@@ -1,0 +1,22 @@
+---
+const paragraphs = [
+  'I make marks the way a body moves — before thought, before intention, before the word arrives.',
+  'Duende is the center of my practice. Not as metaphor, but as method. Lorca described it as the dark, earthen force that burns through the throat of the singer, the feet of the dancer — the thing that cannot be taught or summoned, only survived. I have come to understand my work as an attempt to stay open to it. To keep the hand moving until something true comes through.',
+  'My materials are watercolor, India ink, graphite, and turmeric dye on paper. The turmeric is not incidental — it is a pigment pulled from the earth, ancient in its use, bodily in its warmth. It stains the paper the way experience stains memory. It connects the work to something that predates the canvas, predates the gallery, predates the name we give to art.',
+  'I am a formally trained painter who distrusts formality. What I trust is the mark — the gesture that survives revision, the line that carries more than it was meant to, the evidence of a hand that did not stop to ask permission. Markmaking is not technique. It is a condition of being human, as fundamental as breath, as old as the first hand pressed against stone.',
+  'My figures are rarely resolved. They are caught mid-becoming — suspended in the moment before the song lands, before the meaning clarifies. I am not interested in arrival. I am interested in the quality of attention paid in the reaching.',
+];
+const closer = 'That is where duende lives. Not in the finished thing. In the wound the making leaves behind.';
+---
+
+<section id="statement" class="section">
+  <div class="statement-lines"></div>
+  <div class="statement-margin"></div>
+  <div class="statement-content">
+    <p class="chapter-label">Artist Statement</p>
+    <div class="statement-text" style="margin-top:14px;">
+      {paragraphs.map((p) => <p>{p}</p>)}
+      <p class="closer">{closer}</p>
+    </div>
+  </div>
+</section>

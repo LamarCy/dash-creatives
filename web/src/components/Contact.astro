@@ -1,0 +1,72 @@
+---
+const subjects = [
+  'Commission Inquiry',
+  'Gallery / Exhibition',
+  'Shop Question',
+  'Music Collaboration',
+  'Press / Media',
+  'Just Saying Hello',
+];
+---
+
+<section id="contact" class="section">
+  <div class="section-header">
+    <p class="chapter-label">Chapter VI</p>
+    <h2 class="section-title">Get in <em>Touch</em></h2>
+  </div>
+  <div class="contact-layout">
+    <div class="contact-aside">
+      <p>
+        For commissions, gallery inquiries, press, or just to say hello — fill out the form or
+        write directly.
+      </p>
+      <div class="contact-details">
+        <a href="mailto:hello@studio.com" class="contact-row">
+          <span class="c-label">Email</span>
+          <span class="c-val">hello@studio.com</span>
+        </a>
+        <a
+          href="https://substack.com/@durrelllamar/notes"
+          target="_blank"
+          rel="noopener"
+          class="contact-row"
+        >
+          <span class="c-label">Substack</span>
+          <span class="c-val">@durrelllamar</span>
+        </a>
+        <div class="contact-row">
+          <span class="c-label">Studio</span>
+          <span class="c-val">Open by appointment</span>
+        </div>
+        <div class="contact-row">
+          <span class="c-label">Response</span>
+          <span class="c-val">Within 2–3 business days</span>
+        </div>
+      </div>
+    </div>
+    <form class="nb-form" novalidate>
+      <div class="nb-field">
+        <label for="cf-name">Name</label>
+        <input id="cf-name" name="name" type="text" placeholder="Your name" required />
+      </div>
+      <div class="nb-field">
+        <label for="cf-email">Email</label>
+        <input id="cf-email" name="email" type="email" placeholder="you@example.com" required />
+      </div>
+      <div class="nb-field">
+        <label for="cf-subject">Subject</label>
+        <select id="cf-subject" name="subject">
+          <option value="">— Choose one —</option>
+          {subjects.map((s) => <option value={s}>{s}</option>)}
+        </select>
+      </div>
+      <div class="nb-field">
+        <label for="cf-message">Message</label>
+        <textarea id="cf-message" name="message" placeholder="Tell me about your project…" required></textarea>
+      </div>
+      <input class="nb-honeypot" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
+      <button type="submit" class="nb-submit">Send Message</button>
+      <p class="nb-status" role="status" aria-live="polite"></p>
+    </form>
+  </div>
+</section>

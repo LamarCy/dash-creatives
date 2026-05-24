@@ -1,0 +1,30 @@
+{
+  "name": "dash-creatives",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Dash Creatives — artist portfolio monorepo (Astro frontend + Express/Supabase backend)",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "workspaces": [
+    "web",
+    "backend"
+  ],
+  "scripts": {
+    "dev": "concurrently -n web,api -c blue,green \"npm:dev:web\" \"npm:dev:api\"",
+    "dev:web": "npm run dev -w web",
+    "dev:api": "npm run dev -w backend",
+    "build": "npm run build -w web && npm run build -w backend",
+    "build:web": "npm run build -w web",
+    "build:api": "npm run build -w backend",
+    "extract:images": "node --max-old-space-size=4096 tools/extract-images.mjs",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "format": "prettier --write \"**/*.{ts,tsx,js,mjs,astro,json,md,css}\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0",
+    "node-html-parser": "^7.0.1",
+    "prettier": "^3.4.2"
+  }
+}

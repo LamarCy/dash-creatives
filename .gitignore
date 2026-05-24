@@ -1,0 +1,35 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+build/
+.astro/
+.netlify/
+
+# Backend build
+backend/dist/
+
+# Env files
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Legacy single-file site (huge, kept for one-time extraction only)
+legacy/index.html
+
+# Extractor scratch output
+tools/index.stripped.html

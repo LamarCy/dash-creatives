@@ -1,0 +1,31 @@
+---
+import { tiers } from '@/data/tiers';
+---
+
+<section id="commissions" class="section">
+  <div class="commission-layout">
+    <div>
+      <p class="chapter-label">Chapter V</p>
+      <h2 class="section-title">Commission <em>a Piece</em></h2>
+      <p class="commission-body">
+        Every commission starts with a conversation. Whether you're a collector with something
+        specific in mind, a gallery seeking a site-responsive work, or someone with a story that
+        needs illustrating — write and we'll find the right shape for it together.
+      </p>
+      <a href="#contact" class="btn btn-ghost btn-sm">Start a Conversation</a>
+    </div>
+    <div>
+      <div class="tiers">
+        {tiers.map((t) => (
+          <div class="tier">
+            <div class="tier-left">
+              <h4>{t.name}</h4>
+              <p>{t.detail}</p>
+            </div>
+            <span class="tier-price">{t.priceLabel}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>

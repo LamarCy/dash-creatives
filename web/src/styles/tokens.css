@@ -1,0 +1,14 @@
+:root {
+  --white: #ffffff;
+  --off: #f9f9f7;
+  --paper: #f4f2ed;
+  --rule: #d6d3cc;
+  --ink: #111110;
+  --ink-mid: #444440;
+  --ink-light: #888882;
+  --red-pencil: #c0392b;
+  --blue-pencil: #2e5fa3;
+  --margin: #d4a0a0;
+  --notebook-line: rgba(90, 120, 160, 0.11);
+  --shadow-card: 0 4px 40px rgba(0, 0, 0, 0.09);
+}

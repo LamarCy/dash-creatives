@@ -1,0 +1,396 @@
+{
+  "generatedAt": "2026-05-24T18:07:48.002Z",
+  "source": "/Users/dksmith1018/Documents/dash-creatives/legacy/index.html",
+  "totalImages": 43,
+  "uniqueImages": 20,
+  "byArtwork": {
+    "0": {
+      "filename": "the-songwriter-2.png",
+      "alt": "The Songwriter 2",
+      "sha1": "e725d163ba623cb6c4ff8dd450037319c2d91954"
+    },
+    "1": {
+      "filename": "phia-commission-for-simon-perkins.png",
+      "alt": "Phia — Commission for Simon Perkins",
+      "sha1": "11ee3a39933e798f12a5045a2db45d925167833c"
+    },
+    "2": {
+      "filename": "palm-springs.png",
+      "alt": "Palm Springs",
+      "sha1": "30fc450c3e37c2de894e74c5eb3d4e5ad86e04c6"
+    },
+    "3": {
+      "filename": "the-songwriter.png",
+      "alt": "The Songwriter",
+      "sha1": "c4f8908272e030b8df97bac3ef01a64d95b6dd88"
+    },
+    "4": {
+      "filename": "honeymoon-in-vegas.png",
+      "alt": "Honeymoon in Vegas",
+      "sha1": "5a86838a73c74dccf56f5b495c7671eaff814c18"
+    },
+    "5": {
+      "filename": "vegas-in-the-pines.png",
+      "alt": "Vegas in the Pines",
+      "sha1": "6cf38bfe7f4a47c009d257a0875b2b6b572698af"
+    },
+    "6": {
+      "filename": "ashley-1.png",
+      "alt": "Ashley 1",
+      "sha1": "906fa1544dd2643a7e5ea79643c862f7a9ffa90c"
+    },
+    "7": {
+      "filename": "untitled-minotauro.png",
+      "alt": "Untitled (Minotauro)",
+      "sha1": "6fa9fdabc779bc2a782cc9802eaeeaff548ec1d0"
+    },
+    "8": {
+      "filename": "duende.png",
+      "alt": "Duende",
+      "sha1": "e1d1d2f48b14c67288328aae733e270f0d785dcc"
+    },
+    "9": {
+      "filename": "for-my-daughter.png",
+      "alt": "For My Daughter",
+      "sha1": "6db64b297bb3524361c5588ed67c089d16d2b01d"
+    },
+    "10": {
+      "filename": "monarch-444.png",
+      "alt": "Monarch 444",
+      "sha1": "f3ae2c237f90a57058f663d653234c590af44266"
+    },
+    "11": {
+      "filename": "brace.png",
+      "alt": "Brace",
+      "sha1": "d5840d85271c8c6cbcde91a7c12dfb219001bdc2"
+    },
+    "12": {
+      "filename": "wuhmun.png",
+      "alt": "Wuhmun",
+      "sha1": "419e99ed3d698ba69de399f347431bda83433fa4"
+    },
+    "13": {
+      "filename": "terminus.png",
+      "alt": "Terminus",
+      "sha1": "7b48a6f299d0592ccdc42f20575c8a01e00a3e62"
+    },
+    "15": {
+      "filename": "the-songwriter-2.png",
+      "alt": "The Songwriter 2",
+      "sha1": "e725d163ba623cb6c4ff8dd450037319c2d91954"
+    },
+    "16": {
+      "filename": "phia-commission-for-simon-perkins.png",
+      "alt": "Phia — Commission for Simon Perkins",
+      "sha1": "11ee3a39933e798f12a5045a2db45d925167833c"
+    },
+    "17": {
+      "filename": "palm-springs.png",
+      "alt": "Palm Springs",
+      "sha1": "30fc450c3e37c2de894e74c5eb3d4e5ad86e04c6"
+    }
+  },
+  "entries": [
+    {
+      "index": 0,
+      "dataArtwork": null,
+      "alt": "The Songwriter 2",
+      "filename": "the-songwriter-2.png",
+      "sha1": "e725d163ba623cb6c4ff8dd450037319c2d91954"
+    },
+    {
+      "index": 1,
+      "dataArtwork": null,
+      "alt": "Palm Springs",
+      "filename": "palm-springs.png",
+      "sha1": "30fc450c3e37c2de894e74c5eb3d4e5ad86e04c6"
+    },
+    {
+      "index": 2,
+      "dataArtwork": null,
+      "alt": "Phia — Commission for Simon Perkins",
+      "filename": "phia-commission-for-simon-perkins.png",
+      "sha1": "11ee3a39933e798f12a5045a2db45d925167833c"
+    },
+    {
+      "index": 3,
+      "dataArtwork": "1",
+      "alt": "Phia — Commission for Simon Perkins",
+      "filename": "phia-commission-for-simon-perkins.png",
+      "sha1": "11ee3a39933e798f12a5045a2db45d925167833c"
+    },
+    {
+      "index": 4,
+      "dataArtwork": "2",
+      "alt": "Palm Springs",
+      "filename": "palm-springs.png",
+      "sha1": "30fc450c3e37c2de894e74c5eb3d4e5ad86e04c6"
+    },
+    {
+      "index": 5,
+      "dataArtwork": "3",
+      "alt": "The Songwriter",
+      "filename": "the-songwriter.png",
+      "sha1": "c4f8908272e030b8df97bac3ef01a64d95b6dd88"
+    },
+    {
+      "index": 6,
+      "dataArtwork": "4",
+      "alt": "Honeymoon in Vegas",
+      "filename": "honeymoon-in-vegas.png",
+      "sha1": "5a86838a73c74dccf56f5b495c7671eaff814c18"
+    },
+    {
+      "index": 7,
+      "dataArtwork": "0",
+      "alt": "The Songwriter 2",
+      "filename": "the-songwriter-2.png",
+      "sha1": "e725d163ba623cb6c4ff8dd450037319c2d91954"
+    },
+    {
+      "index": 8,
+      "dataArtwork": "5",
+      "alt": "Vegas in the Pines",
+      "filename": "vegas-in-the-pines.png",
+      "sha1": "6cf38bfe7f4a47c009d257a0875b2b6b572698af"
+    },
+    {
+      "index": 9,
+      "dataArtwork": "6",
+      "alt": "Ashley 1",
+      "filename": "ashley-1.png",
+      "sha1": "906fa1544dd2643a7e5ea79643c862f7a9ffa90c"
+    },
+    {
+      "index": 10,
+      "dataArtwork": "7",
+      "alt": "Untitled (Minotauro)",
+      "filename": "untitled-minotauro.png",
+      "sha1": "6fa9fdabc779bc2a782cc9802eaeeaff548ec1d0"
+    },
+    {
+      "index": 11,
+      "dataArtwork": "8",
+      "alt": "Duende",
+      "filename": "duende.png",
+      "sha1": "e1d1d2f48b14c67288328aae733e270f0d785dcc"
+    },
+    {
+      "index": 12,
+      "dataArtwork": "9",
+      "alt": "For My Daughter",
+      "filename": "for-my-daughter.png",
+      "sha1": "6db64b297bb3524361c5588ed67c089d16d2b01d"
+    },
+    {
+      "index": 13,
+      "dataArtwork": "10",
+      "alt": "Monarch 444",
+      "filename": "monarch-444.png",
+      "sha1": "f3ae2c237f90a57058f663d653234c590af44266"
+    },
+    {
+      "index": 14,
+      "dataArtwork": "1",
+      "alt": "Sankofa",
+      "filename": "sankofa.jpg",
+      "sha1": "c98b4a925c32f30c3687a6a228de373a6916f945"
+    },
+    {
+      "index": 15,
+      "dataArtwork": "1",
+      "alt": "Holy Matrimony",
+      "filename": "holy-matrimony.jpg",
+      "sha1": "9c8420500cc79d5b730489a5468a3e122b576047"
+    },
+    {
+      "index": 16,
+      "dataArtwork": "1",
+      "alt": "Georgia Red Clay",
+      "filename": "georgia-red-clay.png",
+      "sha1": "a575474659882b1168f5ff9dd66a06c983bc0e0e"
+    },
+    {
+      "index": 17,
+      "dataArtwork": "1",
+      "alt": "",
+      "filename": "artwork-1.jpg",
+      "sha1": "7b98f31745535d94e2f2e7d7a287e13a899385bf"
+    },
+    {
+      "index": 18,
+      "dataArtwork": "11",
+      "alt": "Brace",
+      "filename": "brace.png",
+      "sha1": "d5840d85271c8c6cbcde91a7c12dfb219001bdc2"
+    },
+    {
+      "index": 19,
+      "dataArtwork": "12",
+      "alt": "Wuhmun",
+      "filename": "wuhmun.png",
+      "sha1": "419e99ed3d698ba69de399f347431bda83433fa4"
+    },
+    {
+      "index": 20,
+      "dataArtwork": "13",
+      "alt": "Terminus",
+      "filename": "terminus.png",
+      "sha1": "7b48a6f299d0592ccdc42f20575c8a01e00a3e62"
+    },
+    {
+      "index": 21,
+      "dataArtwork": "1",
+      "alt": "Alexandria I",
+      "filename": "alexandria-i.jpg",
+      "sha1": "1461c3dfcba5ffc0c0da320cc370cf87dafba9f4"
+    },
+    {
+      "index": 22,
+      "dataArtwork": "1",
+      "alt": "Untitled (House of Balloons)",
+      "filename": "untitled-house-of-balloons.png",
+      "sha1": "99839611841f4592789c219d6a3fd91fb9d8f413"
+    },
+    {
+      "index": 23,
+      "dataArtwork": "15",
+      "alt": "The Songwriter 2",
+      "filename": "the-songwriter-2.png",
+      "sha1": "e725d163ba623cb6c4ff8dd450037319c2d91954"
+    },
+    {
+      "index": 24,
+      "dataArtwork": "16",
+      "alt": "Phia — Commission for Simon Perkins",
+      "filename": "phia-commission-for-simon-perkins.png",
+      "sha1": "11ee3a39933e798f12a5045a2db45d925167833c"
+    },
+    {
+      "index": 25,
+      "dataArtwork": "17",
+      "alt": "Palm Springs",
+      "filename": "palm-springs.png",
+      "sha1": "30fc450c3e37c2de894e74c5eb3d4e5ad86e04c6"
+    },
+    {
+      "index": 26,
+      "dataArtwork": null,
+      "alt": "The Songwriter",
+      "filename": "the-songwriter.png",
+      "sha1": "c4f8908272e030b8df97bac3ef01a64d95b6dd88"
+    },
+    {
+      "index": 27,
+      "dataArtwork": null,
+      "alt": "Honeymoon in Vegas",
+      "filename": "honeymoon-in-vegas.png",
+      "sha1": "5a86838a73c74dccf56f5b495c7671eaff814c18"
+    },
+    {
+      "index": 28,
+      "dataArtwork": null,
+      "alt": "Vegas in the Pines",
+      "filename": "vegas-in-the-pines.png",
+      "sha1": "6cf38bfe7f4a47c009d257a0875b2b6b572698af"
+    },
+    {
+      "index": 29,
+      "dataArtwork": null,
+      "alt": "Ashley 1",
+      "filename": "ashley-1.png",
+      "sha1": "906fa1544dd2643a7e5ea79643c862f7a9ffa90c"
+    },
+    {
+      "index": 30,
+      "dataArtwork": null,
+      "alt": "Untitled (Minotauro)",
+      "filename": "untitled-minotauro.png",
+      "sha1": "6fa9fdabc779bc2a782cc9802eaeeaff548ec1d0"
+    },
+    {
+      "index": 31,
+      "dataArtwork": null,
+      "alt": "Duende",
+      "filename": "duende.png",
+      "sha1": "e1d1d2f48b14c67288328aae733e270f0d785dcc"
+    },
+    {
+      "index": 32,
+      "dataArtwork": null,
+      "alt": "For My Daughter",
+      "filename": "for-my-daughter.png",
+      "sha1": "6db64b297bb3524361c5588ed67c089d16d2b01d"
+    },
+    {
+      "index": 33,
+      "dataArtwork": null,
+      "alt": "Monarch 444",
+      "filename": "monarch-444.png",
+      "sha1": "f3ae2c237f90a57058f663d653234c590af44266"
+    },
+    {
+      "index": 34,
+      "dataArtwork": null,
+      "alt": "Brace",
+      "filename": "brace.png",
+      "sha1": "d5840d85271c8c6cbcde91a7c12dfb219001bdc2"
+    },
+    {
+      "index": 35,
+      "dataArtwork": null,
+      "alt": "Wuhmun",
+      "filename": "wuhmun.png",
+      "sha1": "419e99ed3d698ba69de399f347431bda83433fa4"
+    },
+    {
+      "index": 36,
+      "dataArtwork": null,
+      "alt": "Terminus",
+      "filename": "terminus.png",
+      "sha1": "7b48a6f299d0592ccdc42f20575c8a01e00a3e62"
+    },
+    {
+      "index": 37,
+      "dataArtwork": null,
+      "alt": "Untitled (House of Balloons)",
+      "filename": "untitled-house-of-balloons.png",
+      "sha1": "99839611841f4592789c219d6a3fd91fb9d8f413"
+    },
+    {
+      "index": 39,
+      "dataArtwork": "1",
+      "alt": "Alexandria I",
+      "filename": "alexandria-i.jpg",
+      "sha1": "1461c3dfcba5ffc0c0da320cc370cf87dafba9f4"
+    },
+    {
+      "index": 40,
+      "dataArtwork": "1",
+      "alt": "Holy Matrimony",
+      "filename": "holy-matrimony.jpg",
+      "sha1": "9c8420500cc79d5b730489a5468a3e122b576047"
+    },
+    {
+      "index": 41,
+      "dataArtwork": "1",
+      "alt": "Sankofa",
+      "filename": "sankofa.jpg",
+      "sha1": "c98b4a925c32f30c3687a6a228de373a6916f945"
+    },
+    {
+      "index": 42,
+      "dataArtwork": "1",
+      "alt": "",
+      "filename": "artwork-1.jpg",
+      "sha1": "7b98f31745535d94e2f2e7d7a287e13a899385bf"
+    },
+    {
+      "index": 43,
+      "dataArtwork": "1",
+      "alt": "Georgia Red Clay",
+      "filename": "georgia-red-clay.png",
+      "sha1": "a575474659882b1168f5ff9dd66a06c983bc0e0e"
+    }
+  ]
+}
