@@ -3,25 +3,27 @@ export type EventItem = {
   day: string;
   name: string;
   where: string[];
+  cta?: string;
 };
 
 export const events: EventItem[] = [
   {
-    month: '2023',
-    day: '—',
-    name: 'American Soil American Soul',
-    where: ['Grassroots Coffee Roasters', 'Thomasville, GA'],
+    month: 'Past — 2022',
+    day: 'I',
+    name: 'American Soul American Soul',
+    where: ['Vinings, Atlanta, GA', 'Solo Exhibition — Works by Durrell & Ashley Smith'],
   },
   {
-    month: '2022',
-    day: '—',
-    name: 'American Soul American Soul',
-    where: ['Vinings', 'Atlanta, GA'],
+    month: 'Past — 2023',
+    day: 'II',
+    name: 'American Soil American Soul',
+    where: ['Grassroots Coffee Roasters', 'Thomasville, GA · Solo Exhibition'],
   },
   {
     month: 'Upcoming',
     day: '—',
-    name: 'Details forthcoming',
-    where: ['New exhibition in planning', 'Contact for inquiries'],
+    name: 'New Exhibition',
+    where: ['Details forthcoming.', 'Inquire for exhibition opportunities.'],
+    cta: 'Contact',
   },
 ];

@@ -1,155 +1,104 @@
 ---
 const bio = [
-  'Durrell Lamar Smith is a painter and assemblage artist based in Atlanta, working across watercolor, India ink, graphite, turmeric dye, oil, and mixed media. His practice is rooted in duende — Lorca\'s dark, earthen force that animates art that has been survived rather than performed. The work attends to figure, landscape, and the residue of memory; to the mark before the meaning.',
-  'He holds an M.A. in Art Education from Boston University (2018) and has shown work across the South under the banner of American Soul American Soul. He collaborates regularly with his wife, the painter Ashley Smith, whose work appears in this collection alongside his own.',
-  'Smith is currently open to gallery representation, group and solo exhibition opportunities, and commissions. For studio visits, press, or inquiries, please get in touch.',
-];
-
-const education = [
-  { year: '2018', detail: 'M.A. Art Education — Boston University' },
-];
-
-const soloShows = [
-  { year: '2023', detail: 'American Soil American Soul — Grassroots Coffee Roasters, Thomasville, GA' },
-  { year: '2022', detail: 'American Soul American Soul — Vinings, Atlanta, GA' },
-  { year: 'c. 2012', detail: 'Millstone Gallery' },
-];
-
-const practice = [
-  'Watercolor · India Ink · Graphite · Turmeric Dye',
-  'Oil on Canvas',
-  'Mixed Media Assemblage',
-  'Drawing & Markmaking',
+  'Durrell Lamar Smith is a painter and assemblage artist based in Atlanta, Georgia. Working across watercolor, mixed media assemblage, oil, and India ink on paper, his practice is rooted in the Lorcan concept of duende — the dark, earthen force that animates authentic creative expression. His work explores markmaking as a fundamental condition of human experience, drawing on myth, music, and the lyric impulse as primary materials.',
+  'Smith holds a Master of Arts in Art Education from Boston University (2018). His work has been exhibited in Atlanta and across Georgia, and is held in private collections. He works in close collaboration with his wife, artist Ashley Smith.',
+  'DASH Creatives is open to gallery representation, institutional exhibition, and site-responsive commissions. Inquiries welcome.',
 ];
 ---
 
-<section id="about" class="section">
+<section id="about" class="section about-section">
   <div class="section-header">
-    <p class="chapter-label">Chapter II · About</p>
-    <h2 class="section-title">About the <em>Artist</em></h2>
+    <p class="chapter-label">About</p>
+    <h2 class="section-title">Durrell Lamar <em>Smith</em></h2>
   </div>
-  <div class="about-layout">
+  <div class="about-grid">
     <div class="about-bio">
       {bio.map((p) => <p>{p}</p>)}
+      <a href="#contact" class="btn btn-fill btn-sm">Get in Touch</a>
     </div>
-    <aside class="about-cv">
-      <h3 class="cv-heading">Curriculum Vitae</h3>
-
-      <div class="cv-block">
+    <div class="about-cv">
+      <div class="cv-row">
         <p class="cv-label">Education</p>
-        <ul class="cv-list">
-          {education.map((e) => (
-            <li>
-              <span class="cv-year">{e.year}</span>
-              <span class="cv-detail">{e.detail}</span>
-            </li>
-          ))}
-        </ul>
+        <p class="cv-body">M.A. Art Education<br />Boston University, 2018</p>
       </div>
-
-      <div class="cv-block">
+      <div class="cv-row">
         <p class="cv-label">Solo Exhibitions</p>
-        <ul class="cv-list">
-          {soloShows.map((e) => (
-            <li>
-              <span class="cv-year">{e.year}</span>
-              <span class="cv-detail">{e.detail}</span>
-            </li>
-          ))}
-        </ul>
+        <p class="cv-body cv-body-wide">
+          American Soil American Soul<br />
+          <span class="cv-sub">Grassroots Coffee Roasters, Thomasville, GA · 2023</span><br /><br />
+          American Soul American Soul<br />
+          <span class="cv-sub">Vinings, Atlanta, GA · 2022</span><br /><br />
+          Early Exhibition<br />
+          <span class="cv-sub">Millstone Gallery, Atlanta, GA · c. 2012</span>
+        </p>
       </div>
-
-      <div class="cv-block">
+      <div class="cv-row">
         <p class="cv-label">Practice</p>
-        <ul class="cv-list cv-list-plain">
-          {practice.map((p) => <li><span class="cv-detail">{p}</span></li>)}
-        </ul>
+        <p class="cv-body">Watercolor · India Ink · Graphite<br />Turmeric Dye · Mixed Media Assemblage<br />Oil on Canvas</p>
       </div>
-
-      <div class="cv-block">
+      <div class="cv-row cv-row-last">
         <p class="cv-label">Based</p>
-        <ul class="cv-list cv-list-plain">
-          <li><span class="cv-detail">Atlanta, Georgia</span></li>
-        </ul>
+        <p class="cv-body">Atlanta, Georgia<br />Working everywhere.</p>
       </div>
-    </aside>
+    </div>
   </div>
 </section>
 
 <style>
-  .about-layout {
+  .about-section {
+    background: var(--off);
+    border-top: 1px solid var(--rule);
+  }
+  .about-grid {
     display: grid;
-    grid-template-columns: 1.2fr 0.9fr;
-    gap: 64px;
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 0 24px;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
   }
   .about-bio p {
-    font-family: 'EB Garamond', Georgia, serif;
-    font-size: 1.15rem;
-    line-height: 1.75;
-    color: var(--ink);
-    margin-bottom: 1.1rem;
+    font-size: 1.05rem;
+    line-height: 1.88;
+    color: var(--ink-mid);
+    margin-bottom: 28px;
+  }
+  .about-bio p:last-of-type {
+    margin-bottom: 40px;
   }
   .about-cv {
-    border-left: 1px solid var(--rule);
-    padding-left: 36px;
+    border-top: 1px solid var(--rule);
   }
-  .cv-heading {
-    font-family: 'DM Mono', monospace;
-    font-weight: 400;
-    font-size: 0.62rem;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--ink-light);
-    margin-bottom: 22px;
+  .cv-row {
+    padding: 20px 0;
+    border-bottom: 1px solid var(--rule);
   }
-  .cv-block {
-    margin-bottom: 26px;
+  .cv-row-last {
+    border-bottom: none;
   }
   .cv-label {
     font-family: 'DM Mono', monospace;
-    font-weight: 400;
-    font-size: 0.6rem;
-    letter-spacing: 0.2em;
+    font-weight: 300;
+    font-size: 0.54rem;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: var(--ink-mid);
+    color: var(--ink-light);
     margin-bottom: 10px;
   }
-  .cv-list {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  .cv-list li {
-    display: flex;
-    gap: 14px;
-    font-family: 'EB Garamond', Georgia, serif;
+  .cv-body {
     font-size: 1rem;
-    line-height: 1.5;
-    color: var(--ink);
+    line-height: 1.7;
+    color: var(--ink-mid);
   }
-  .cv-year {
-    flex: 0 0 60px;
-    font-family: 'DM Mono', monospace;
-    font-size: 0.7rem;
-    letter-spacing: 0.08em;
+  .cv-body-wide {
+    line-height: 1.9;
+  }
+  .cv-sub {
+    font-size: 0.85rem;
     color: var(--ink-light);
-    padding-top: 2px;
   }
-  .cv-list-plain li { display: block; }
-  @media (max-width: 880px) {
-    .about-layout {
+  @media (max-width: 900px) {
+    .about-grid {
       grid-template-columns: 1fr;
-      gap: 40px;
-    }
-    .about-cv {
-      border-left: none;
-      border-top: 1px solid var(--rule);
-      padding-left: 0;
-      padding-top: 32px;
+      gap: 48px;
     }
   }
 </style>

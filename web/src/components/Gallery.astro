@@ -19,15 +19,18 @@ const items = [...artworks].sort((a, b) => b.year - a.year);
           </div>
           <div class="t-info">
             <p class="t-tag">{a.tag}</p>
-            <h3 class="t-title">{a.title}</h3>
+            <h3 class="t-title">
+              {a.title}
+              {a.artist && <em class="t-artist"> ({a.artist})</em>}
+            </h3>
             <p class="t-desc">{a.description}</p>
             <div class="t-meta">
               <div class="t-meta-item">Medium<strong>{a.medium}</strong></div>
-              {a.support && <div class="t-meta-item">Support<strong>{a.support}</strong></div>}
-              {a.size && <div class="t-meta-item">Size<strong>{a.size}</strong></div>}
-              {a.price && <div class="t-meta-item">Price<strong>{a.price}</strong></div>}
-              {a.artist && <div class="t-meta-item">Artist<strong>{a.artist}</strong></div>}
+              {a.size
+                ? <div class="t-meta-item">Size<strong>{a.size}</strong></div>
+                : a.support && <div class="t-meta-item">Support<strong>{a.support}</strong></div>}
               <div class="t-meta-item">Status<strong>{a.status}</strong></div>
+              {a.price && <div class="t-meta-item">Price<strong>{a.price}</strong></div>}
             </div>
             <a
               href={a.status === 'Commission — Sold' ? '#commissions' : '#contact'}
@@ -41,3 +44,11 @@ const items = [...artworks].sort((a, b) => b.year - a.year);
     ))}
   </div>
 </section>
+
+<style>
+  .t-artist {
+    font-size: 0.75em;
+    color: var(--ink-light);
+    font-style: italic;
+  }
+</style>

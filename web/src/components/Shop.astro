@@ -2,6 +2,17 @@
 import { artworks } from '@/data/artworks';
 
 const items = artworks.filter((a) => a.inShop);
+
+const shopTitle = (a: (typeof items)[number]) =>
+  a.status === 'Commission — Sold' && a.title.startsWith('Phia')
+    ? 'Phia — Commission'
+    : a.title;
+
+const shopPrice = (a: (typeof items)[number]) => {
+  if (a.status === 'Sold' || a.status === 'Stolen') return a.status;
+  if (a.status === 'Commission — Sold') return 'Sold';
+  return 'Inquire';
+};
 ---
 
 <section id="shop" class="section">
@@ -19,9 +30,9 @@ const items = artworks.filter((a) => a.inShop);
           {a.shopBadge && <span class="shop-badge">{a.shopBadge}</span>}
         </div>
         <div class="shop-info">
-          <h3 class="shop-name">{a.title}</h3>
+          <h3 class="shop-name">{shopTitle(a)}</h3>
           <div class="shop-row">
-            <span class="shop-price">{a.status === 'Sold' || a.status === 'Stolen' ? a.status : (a.price ?? 'Inquire')}</span>
+            <span class="shop-price">{shopPrice(a)}</span>
             <span class="shop-type">{a.shopType ?? a.medium}</span>
           </div>
         </div>
@@ -29,6 +40,6 @@ const items = artworks.filter((a) => a.inShop);
     ))}
   </div>
   <div style="margin-top:44px;position:relative;z-index:1;">
-    <a href="#contact" class="btn btn-sm">Inquire About Any Work</a>
+    <a href="#contact" class="btn btn-sm">Inquire About Availability or Representation</a>
   </div>
 </section>
