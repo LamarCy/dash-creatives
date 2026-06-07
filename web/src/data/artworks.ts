@@ -151,6 +151,22 @@ export const artworks: Artwork[] = [
     shopType: 'Watercolor',
   },
   {
+    id: 21,
+    year: 2022,
+    title: 'Ballad of Odysseus',
+    image: '/images/ballad-of-odysseus.jpg',
+    alt: 'Ballad of Odysseus',
+    tag: 'Mixed Media Assemblage · Original',
+    description:
+      'A horizon of cursive script unfurls across a pewter and cream ground — calligraphic strokes in oil-black ink moving like wind over water, broken by dense passages of collage, ochre, and impasto. The work invokes Odysseus less as hero than as wanderer — the long, looping return that writes itself out across years. The script never quite resolves into legible words; it remains the rhythm of the journey rather than its translation.',
+    medium: 'Mixed Media Assemblage',
+    size: '55 × 48 in',
+    status: 'Sold',
+    inShop: true,
+    shopBadge: 'Sold',
+    shopType: 'Mixed Media',
+  },
+  {
     id: 9,
     year: 2022,
     title: 'Duende',
