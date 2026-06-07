@@ -11,7 +11,7 @@ const shopTitle = (a: (typeof items)[number]) =>
 const shopPrice = (a: (typeof items)[number]) => {
   if (a.status === 'Sold' || a.status === 'Stolen') return a.status;
   if (a.status === 'Commission — Sold') return 'Sold';
-  return 'Inquire';
+  return a.price ?? 'Inquire';
 };
 ---
 

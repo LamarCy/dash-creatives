@@ -78,7 +78,8 @@ export const artworks: Artwork[] = [
     description:
       'An abstracted figure emerges from cascading washes of yellow, teal, and grey — ink drips and gestural marks suggesting the fluid, sometimes chaotic act of creation. Turmeric dye lends a warm organic undertone to a composition that feels simultaneously improvised and inevitable.',
     medium: 'Watercolor, India Ink, Graphite, Turmeric Dye',
-    support: 'Watercolor Paper',
+    size: '18 × 24 in',
+    price: '$800',
     status: 'Available',
     inShop: true,
     shopBadge: 'New',
