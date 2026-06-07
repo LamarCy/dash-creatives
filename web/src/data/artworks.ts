@@ -245,9 +245,9 @@ export const artworks: Artwork[] = [
     description:
       'A field-worn waxed cotton hunting jacket designed by Durrell Smith, lined with a custom-printed textile patterning the Original Dogman wordmark with English Pointer silhouettes and bobwhite quail over typewritten field notes. The piece bridges studio practice and the sporting life — the garment as wearable assemblage, made from sustainable materials, finished by hand. One in a small run.',
     medium: 'Waxed Cotton · Custom-Printed Textile Lining',
-    status: 'Available',
+    status: 'Sold',
     inShop: true,
-    shopBadge: 'Garment',
+    shopBadge: 'Sold',
     shopType: 'Garment Design',
   },
   {
