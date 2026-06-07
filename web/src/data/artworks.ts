@@ -11,7 +11,7 @@ export type Artwork = {
   size?: string;
   price?: string;
   artist?: string;
-  status: 'Available' | 'Sold' | 'Commission — Sold' | 'Stolen';
+  status: 'Available' | 'Sold' | 'Commission — Sold' | 'Stolen' | 'Not for Sale';
   shopBadge?: string;
   shopType?: string;
   inShop?: boolean;
@@ -29,10 +29,9 @@ export const artworks: Artwork[] = [
       'A crouched, intensely focused figure rendered in teal, crimson, and black — gestural white marks cut across the composition like notation on a staff. The words "Melody, Markmaking, Songwriting" are inscribed in the lower corner, and "Simple\'Em" floats to the left, anchoring this as a meditation on the act of creative making. A companion to the first Songwriter work.',
     medium: 'Watercolor, India Ink, Graphite, Turmeric Dye',
     size: '18 × 24 in',
-    price: '$800',
-    status: 'Available',
+    status: 'Not for Sale',
     inShop: true,
-    shopBadge: 'New',
+    shopBadge: 'Not for Sale',
     shopType: 'Watercolor · Turmeric Dye',
   },
   {
@@ -79,10 +78,9 @@ export const artworks: Artwork[] = [
       'An abstracted figure emerges from cascading washes of yellow, teal, and grey — ink drips and gestural marks suggesting the fluid, sometimes chaotic act of creation. Turmeric dye lends a warm organic undertone to a composition that feels simultaneously improvised and inevitable.',
     medium: 'Watercolor, India Ink, Graphite, Turmeric Dye',
     size: '18 × 24 in',
-    price: '$800',
-    status: 'Available',
+    status: 'Not for Sale',
     inShop: true,
-    shopBadge: 'New',
+    shopBadge: 'Not for Sale',
     shopType: 'Watercolor · Turmeric Dye',
   },
   {
@@ -181,9 +179,9 @@ export const artworks: Artwork[] = [
       'A luminous assemblage of gilded florals — sunflowers, peonies, and roses cast in gold — layered over a textured black-and-white canvas with delicate pink ribbon. An intimate and deeply personal work that transforms botanical abundance into an offering of love and legacy.',
     medium: 'Mixed Media Assemblage',
     size: '36 × 36 in',
-    status: 'Available',
+    status: 'Not for Sale',
     inShop: true,
-    shopBadge: 'Original',
+    shopBadge: 'Not for Sale',
     shopType: 'Mixed Media',
   },
   {
@@ -197,9 +195,9 @@ export const artworks: Artwork[] = [
       'Bold gesture marks in black against charged yellow — raw burlap, dried botanicals, and a small preserved butterfly at the center. The number 444 carries its own quiet symbolism within a composition that feels both primal and ceremonial, assemblage as ritual.',
     medium: 'Mixed Media Assemblage',
     size: '48 × 36 in',
-    status: 'Available',
+    status: 'Not for Sale',
     inShop: true,
-    shopBadge: 'Original',
+    shopBadge: 'Not for Sale',
     shopType: 'Mixed Media',
   },
   {
@@ -230,9 +228,9 @@ export const artworks: Artwork[] = [
       'A face emerges from dense, heavily worked layers — ochre, teal, purple, and charcoal — with expressive marks suggesting both mask and portrait. The textured surface, built from mixed media including what appears to be sand or grit, gives the face a monumental, sculptural quality. Urgent and searching.',
     medium: 'Mixed Media',
     size: '24 × 36 in',
-    status: 'Available',
+    status: 'Sold',
     inShop: true,
-    shopBadge: 'Original',
+    shopBadge: 'Sold',
     shopType: 'Mixed Media',
   },
   {
@@ -262,10 +260,9 @@ export const artworks: Artwork[] = [
       'A riotous, energetic canvas of sweeping black arcs, vivid splashes of crimson, yellow, teal, and blue — gesture marks colliding with crackled paint surface in a composition that feels like pure id released onto canvas. One of the earliest works in the collection, it already demonstrates the fearless, layered approach that defines the body of work.',
     medium: 'Mixed Media',
     size: '17 × 11 in',
-    price: '$600',
-    status: 'Available',
+    status: 'Not for Sale',
     inShop: true,
-    shopBadge: 'Original',
+    shopBadge: 'Not for Sale',
     shopType: 'Mixed Media',
   },
 ];
