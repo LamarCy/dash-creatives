@@ -94,10 +94,9 @@ export const artworks: Artwork[] = [
       "A lush, sunlit hound moves through a dense tropical landscape — palm fronds rendered with careful botanical attention against warm amber washes. The dog's alert poise and the verdant surroundings create a tender, almost cinematic stillness.",
     medium: 'Watercolor, India Ink',
     size: '18 × 24 in',
-    price: '$800',
-    status: 'Available',
+    status: 'Not for Sale',
     inShop: true,
-    shopBadge: 'New',
+    shopBadge: 'Not for Sale',
     shopType: 'Watercolor · India Ink',
   },
   {
