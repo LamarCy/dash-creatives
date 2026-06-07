@@ -1,0 +1,155 @@
+---
+const bio = [
+  'Durrell Lamar Smith is a painter and assemblage artist based in Atlanta, working across watercolor, India ink, graphite, turmeric dye, oil, and mixed media. His practice is rooted in duende — Lorca\'s dark, earthen force that animates art that has been survived rather than performed. The work attends to figure, landscape, and the residue of memory; to the mark before the meaning.',
+  'He holds an M.A. in Art Education from Boston University (2018) and has shown work across the South under the banner of American Soul American Soul. He collaborates regularly with his wife, the painter Ashley Smith, whose work appears in this collection alongside his own.',
+  'Smith is currently open to gallery representation, group and solo exhibition opportunities, and commissions. For studio visits, press, or inquiries, please get in touch.',
+];
+
+const education = [
+  { year: '2018', detail: 'M.A. Art Education — Boston University' },
+];
+
+const soloShows = [
+  { year: '2023', detail: 'American Soil American Soul — Grassroots Coffee Roasters, Thomasville, GA' },
+  { year: '2022', detail: 'American Soul American Soul — Vinings, Atlanta, GA' },
+  { year: 'c. 2012', detail: 'Millstone Gallery' },
+];
+
+const practice = [
+  'Watercolor · India Ink · Graphite · Turmeric Dye',
+  'Oil on Canvas',
+  'Mixed Media Assemblage',
+  'Drawing & Markmaking',
+];
+---
+
+<section id="about" class="section">
+  <div class="section-header">
+    <p class="chapter-label">Chapter II · About</p>
+    <h2 class="section-title">About the <em>Artist</em></h2>
+  </div>
+  <div class="about-layout">
+    <div class="about-bio">
+      {bio.map((p) => <p>{p}</p>)}
+    </div>
+    <aside class="about-cv">
+      <h3 class="cv-heading">Curriculum Vitae</h3>
+
+      <div class="cv-block">
+        <p class="cv-label">Education</p>
+        <ul class="cv-list">
+          {education.map((e) => (
+            <li>
+              <span class="cv-year">{e.year}</span>
+              <span class="cv-detail">{e.detail}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div class="cv-block">
+        <p class="cv-label">Solo Exhibitions</p>
+        <ul class="cv-list">
+          {soloShows.map((e) => (
+            <li>
+              <span class="cv-year">{e.year}</span>
+              <span class="cv-detail">{e.detail}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div class="cv-block">
+        <p class="cv-label">Practice</p>
+        <ul class="cv-list cv-list-plain">
+          {practice.map((p) => <li><span class="cv-detail">{p}</span></li>)}
+        </ul>
+      </div>
+
+      <div class="cv-block">
+        <p class="cv-label">Based</p>
+        <ul class="cv-list cv-list-plain">
+          <li><span class="cv-detail">Atlanta, Georgia</span></li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<style>
+  .about-layout {
+    display: grid;
+    grid-template-columns: 1.2fr 0.9fr;
+    gap: 64px;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+  .about-bio p {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 1.15rem;
+    line-height: 1.75;
+    color: var(--ink);
+    margin-bottom: 1.1rem;
+  }
+  .about-cv {
+    border-left: 1px solid var(--rule);
+    padding-left: 36px;
+  }
+  .cv-heading {
+    font-family: 'DM Mono', monospace;
+    font-weight: 400;
+    font-size: 0.62rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-light);
+    margin-bottom: 22px;
+  }
+  .cv-block {
+    margin-bottom: 26px;
+  }
+  .cv-label {
+    font-family: 'DM Mono', monospace;
+    font-weight: 400;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-mid);
+    margin-bottom: 10px;
+  }
+  .cv-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .cv-list li {
+    display: flex;
+    gap: 14px;
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: var(--ink);
+  }
+  .cv-year {
+    flex: 0 0 60px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    color: var(--ink-light);
+    padding-top: 2px;
+  }
+  .cv-list-plain li { display: block; }
+  @media (max-width: 880px) {
+    .about-layout {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+    .about-cv {
+      border-left: none;
+      border-top: 1px solid var(--rule);
+      padding-left: 0;
+      padding-top: 32px;
+    }
+  }
+</style>

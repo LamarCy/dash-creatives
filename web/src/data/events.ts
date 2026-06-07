@@ -7,21 +7,21 @@ export type EventItem = {
 
 export const events: EventItem[] = [
   {
-    month: 'May 2025',
-    day: '04',
-    name: 'Spring Open Studio',
-    where: ['The Studio', 'Open to collectors & visitors'],
+    month: '2023',
+    day: '—',
+    name: 'American Soil American Soul',
+    where: ['Grassroots Coffee Roasters', 'Thomasville, GA'],
   },
   {
-    month: 'Jun 2025',
-    day: '18',
-    name: 'Illustrated Folk Night',
-    where: ['The Lantern Room', 'Live music & new prints'],
+    month: '2022',
+    day: '—',
+    name: 'American Soul American Soul',
+    where: ['Vinings', 'Atlanta, GA'],
   },
   {
-    month: 'Sep 2025',
-    day: '12',
-    name: 'Autumn Gallery Show',
-    where: ['Millstone Gallery', 'New series debut'],
+    month: 'Upcoming',
+    day: '—',
+    name: 'Details forthcoming',
+    where: ['New exhibition in planning', 'Contact for inquiries'],
   },
 ];

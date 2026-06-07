@@ -7,7 +7,7 @@ const items = artworks.filter((a) => a.inShop);
 <section id="shop" class="section">
   <div class="section-header">
     <p class="chapter-label">Chapter IV</p>
-    <h2 class="section-title">The <em>Shop</em></h2>
+    <h2 class="section-title">Available <em>Works</em></h2>
   </div>
   <div class="shop-grid">
     {items.map((a) => (
@@ -21,7 +21,7 @@ const items = artworks.filter((a) => a.inShop);
         <div class="shop-info">
           <h3 class="shop-name">{a.title}</h3>
           <div class="shop-row">
-            <span class="shop-price">{a.status === 'Sold' || a.status === 'Stolen' ? a.status : 'Inquire'}</span>
+            <span class="shop-price">{a.status === 'Sold' || a.status === 'Stolen' ? a.status : (a.price ?? 'Inquire')}</span>
             <span class="shop-type">{a.shopType ?? a.medium}</span>
           </div>
         </div>

@@ -25,6 +25,8 @@ const items = [...artworks].sort((a, b) => b.year - a.year);
               <div class="t-meta-item">Medium<strong>{a.medium}</strong></div>
               {a.support && <div class="t-meta-item">Support<strong>{a.support}</strong></div>}
               {a.size && <div class="t-meta-item">Size<strong>{a.size}</strong></div>}
+              {a.price && <div class="t-meta-item">Price<strong>{a.price}</strong></div>}
+              {a.artist && <div class="t-meta-item">Artist<strong>{a.artist}</strong></div>}
               <div class="t-meta-item">Status<strong>{a.status}</strong></div>
             </div>
             <a
