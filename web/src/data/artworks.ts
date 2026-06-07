@@ -249,6 +249,22 @@ export const artworks: Artwork[] = [
     shopType: 'Mixed Media',
   },
   {
+    id: 13,
+    year: 2015,
+    title: 'Holy Matrimony',
+    image: '/images/holy-matrimony.jpg',
+    alt: 'Holy Matrimony',
+    tag: 'Mixed Media Assemblage · Original',
+    description:
+      'A densely worked surface in cream, ochre, and graphite black — calligraphic mark-making layered over collaged fragments, with an oval and a single ringed circle anchoring the lower register. Heavy impasto, scraped passages, and gestural line collide across the canvas, a meditation on union as something forged through accumulation and erasure rather than tidy resolution.',
+    medium: 'Mixed Media Assemblage',
+    size: '55 × 48 in',
+    status: 'Sold',
+    inShop: true,
+    shopBadge: 'Sold',
+    shopType: 'Mixed Media',
+  },
+  {
     id: 20,
     year: 2012,
     title: 'Untitled (House of Balloons)',
