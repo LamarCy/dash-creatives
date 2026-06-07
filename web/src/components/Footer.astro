@@ -1,0 +1,59 @@
+---
+const navLinks = [
+  { href: '#gallery', label: 'Gallery' },
+  { href: '#statement', label: 'Statement' },
+  { href: '#music', label: 'Music' },
+  { href: '#events', label: 'Events' },
+  { href: '#shop', label: 'Shop' },
+  { href: '#commissions', label: 'Commissions' },
+  { href: '#contact', label: 'Contact' },
+];
+const connectLinks = [
+  { href: 'https://substack.com/@durrelllamar/notes', label: 'Substack', external: true },
+  { href: '#contact', label: 'Newsletter', external: false },
+];
+const year = new Date().getFullYear();
+---
+
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <h2>Dash Creatives</h2>
+      <p>
+        Original paintings, mixed media assemblage, and music for collectors, galleries, and the
+        wonderfully curious.
+      </p>
+    </div>
+    <div class="footer-col">
+      <h3>Navigate</h3>
+      <ul>
+        {navLinks.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h3>Connect</h3>
+      <ul>
+        {connectLinks.map((l) => (
+          <li>
+            <a href={l.href} target={l.external ? '_blank' : undefined} rel={l.external ? 'noopener' : undefined}>
+              {l.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h3>Legal</h3>
+      <ul>
+        <li><a href="#contact">Privacy</a></li>
+        <li><a href="#contact">Terms</a></li>
+        <li><a href="#contact">Shipping</a></li>
+        <li><a href="#contact">Returns</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© {year} Dash Creatives. All rights reserved.</p>
+    <p>Made with ink &amp; intention</p>
+  </div>
+</footer>

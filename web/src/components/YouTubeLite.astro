@@ -1,0 +1,37 @@
+---
+interface Props {
+  id: string;
+  title?: string;
+}
+const { id, title = 'YouTube video' } = Astro.props;
+const poster = `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
+---
+
+<div class="yt-lite" data-yt-id={id} data-yt-title={title} role="button" tabindex="0" aria-label={`Play ${title}`}>
+  <img src={poster} alt={title} loading="lazy" decoding="async" />
+  <div class="yt-play" aria-hidden="true"></div>
+</div>
+
+<script>
+  const facades = document.querySelectorAll<HTMLDivElement>('.yt-lite[data-yt-id]');
+  const activate = (el: HTMLDivElement) => {
+    const id = el.dataset.ytId;
+    const title = el.dataset.ytTitle ?? 'YouTube video';
+    if (!id) return;
+    const iframe = document.createElement('iframe');
+    iframe.src = `https://www.youtube.com/embed/${id}?autoplay=1`;
+    iframe.title = title;
+    iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+    iframe.setAttribute('allowfullscreen', '');
+    el.replaceChildren(iframe);
+  };
+  facades.forEach((el) => {
+    el.addEventListener('click', () => activate(el));
+    el.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        activate(el);
+      }
+    });
+  });
+</script>

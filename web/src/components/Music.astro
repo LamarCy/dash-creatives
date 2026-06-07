@@ -1,0 +1,55 @@
+---
+import { tracks, musicLinks } from '@/data/tracks';
+import YouTubeLite from './YouTubeLite.astro';
+
+const featuredId = import.meta.env.PUBLIC_YOUTUBE_FEATURED_ID ?? 'EdFSDXgwF4U';
+---
+
+<section id="music" class="section">
+  <div class="section-header">
+    <p class="chapter-label">Chapter II</p>
+    <h2 class="section-title">Music made <em>with Ashley</em></h2>
+  </div>
+  <div class="music-layout">
+    <div>
+      <div class="music-tracks">
+        {tracks.map((t) => (
+          <div class="track">
+            <span class="track-num">{t.number}</span>
+            <div class="track-info">
+              <h4>{t.title}</h4>
+              <p>{t.meta}</p>
+            </div>
+            <span class="track-dur">
+              {t.watchUrl ? (
+                <a href={t.watchUrl} target="_blank" rel="noopener" class="track-watch">▶ Watch</a>
+              ) : (
+                '—'
+              )}
+            </span>
+          </div>
+        ))}
+      </div>
+      <div class="music-actions">
+        {musicLinks.substack && (
+          <a href={musicLinks.substack} target="_blank" rel="noopener" class="btn btn-fill btn-sm">Substack ↗</a>
+        )}
+        {musicLinks.spotify && (
+          <a href={musicLinks.spotify} target="_blank" rel="noopener" class="btn btn-sm">Spotify ↗</a>
+        )}
+      </div>
+    </div>
+    <div class="music-aside">
+      <div class="album-cover">
+        <YouTubeLite id={featuredId} title="Momma Gone" />
+      </div>
+      <div class="collab-note">
+        <p>
+          A long-running collaboration built on shared late nights, half-finished cups of tea, and
+          the belief that songs and pictures belong together. New music arriving late 2025.
+        </p>
+        <span class="by-line">— Made with Ashley</span>
+      </div>
+    </div>
+  </div>
+</section>

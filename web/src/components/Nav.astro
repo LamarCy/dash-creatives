@@ -1,0 +1,22 @@
+---
+const links = [
+  { href: '#gallery', label: 'Gallery' },
+  { href: '#statement', label: 'Statement' },
+  { href: '#music', label: 'Music' },
+  { href: '#events', label: 'Events' },
+  { href: '#shop', label: 'Shop' },
+  { href: '#commissions', label: 'Commissions' },
+  { href: '#contact', label: 'Contact' },
+];
+---
+
+<nav>
+  <a href="#hero" class="nav-logo">
+    Dash <span class="nav-tag">/ Creatives</span>
+  </a>
+  <ul class="nav-links">
+    {links.map((l) => (
+      <li><a href={l.href}>{l.label}</a></li>
+    ))}
+  </ul>
+</nav>

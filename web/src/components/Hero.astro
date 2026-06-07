@@ -1,0 +1,33 @@
+---
+import { heroPieces } from '@/data/artworks';
+---
+
+<section id="hero">
+  <div class="hero-left">
+    <div class="hero-content">
+      <p class="chapter-label">An Independent Studio — Est. 2012</p>
+      <h1 class="hero-title">
+        <span class="pencil-u">Original</span> work,<br />
+        <em>honestly made.</em>
+      </h1>
+      <p class="hero-body">
+        Paintings, mixed media assemblage, commissions, and music — for collectors, galleries, and
+        anyone who believes the handmade thing is still the most radical choice.
+      </p>
+      <div class="hero-actions">
+        <a href="#gallery" class="btn btn-fill">View Gallery</a>
+        <a href="#commissions" class="btn">Commission a Piece</a>
+      </div>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="wall-cluster">
+      {heroPieces.map((p) => (
+        <div class="wall-piece">
+          <img src={p.image} alt={p.alt} loading="eager" decoding="async" />
+          <span class="wall-label">{p.label}</span>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
