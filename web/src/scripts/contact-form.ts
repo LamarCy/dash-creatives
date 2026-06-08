@@ -46,7 +46,7 @@ if (form && status) {
       form.reset();
     } catch (err) {
       status.dataset.state = 'err';
-      status.textContent = 'Could not send. Email hello@studio.com instead.';
+      status.textContent = 'Could not send. Email durrell.smith03@gmail.com instead.';
     } finally {
       if (submit) submit.disabled = false;
     }

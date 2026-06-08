@@ -41,6 +41,9 @@ const shopPrice = (a: (typeof items)[number]) => {
     ))}
   </div>
   <div style="margin-top:44px;position:relative;z-index:1;">
-    <a href="#contact" class="btn btn-sm">Inquire About Availability or Representation</a>
+    <a
+      href={`mailto:durrell.smith03@gmail.com?subject=${encodeURIComponent('Inquiry — Available Works / Representation')}&body=${encodeURIComponent("Hi Durrell,\n\nI'm reaching out about:\n\n- A specific work:\n- Availability / pricing:\n- Gallery representation:\n- Other:\n\nThanks,\n")}`}
+      class="btn btn-sm"
+    >Inquire About Availability or Representation</a>
   </div>
 </section>

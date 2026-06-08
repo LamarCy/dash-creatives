@@ -14,7 +14,10 @@ const bio = [
   <div class="about-grid">
     <div class="about-bio">
       {bio.map((p) => <p>{p}</p>)}
-      <a href="#contact" class="btn btn-fill btn-sm">Get in Touch</a>
+      <a
+        href={`mailto:durrell.smith03@gmail.com?subject=${encodeURIComponent('Hello from your site')}&body=${encodeURIComponent('Hi Durrell,\n\n')}`}
+        class="btn btn-fill btn-sm"
+      >Get in Touch</a>
     </div>
     <div class="about-cv">
       <div class="cv-row">

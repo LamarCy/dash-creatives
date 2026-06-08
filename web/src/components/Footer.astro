@@ -9,11 +9,21 @@ const navLinks = [
   { href: '#commissions', label: 'Commissions' },
   { href: '#contact', label: 'Contact' },
 ];
+const mailto = (subject: string, body?: string) =>
+  `mailto:durrell.smith03@gmail.com?subject=${encodeURIComponent(subject)}` +
+  (body ? `&body=${encodeURIComponent(body)}` : '');
+
 const connectLinks = [
   { href: 'https://www.instagram.com/d_ash_creatives', label: 'Instagram', external: true },
   { href: 'https://substack.com/@durrelllamar/notes', label: 'Substack', external: true },
-  { href: '#contact', label: 'Newsletter', external: false },
-  { href: '#contact', label: 'Etsy', external: false },
+  { href: mailto('Newsletter signup', 'Hi Durrell,\n\nPlease add me to your newsletter.\n\nName:\n\nThanks,\n'), label: 'Newsletter', external: false },
+  { href: mailto('Etsy inquiry'), label: 'Etsy', external: false },
+];
+const legalLinks = [
+  { href: mailto('Privacy question'), label: 'Privacy' },
+  { href: mailto('Terms question'), label: 'Terms' },
+  { href: mailto('Shipping question'), label: 'Shipping' },
+  { href: mailto('Returns question'), label: 'Returns' },
 ];
 const year = new Date().getFullYear();
 ---
@@ -48,10 +58,7 @@ const year = new Date().getFullYear();
     <div class="footer-col">
       <h3>Legal</h3>
       <ul>
-        <li><a href="#contact">Privacy</a></li>
-        <li><a href="#contact">Terms</a></li>
-        <li><a href="#contact">Shipping</a></li>
-        <li><a href="#contact">Returns</a></li>
+        {legalLinks.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
       </ul>
     </div>
   </div>

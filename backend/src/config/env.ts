@@ -12,8 +12,8 @@ const schema = z.object({
   SUPABASE_ANON_KEY: z.preprocess(emptyToUndefined, z.string().optional()),
   SUPABASE_SERVICE_ROLE_KEY: z.preprocess(emptyToUndefined, z.string().optional()),
   RESEND_API_KEY: z.preprocess(emptyToUndefined, z.string().optional()),
-  CONTACT_NOTIFY_TO: z.preprocess(emptyToUndefined, z.string().email().default('hello@dashcreatives.com')),
-  CONTACT_FROM: z.preprocess(emptyToUndefined, z.string().default('hello@dashcreatives.com')),
+  CONTACT_NOTIFY_TO: z.preprocess(emptyToUndefined, z.string().email().default('durrell.smith03@gmail.com')),
+  CONTACT_FROM: z.preprocess(emptyToUndefined, z.string().default('contact@dashcreatives.art')),
   RATE_LIMIT_WINDOW_MS: z.coerce.number().int().positive().default(60_000),
   RATE_LIMIT_MAX: z.coerce.number().int().positive().default(5),
 });

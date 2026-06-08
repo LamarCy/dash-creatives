@@ -14,7 +14,12 @@ import { events } from '@/data/events';
         <div class="event-day event-day-roman">{e.day}</div>
         <h3 class="event-name">{e.name}</h3>
         <p class="event-where" set:html={e.where.join('<br>')} />
-        {e.cta && <a href="#contact" class="btn btn-sm">{e.cta}</a>}
+        {e.cta && (
+          <a
+            href={`mailto:durrell.smith03@gmail.com?subject=${encodeURIComponent(`Exhibition inquiry: ${e.name}`)}&body=${encodeURIComponent('Hi Durrell,\n\nI\'m reaching out about an upcoming exhibition opportunity.\n\n')}`}
+            class="btn btn-sm"
+          >{e.cta}</a>
+        )}
       </div>
     ))}
   </div>

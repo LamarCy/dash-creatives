@@ -33,7 +33,11 @@ const items = [...artworks].sort((a, b) => b.year - a.year);
               {a.price && <div class="t-meta-item">Price<strong>{a.price}</strong></div>}
             </div>
             <a
-              href={a.status === 'Commission — Sold' ? '#commissions' : '#contact'}
+              href={
+                a.status === 'Commission — Sold'
+                  ? `mailto:durrell.smith03@gmail.com?subject=${encodeURIComponent(`Commission inquiry: similar to ${a.title}`)}&body=${encodeURIComponent(`Hi Durrell,\n\nI'd love to commission a piece in the spirit of "${a.title}" (${a.year}). Here's what I have in mind:\n\n- Subject:\n- Size preference:\n- Timeline:\n\nThanks,\n`)}`
+                  : `mailto:durrell.smith03@gmail.com?subject=${encodeURIComponent(`Inquiry: ${a.title}${a.price ? ` (${a.price})` : ''}`)}&body=${encodeURIComponent(`Hi Durrell,\n\nI'm interested in "${a.title}" (${a.year}${a.size ? `, ${a.size}` : ''}${a.price ? `, ${a.price}` : ''}). Could you share availability and next steps?\n\nThanks,\n`)}`
+              }
               class="btn btn-sm"
             >
               {a.status === 'Commission — Sold' ? 'Commission Similar' : 'Inquire'}
