@@ -317,7 +317,7 @@ export const artworks: Artwork[] = [
   },
   {
     id: 18,
-    year: 2016,
+    year: 2015,
     title: 'Terminus',
     image: '/images/terminus.png',
     alt: 'Terminus',
@@ -333,7 +333,7 @@ export const artworks: Artwork[] = [
   },
   {
     id: 26,
-    year: 2015,
+    year: 2018,
     title: 'Sankofa',
     image: '/images/sankofa.jpg',
     alt: 'Sankofa',
@@ -397,7 +397,7 @@ export const artworks: Artwork[] = [
   },
   {
     id: 13,
-    year: 2015,
+    year: 2018,
     title: 'Holy Matrimony',
     image: '/images/holy-matrimony.jpg',
     alt: 'Holy Matrimony',
