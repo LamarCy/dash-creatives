@@ -7,7 +7,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DASH Creatives — Pick a World</title>
-<meta name="description" content="LamarCy is the songwriter half of DASH Creatives — Southern blues, soul, and rock written in Atlanta, haunted by Charleston. Debut album Cha'Annolog, 2027.">
+<meta name="description" content="LamarCy is the songwriter half of DASH Creatives — Southern blues, soul, and rock written in Atlanta, haunted by Charleston.">
 <style is:global>
 @font-face{font-family:'Anton';src:url('/gateway/Anton.ttf')}
 @font-face{font-family:'Oswald';src:url('/gateway/Oswald.ttf')}
@@ -73,9 +73,21 @@ section.block .lede{font-size:18px;font-style:italic;color:#3d3a33;max-width:62c
 .coverrow figure{background:#fff;border:4px solid var(--ink);padding:10px;box-shadow:9px 9px 0 rgba(20,20,18,.85)}
 .coverrow img{width:100%;display:block}
 .coverrow figcaption{font-family:'Oswald',sans-serif;text-transform:uppercase;font-size:12px;letter-spacing:3px;padding-top:9px;color:#3d3a33}
-#album{background:var(--seafoam)}
-#album .lede{color:#12312e}
-#album figcaption{color:var(--ink)}
+#instagram{background:var(--seafoam)}
+#instagram .lede{color:#12312e}
+.igrid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;margin-top:44px}
+@media(max-width:900px){.igrid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.igrid{grid-template-columns:1fr}}
+.igbox{display:block;background:#fff;border:4px solid var(--ink);padding:10px;box-shadow:9px 9px 0 rgba(20,20,18,.85);
+  text-decoration:none;transition:transform .12s}
+.igbox:hover{transform:translate(-2px,-2px)}
+.igbox .ph{aspect-ratio:1/1;background:var(--cream);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;
+  background-image:radial-gradient(rgba(20,20,18,.10) 1.6px, transparent 1.6px);background-size:18px 18px;overflow:hidden}
+.igbox .ph img{width:88px}
+.igbox .ph span{font-family:'Oswald',sans-serif;text-transform:uppercase;font-size:12px;letter-spacing:3px;color:#3d3a33}
+.igbox .ph .igimg{width:100%;height:100%;object-fit:cover}
+.ignote{margin-top:34px;font-size:13px;letter-spacing:4px;color:var(--ink);text-transform:uppercase}
+.ignote a{color:var(--ink);font-weight:700}
 
 /* ---------- singles ---------- */
 .songs{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:34px;margin-top:44px}
@@ -144,18 +156,26 @@ body.locked{overflow:hidden;height:100vh}
   </div>
 </div>
 
-<!-- ============ THE ALBUM ============ -->
-<section class="block" id="album">
-  <div class="kick">The Debut Album · 2027</div>
-  <h2>Cha&rsquo;Annolog</h2>
-  <p class="lede">Charleston + analog + chronicle. A record written by Durrell Lamar, sung by borrowed
-     voices, and documented in public from the first voice memo to the final master.</p>
-  <div class="coverrow">
-    <figure><img src="/gateway/cover-pressing.jpg" alt="Cha'Annolog cover — The Pressing"><figcaption>The Pressing · standard</figcaption></figure>
-    <figure><img src="/gateway/cover-float.jpg" alt="Cha'Annolog cover — The Float"><figcaption>The Float · alternate</figcaption></figure>
-    <figure><img src="/gateway/cover-chronicle.jpg" alt="Cha'Annolog cover — The Chronicle"><figcaption>The Chronicle · archive</figcaption></figure>
-    <figure><img src="/gateway/cover-deluxe.jpg" alt="Cha'Annolog deluxe vinyl cover"><figcaption>Deluxe vinyl · for the elders</figcaption></figure>
+<!-- ============ INSTAGRAM ============ -->
+<section class="block" id="instagram">
+  <div class="kick">The Daily Chronicle</div>
+  <h2>On Instagram</h2>
+  <p class="lede">The making of the music, documented as it happens.</p>
+  <div class="igrid" id="igrid">
+    <a class="igbox" href="https://www.instagram.com/_lamar_cy" target="_blank" rel="noopener">
+      <div class="ph"><img src="/gateway/heart.png" alt=""><span>@_lamar_cy</span></div></a>
+    <a class="igbox" href="https://www.instagram.com/_lamar_cy" target="_blank" rel="noopener">
+      <div class="ph"><img src="/gateway/heart.png" alt=""><span>@_lamar_cy</span></div></a>
+    <a class="igbox" href="https://www.instagram.com/_lamar_cy" target="_blank" rel="noopener">
+      <div class="ph"><img src="/gateway/heart.png" alt=""><span>@_lamar_cy</span></div></a>
+    <a class="igbox" href="https://www.instagram.com/_lamar_cy" target="_blank" rel="noopener">
+      <div class="ph"><img src="/gateway/heart.png" alt=""><span>@_lamar_cy</span></div></a>
+    <a class="igbox" href="https://www.instagram.com/_lamar_cy" target="_blank" rel="noopener">
+      <div class="ph"><img src="/gateway/heart.png" alt=""><span>@_lamar_cy</span></div></a>
+    <a class="igbox" href="https://www.instagram.com/_lamar_cy" target="_blank" rel="noopener">
+      <div class="ph"><img src="/gateway/heart.png" alt=""><span>@_lamar_cy</span></div></a>
   </div>
+  <p class="ignote osw">Follow along → <a href="https://www.instagram.com/_lamar_cy" target="_blank" rel="noopener">@_lamar_cy</a></p>
 </section>
 
 <!-- ============ THE SINGLES ============ -->
@@ -187,14 +207,14 @@ body.locked{overflow:hidden;height:100vh}
 <section class="block" id="chronicle">
   <div class="kick">Follow the Making</div>
   <h2 style="color:var(--cream)">The Chronicle</h2>
-  <p class="lede">The album is being documented as it&rsquo;s made — essays, gear breakdowns, and the
+  <p class="lede">The music is documented as it&rsquo;s made — essays, gear breakdowns, and the
      story of every song. Pick a door.</p>
   <div class="doors">
-    <a class="door" href="https://substack.com/@durrelllamar/notes" target="_blank" rel="noopener">
+    <a class="door" href="https://substack.com/@lamarcy3" target="_blank" rel="noopener">
       <div class="d1">Substack</div><div class="d2">The essays · one song, one story</div></a>
     <a class="door" href="https://durrelllamar.bandcamp.com" target="_blank" rel="noopener">
       <div class="d1">Bandcamp</div><div class="d2">Own the music</div></a>
-    <a class="door" href="https://www.instagram.com/d_ash_creatives" target="_blank" rel="noopener">
+    <a class="door" href="https://www.instagram.com/_lamar_cy" target="_blank" rel="noopener">
       <div class="d1">Instagram</div><div class="d2">The daily chronicle</div></a>
     <a class="door" href="https://www.youtube.com/@durrelllamar" target="_blank" rel="noopener">
       <div class="d1">YouTube</div><div class="d2">Anatomy of every song</div></a>
@@ -498,6 +518,28 @@ body.locked{overflow:hidden;height:100vh}
     renderer.render(scene, camera);
   })();
 })();
+</script>
+<script is:inline>
+// ---- LIVE INSTAGRAM FEED ----------------------------------------------
+// To make these boxes auto-update with the latest LamarCy Instagram posts:
+// 1. Create a free feed at https://behold.so (connect the Instagram account)
+// 2. Paste the JSON feed URL it gives you below, e.g. 'https://feeds.behold.so/XXXX'
+// The boxes then always show the newest posts — no code changes ever again.
+const IG_FEED_URL = '';   // <— paste feed URL here
+if (IG_FEED_URL) {
+  fetch(IG_FEED_URL).then(r => r.json()).then(data => {
+    const posts = (data.posts || data).slice(0, 6);
+    const boxes = document.querySelectorAll('#igrid .igbox');
+    posts.forEach((post, i) => {
+      if (!boxes[i]) return;
+      const img = post.thumbnailUrl || post.mediaUrl || post.sizes?.medium?.mediaUrl;
+      if (!img) return;
+      boxes[i].href = post.permalink || boxes[i].href;
+      boxes[i].querySelector('.ph').innerHTML =
+        '<img class="igimg" loading="lazy" alt="Instagram post" src="' + img + '">';
+    });
+  }).catch(()=>{ /* placeholders remain */ });
+}
 </script>
 </body>
 </html>
