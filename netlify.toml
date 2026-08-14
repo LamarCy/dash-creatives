@@ -6,6 +6,18 @@
 [build.environment]
   NODE_VERSION = "20"
 
+# Local `netlify dev` only: the CLI spawns the framework with a scrubbed
+# env, so shebangs can't find node without an explicit PATH (macOS/Homebrew).
+[context.dev.environment]
+  PATH = "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+
+# Store endpoints (Stripe checkout + gated downloads). Each function sets
+# its own route via `export const config` — /store/checkout, /store/status,
+# /store/download. Masters live in Netlify Blobs (store "singles"), never in git.
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
 [[redirects]]
   from = "/api/*"
   to = "https://dash-creatives-api.onrender.com/api/:splat"

@@ -1,0 +1,149 @@
+---
+// Post-purchase delivery page — reached from Stripe Checkout's success_url
+// as /download?session_id=cs_... ; verifies with /store/download?probe=1.
+const isDev = import.meta.env.DEV;
+---
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Your Single — LamarCy · DASH Creatives</title>
+<style is:global>
+@font-face{font-family:'Anton';src:url('/gateway/Anton.ttf')}
+@font-face{font-family:'Oswald';src:url('/gateway/Oswald.ttf')}
+:root{--tiffany:#09B1AB;--seafoam:#5CB9AE;--cream:#F7F3E8;--ink:#141412;--sepia:#E3DECB}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--cream);color:var(--ink);font-family:Georgia,'Times New Roman',serif;min-height:100vh;
+  background-image:radial-gradient(rgba(20,20,18,.10) 1.6px, transparent 1.6px);background-size:22px 22px}
+.anton{font-family:'Anton',sans-serif;text-transform:uppercase}
+.osw{font-family:'Oswald',sans-serif;text-transform:uppercase}
+.mono{font-family:'DejaVu Sans Mono',Menlo,monospace;text-transform:uppercase}
+.mast{display:flex;align-items:center;justify-content:space-between;padding:22px 40px;
+  border-bottom:4px solid var(--tiffany);background:var(--ink)}
+.mast a{color:var(--cream);text-decoration:none;font-size:13px;letter-spacing:5px;font-weight:600}
+.mast a:hover{color:var(--tiffany)}
+.mast .co{color:var(--tiffany);font-size:14px;letter-spacing:6px;font-weight:700}
+main{max-width:680px;margin:0 auto;padding:9vh 24px 12vh;text-align:center}
+.heartmark{width:54px;margin:0 auto 26px;display:block}
+.kick{font-size:12px;letter-spacing:7px;color:var(--tiffany);font-weight:700}
+h1{font-size:clamp(40px,7vw,72px);line-height:.98;margin:12px 0 8px}
+.stamp{font-size:12px;letter-spacing:4px;color:#5a564b;margin-bottom:38px}
+.sleeve{background:#fff;border:4px solid var(--ink);box-shadow:10px 10px 0 rgba(20,20,18,.85);
+  padding:12px;margin:0 auto;max-width:420px;text-align:left}
+.sleeve img{width:100%;display:block;border-bottom:4px solid var(--ink)}
+.sleeve .body{padding:22px 24px 26px}
+.sleeve h2{font-family:'Anton',sans-serif;text-transform:uppercase;font-size:30px}
+.sleeve .credits{font-size:14px;color:#5a564b;margin:8px 0 20px;font-style:italic}
+.cta{display:inline-block;background:var(--ink);color:var(--cream);text-decoration:none;border:0;cursor:pointer;
+  font-family:'Oswald',sans-serif;text-transform:uppercase;font-size:14px;letter-spacing:4px;font-weight:700;padding:15px 26px}
+.cta:hover{background:var(--tiffany);color:var(--ink)}
+.note{font-size:12px;letter-spacing:3px;color:#5a564b;margin-top:34px;line-height:2}
+.note a{color:var(--ink);font-weight:700}
+.state{display:none}
+.state.on{display:block}
+.plain{font-size:17px;line-height:1.8;max-width:46ch;margin:0 auto}
+.plain a{color:var(--ink)}
+footer{padding:34px 24px;border-top:4px solid var(--ink);text-align:center}
+footer .mono{color:#5a564b;font-size:11px;letter-spacing:4px}
+</style>
+</head>
+<body data-dev={isDev ? '1' : undefined}>
+
+<div class="mast">
+  <span class="co osw">DASH CREATIVES</span>
+  <a class="osw" href="/?world=lamarcy#singles">← Back to the music</a>
+</div>
+
+<main>
+  <img class="heartmark" src="/gateway/heart.png" alt="">
+
+  <!-- verifying -->
+  <div class="state on" id="stChecking">
+    <div class="kick osw">The Vault</div>
+    <h1 class="anton">Checking the ledger…</h1>
+    <p class="stamp mono">HOLD FAST · VERIFYING YOUR PRESSING</p>
+  </div>
+
+  <!-- paid -->
+  <div class="state" id="stPaid">
+    <div class="kick osw">Direct Pressing · Paid in Full</div>
+    <h1 class="anton">It's yours.</h1>
+    <p class="stamp mono" id="paidStamp">LC-000 · REC 2026 · CHS→ATL</p>
+    <div class="sleeve">
+      <img id="paidCover" src="/gateway/single-lowcountry.jpg" alt="">
+      <div class="body">
+        <h2 id="paidTitle">—</h2>
+        <div class="credits">A LamarCy single · written in Atlanta, haunted by Charleston.</div>
+        <a class="cta" id="dlBtn" href="#">Download the MP3</a>
+      </div>
+    </div>
+    <p class="note osw">Keep this page's link — it's your re-download ticket.<br>
+      Your Stripe receipt is your proof of purchase.</p>
+  </div>
+
+  <!-- payment still settling -->
+  <div class="state" id="stPending">
+    <div class="kick osw">The Vault</div>
+    <h1 class="anton">Almost there</h1>
+    <p class="plain">Your payment is still settling. Give it a minute, then
+      <a href="javascript:location.reload()">refresh this page</a> — the download appears the moment it clears.</p>
+  </div>
+
+  <!-- trouble -->
+  <div class="state" id="stError">
+    <div class="kick osw">The Vault</div>
+    <h1 class="anton">Hmm — that ticket won't scan</h1>
+    <p class="plain">This link doesn't match a purchase. If you just paid and landed here,
+      DM <a href="https://www.instagram.com/_lamar_cy" target="_blank" rel="noopener">@_lamar_cy</a>
+      with your Stripe receipt and it'll be made right — quick.</p>
+  </div>
+</main>
+
+<footer>
+  <div class="mono">LamarCy · The Yin to D.LAMAR's Yang · Atlanta, GA · CHS→ATL</div>
+</footer>
+
+<script is:inline>
+(function(){
+  const COVERS = { lowcountry:'/gateway/single-lowcountry.jpg', momma:'/gateway/single-momma.jpg' };
+  const show = id => {
+    for (const el of document.querySelectorAll('.state')) el.classList.remove('on');
+    document.getElementById(id).classList.add('on');
+  };
+  const params = new URLSearchParams(location.search);
+
+  // Dev-only visual mock (compiled out of prod builds): /download?mock=paid&sku=momma
+  if (document.body.dataset.dev && params.get('mock')){
+    const sku = params.get('sku') || 'lowcountry';
+    if (params.get('mock') === 'paid'){
+      renderPaid({ sku, title: sku === 'momma' ? 'Momma Gone' : 'Lowcountry Beach',
+        catalogNo: sku === 'momma' ? 'LC-002' : 'LC-001' }, 'cs_test_mock');
+    } else if (params.get('mock') === 'pending') show('stPending');
+    else show('stError');
+    return;
+  }
+
+  const sessionId = params.get('session_id');
+  if (!sessionId){ show('stError'); return; }
+
+  function renderPaid(track, sid){
+    document.getElementById('paidTitle').textContent = track.title;
+    document.getElementById('paidStamp').textContent = track.catalogNo + ' · REC 2026 · CHS→ATL';
+    document.getElementById('paidCover').src = COVERS[track.sku] || COVERS.lowcountry;
+    document.getElementById('dlBtn').href = '/store/download?session_id=' + encodeURIComponent(sid);
+    show('stPaid');
+  }
+
+  fetch('/store/download?probe=1&session_id=' + encodeURIComponent(sessionId))
+    .then(r => r.json())
+    .then(d => {
+      if (d && d.ok && d.paid && d.track) renderPaid(d.track, sessionId);
+      else if (d && d.ok && !d.paid) show('stPending');
+      else show('stError');
+    })
+    .catch(() => show('stError'));
+})();
+</script>
+</body>
+</html>

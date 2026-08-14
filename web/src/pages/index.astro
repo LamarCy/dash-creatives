@@ -99,6 +99,20 @@ section.block .lede{font-size:18px;font-style:italic;color:#3d3a33;max-width:62c
 .song .cta{display:inline-block;background:var(--ink);color:var(--cream);text-decoration:none;
   font-family:'Oswald',sans-serif;text-transform:uppercase;font-size:13px;letter-spacing:4px;font-weight:700;padding:12px 22px}
 .song .cta:hover{background:var(--tiffany);color:var(--ink)}
+.song .buyrow{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.song button.cta.buy{display:none;border:0;cursor:pointer;background:var(--tiffany);color:var(--ink)}
+.song button.cta.buy:hover{background:var(--ink);color:var(--cream)}
+.song button.cta.buy[disabled]{opacity:.6;cursor:wait}
+.song .buynote{display:none;font-family:'Oswald',sans-serif;text-transform:uppercase;
+  font-size:11px;letter-spacing:3px;color:#5a564b;margin-top:12px}
+.song .buyerr{display:none;font-size:14px;color:#5a564b;margin-top:8px;font-style:italic}
+.song .playrow{display:none;align-items:center;gap:14px;margin-bottom:18px}
+.song .pbtn{width:46px;height:46px;flex:0 0 46px;border:3px solid var(--ink);background:#fff;cursor:pointer;
+  font-size:15px;line-height:1;box-shadow:4px 4px 0 rgba(20,20,18,.85);font-family:'Oswald',sans-serif}
+.song .pbtn:hover{background:var(--tiffany)}
+.song .pbar{flex:1;height:12px;border:3px solid var(--ink);background:#fff;position:relative;cursor:pointer}
+.song .pfill{position:absolute;top:0;left:0;bottom:0;width:0%;background:var(--tiffany)}
+.song .ptime{font-family:'DejaVu Sans Mono',Menlo,monospace;font-size:11px;color:#5a564b;min-width:84px;text-align:right}
 
 /* ---------- chronicle / links ---------- */
 #chronicle{background:var(--ink);color:var(--cream)}
@@ -189,7 +203,17 @@ body.locked{overflow:hidden;height:100vh}
       <div class="body">
         <h3>Lowcountry Beach</h3>
         <div class="credits">Written, played &amp; sung by Durrell Lamar · LC-001</div>
-        <a class="cta" href="https://lamarcy.bandcamp.com" target="_blank" rel="noopener">Hear it on Bandcamp</a>
+        <div class="playrow">
+          <button class="pbtn" type="button" data-sku="lowcountry" aria-label="Play Lowcountry Beach">▶</button>
+          <div class="pbar"><div class="pfill"></div></div>
+          <div class="ptime">0:00 / 0:00</div>
+        </div>
+        <div class="buyrow">
+          <button class="cta buy" type="button" data-sku="lowcountry">Own it · $0.99</button>
+          <a class="cta" href="https://lamarcy.bandcamp.com" target="_blank" rel="noopener">Hear it on Bandcamp</a>
+        </div>
+        <div class="buynote">MP3 · Direct from the artist · Secure checkout by Stripe</div>
+        <div class="buyerr"></div>
       </div>
     </div>
     <div class="song">
@@ -197,7 +221,17 @@ body.locked{overflow:hidden;height:100vh}
       <div class="body">
         <h3>Momma Gone</h3>
         <div class="credits">Written by Durrell Lamar · Vocals by Ashley Eady Smith</div>
-        <a class="cta" href="https://lamarcy.bandcamp.com" target="_blank" rel="noopener">Hear it on Bandcamp</a>
+        <div class="playrow">
+          <button class="pbtn" type="button" data-sku="momma" aria-label="Play Momma Gone">▶</button>
+          <div class="pbar"><div class="pfill"></div></div>
+          <div class="ptime">0:00 / 0:00</div>
+        </div>
+        <div class="buyrow">
+          <button class="cta buy" type="button" data-sku="momma">Own it · $0.99</button>
+          <a class="cta" href="https://lamarcy.bandcamp.com" target="_blank" rel="noopener">Hear it on Bandcamp</a>
+        </div>
+        <div class="buynote">MP3 · Direct from the artist · Secure checkout by Stripe</div>
+        <div class="buyerr"></div>
       </div>
     </div>
   </div>
@@ -246,6 +280,13 @@ body.locked{overflow:hidden;height:100vh}
     document.body.classList.remove('locked');
     window.scrollTo(0,0);
     setTimeout(()=>document.getElementById('veil').classList.remove('on'), 120);
+  }
+  // Deep link: /?world=lamarcy[#singles] skips the ritual (checkout return trips, IG bio)
+  if (new URLSearchParams(location.search).get('world') === 'lamarcy') {
+    openWorld();
+    const target = location.hash && document.querySelector(location.hash);
+    if (target) setTimeout(() => target.scrollIntoView(), 200);
+    return;
   }
   if (!window.THREE) { document.getElementById('heartCanvas').outerHTML =
     '<img src="/gateway/heart.png" style="position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);width:min(46vw,420px);z-index:3;cursor:pointer" alt="LamarCy heart" id="fbheart">';
@@ -517,6 +558,82 @@ body.locked{overflow:hidden;height:100vh}
     }
     renderer.render(scene, camera);
   })();
+})();
+</script>
+<script is:inline>
+// ---- THE LISTENING POST + DIRECT SALES ----------------------------------
+// Players appear when a single's master is uploaded; Buy buttons appear when
+// Stripe is also configured — so this ships dark, then lights up in stages.
+(function(){
+  const buttons = document.querySelectorAll('button.cta.buy');
+  if (!buttons.length) return;
+  const players = {};
+  const fmt = s => { s = Math.max(0, Math.floor(s || 0)); return Math.floor(s/60) + ':' + String(s%60).padStart(2,'0'); };
+
+  function initPlayer(card, sku){
+    const row = card.querySelector('.playrow');
+    if (!row || players[sku]) return;
+    const btn = row.querySelector('.pbtn'), bar = row.querySelector('.pbar'),
+          fill = row.querySelector('.pfill'), time = row.querySelector('.ptime');
+    const audio = new Audio('/store/play?sku=' + sku);
+    audio.preload = 'metadata';
+    players[sku] = audio;
+    row.style.display = 'flex';
+    const paint = () => {
+      fill.style.width = audio.duration ? (audio.currentTime / audio.duration * 100) + '%' : '0%';
+      time.textContent = fmt(audio.currentTime) + ' / ' + fmt(audio.duration);
+    };
+    audio.addEventListener('loadedmetadata', paint);
+    audio.addEventListener('timeupdate', paint);
+    audio.addEventListener('play',  () => { btn.textContent = 'Ⅱ'; });
+    audio.addEventListener('pause', () => { btn.textContent = '▶'; });
+    audio.addEventListener('ended', () => { btn.textContent = '▶'; paint(); });
+    btn.addEventListener('click', () => {
+      if (audio.paused){
+        for (const k in players) if (k !== sku) players[k].pause();
+        audio.play().catch(()=>{});
+      } else audio.pause();
+    });
+    bar.addEventListener('click', e => {
+      if (!isFinite(audio.duration) || !audio.duration) return;
+      const r = bar.getBoundingClientRect();
+      audio.currentTime = Math.min(Math.max((e.clientX - r.left) / r.width, 0), 1) * audio.duration;
+    });
+  }
+
+  fetch('/store/status').then(r => r.ok ? r.json() : null).then(s => {
+    if (!s) return;
+    for (const btn of buttons){
+      const sku = btn.dataset.sku, card = btn.closest('.song');
+      if (s.files && s.files[sku] && card) initPlayer(card, sku);
+      if (s.ready && s.ready[sku]){
+        btn.style.display = 'inline-block';
+        const note = btn.closest('.body').querySelector('.buynote');
+        if (note) note.style.display = 'block';
+      }
+    }
+  }).catch(()=>{ /* store stays dark */ });
+
+  for (const btn of buttons){
+    btn.addEventListener('click', async () => {
+      const label = btn.textContent;
+      btn.disabled = true; btn.textContent = 'Opening checkout…';
+      try {
+        const r = await fetch('/store/checkout', {
+          method: 'POST',
+          headers: {'content-type':'application/json'},
+          body: JSON.stringify({ sku: btn.dataset.sku })
+        });
+        const data = await r.json();
+        if (data && data.ok && data.url){ location.href = data.url; return; }
+        throw new Error((data && data.error) || 'checkout_failed');
+      } catch (err){
+        btn.disabled = false; btn.textContent = label;
+        const errEl = btn.closest('.body').querySelector('.buyerr');
+        if (errEl){ errEl.textContent = 'Checkout could not open — please try again in a minute.'; errEl.style.display = 'block'; }
+      }
+    });
+  }
 })();
 </script>
 <script is:inline>
