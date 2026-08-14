@@ -1,6 +1,7 @@
 // GET /store/download?session_id=cs_...           → streams the purchased MP3
 // GET /store/download?session_id=cs_...&probe=1   → JSON state for the /download page
-import { CATALOG, isSku, json, readManifest, singlesStore, stripeClient } from './lib/catalog.mts';
+import { CATALOG, customersStore, isSku, json, readManifest, singlesStore, stripeClient } from './lib/catalog.mts';
+import type Stripe from 'stripe';
 
 export default async (req: Request): Promise<Response> => {
   if (req.method !== 'GET') return json({ ok: false, error: 'method_not_allowed' }, 405);
@@ -13,26 +14,44 @@ export default async (req: Request): Promise<Response> => {
   const stripe = stripeClient();
   if (!stripe) return json({ ok: false, error: 'store_not_ready' }, 503);
 
-  let paymentStatus: string;
-  let sku: unknown;
+  let session: Stripe.Checkout.Session;
   try {
-    const session = await stripe.checkout.sessions.retrieve(sessionId);
-    paymentStatus = session.payment_status;
-    sku = session.metadata?.sku;
+    session = await stripe.checkout.sessions.retrieve(sessionId);
   } catch (err) {
     console.error('session_lookup_failed', err instanceof Error ? err.message : err);
     return json({ ok: false, error: 'session_not_found' }, 404);
   }
 
+  const sku = session.metadata?.sku;
   if (!isSku(sku)) return json({ ok: false, error: 'unknown_sku' }, 404);
   const track = CATALOG[sku];
-  const paid = paymentStatus === 'paid';
+  const paid = session.payment_status === 'paid';
+
+  // Marketing capture — idempotent (keyed by session), never blocks delivery.
+  if (paid) {
+    try {
+      await customersStore().setJSON(`sessions/${session.id}`, {
+        email: session.customer_details?.email ?? null,
+        name: session.customer_details?.name ?? null,
+        country: session.customer_details?.address?.country ?? null,
+        newsletterOptIn: session.consent?.promotions === 'opt_in',
+        sku: track.sku,
+        title: track.title,
+        amountCents: session.amount_total,
+        currency: session.currency,
+        purchasedAt: new Date((session.created ?? 0) * 1000).toISOString(),
+        stripeCustomerId: typeof session.customer === 'string' ? session.customer : session.customer?.id ?? null,
+      });
+    } catch (err) {
+      console.error('customer_capture_failed', err instanceof Error ? err.message : err);
+    }
+  }
 
   if (probe) {
     return json({
       ok: true,
       paid,
-      status: paymentStatus,
+      status: session.payment_status,
       track: { sku: track.sku, title: track.title, catalogNo: track.catalogNo, downloadName: track.downloadName },
     });
   }

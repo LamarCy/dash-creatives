@@ -37,6 +37,10 @@ export default async (req: Request): Promise<Response> => {
         },
       ],
       metadata: { sku: track.sku },
+      // Every buyer becomes a Stripe Customer (the CRM of record) and sees
+      // Stripe's native marketing-consent checkbox — the DASH newsletter opt-in.
+      customer_creation: 'always',
+      consent_collection: { promotions: 'auto' },
       success_url: `${origin}/download?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/?world=lamarcy#singles`,
     });

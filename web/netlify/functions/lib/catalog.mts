@@ -49,6 +49,12 @@ export function singlesStore(): Store {
   return getStore({ name: 'singles', consistency: 'strong' });
 }
 
+// Marketing capture: one JSON blob per verified purchase, keyed by session id.
+// Export any time with `netlify blobs:list customers` / blobs:get.
+export function customersStore(): Store {
+  return getStore({ name: 'customers', consistency: 'strong' });
+}
+
 export async function readManifest(store: Store): Promise<Manifest> {
   const m = (await store.get('manifest.json', { type: 'json' })) as Manifest | null;
   return m ?? {};
