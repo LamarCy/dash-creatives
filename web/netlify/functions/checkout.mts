@@ -19,31 +19,46 @@ export default async (req: Request): Promise<Response> => {
 
   const origin = req.headers.get('origin') ?? new URL(req.url).origin;
 
-  try {
-    const session = await stripe.checkout.sessions.create({
-      mode: 'payment',
-      line_items: [
-        {
-          quantity: 1,
-          price_data: {
-            currency: 'usd',
-            unit_amount: track.priceCents,
-            product_data: {
-              name: `${track.title} — LamarCy single (MP3)`,
-              description: `${track.catalogNo} · direct from the artist`,
-              images: [track.cover],
-            },
+  const params = {
+    mode: 'payment' as const,
+    line_items: [
+      {
+        quantity: 1,
+        price_data: {
+          currency: 'usd',
+          unit_amount: track.priceCents,
+          product_data: {
+            name: `${track.title} — LamarCy single (MP3)`,
+            description: `${track.catalogNo} · direct from the artist`,
+            images: [track.cover],
           },
         },
-      ],
-      metadata: { sku: track.sku },
-      // Every buyer becomes a Stripe Customer (the CRM of record) and sees
-      // Stripe's native marketing-consent checkbox — the DASH newsletter opt-in.
-      customer_creation: 'always',
-      consent_collection: { promotions: 'auto' },
-      success_url: `${origin}/download?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}/?world=lamarcy#singles`,
-    });
+      },
+    ],
+    metadata: { sku: track.sku },
+    // Every buyer becomes a Stripe Customer (the CRM of record).
+    customer_creation: 'always' as const,
+    success_url: `${origin}/download?session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${origin}/?world=lamarcy#singles`,
+  };
+
+  try {
+    let session;
+    try {
+      // Preferred: with Stripe's native marketing-consent checkbox — the
+      // DASH Creatives newsletter opt-in on the payment page.
+      session = await stripe.checkout.sessions.create({
+        ...params,
+        consent_collection: { promotions: 'auto' },
+      });
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      if (!msg.includes('consent_collection')) throw err;
+      // Account hasn't agreed to Checkout ToS yet — never lose a sale over
+      // the opt-in checkbox. Sell without it and log loudly.
+      console.error('consent_collection unavailable, selling without opt-in:', msg);
+      session = await stripe.checkout.sessions.create(params);
+    }
     return json({ ok: true, url: session.url });
   } catch (err) {
     console.error('checkout_failed', err instanceof Error ? err.message : err);
