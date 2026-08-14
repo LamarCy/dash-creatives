@@ -642,7 +642,7 @@ body.locked{overflow:hidden;height:100vh}
 // 1. Create a free feed at https://behold.so (connect the Instagram account)
 // 2. Paste the JSON feed URL it gives you below, e.g. 'https://feeds.behold.so/XXXX'
 // The boxes then always show the newest posts — no code changes ever again.
-const IG_FEED_URL = '';   // <— paste feed URL here
+const IG_FEED_URL = 'https://feeds.behold.so/hbwB56KthgozLkVVIRyn';   // @_lamar_cy via behold.so
 if (IG_FEED_URL) {
   fetch(IG_FEED_URL).then(r => r.json()).then(data => {
     const posts = (data.posts || data).slice(0, 6);
