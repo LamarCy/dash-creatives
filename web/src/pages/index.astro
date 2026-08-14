@@ -575,7 +575,7 @@ body.locked{overflow:hidden;height:100vh}
     if (!row || players[sku]) return;
     const btn = row.querySelector('.pbtn'), bar = row.querySelector('.pbar'),
           fill = row.querySelector('.pfill'), time = row.querySelector('.ptime');
-    const audio = new Audio('/store/play?sku=' + sku);
+    const audio = new Audio('/store/play?sku=' + sku + '&v=2');
     audio.preload = 'metadata';
     players[sku] = audio;
     row.style.display = 'flex';
