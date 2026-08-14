@@ -1,6 +1,7 @@
 ---
 // DASH Creatives gateway — diamond heart → four eggs → worlds
 // Assets live in public/gateway/ (unprocessed static files, per Astro convention)
+import OrbNav from '../components/OrbNav.astro';
 ---
 <html lang="en">
 <head>
@@ -261,6 +262,8 @@ body.locked{overflow:hidden;height:100vh}
 </footer>
 
 </div><!-- /rest -->
+
+<OrbNav />
 
 <!-- ============ 3D DIAMOND HEART · click to crack & shatter ============ -->
 <script is:inline src="/gateway/three.min.js"></script>

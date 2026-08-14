@@ -1,6 +1,7 @@
 ---
 // Post-purchase delivery page — reached from Stripe Checkout's success_url
 // as /download?session_id=cs_... ; verifies with /store/download?probe=1.
+import OrbNav from '../components/OrbNav.astro';
 const isDev = import.meta.env.DEV;
 ---
 <html lang="en">
@@ -103,6 +104,8 @@ footer .mono{color:#5a564b;font-size:11px;letter-spacing:4px}
 <footer>
   <div class="mono">LamarCy · The Yin to D.LAMAR's Yang · Atlanta, GA · CHS→ATL</div>
 </footer>
+
+<OrbNav />
 
 <script is:inline>
 (function(){

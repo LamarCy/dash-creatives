@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import OrbNav from '../components/OrbNav.astro';
 
 interface Props {
   title?: string;
@@ -39,6 +40,7 @@ const ogImage = '/images/the-songwriter-2.png';
   </head>
   <body>
     <slot />
+    <OrbNav />
 
     <script>
       import '../scripts/scroll-reveal.ts';

@@ -1,0 +1,112 @@
+---
+// The Astral Orb — Durrell's ink-heart painting spun into electron orbits
+// inside a glass ball. Fixed bottom-right on every DASH page; opens the
+// worlds menu (eggs as icons). Asset: /gateway/orb-heart.png (transparent bg).
+const WORLDS = [
+  { href: '/', label: 'The Gateway', sub: 'the diamond heart', kind: 'heart', c1: '', c2: '' },
+  { href: '/art/#gallery', label: 'D.LAMAR', sub: 'the painter · the gallery', kind: 'egg', c1: '#F2A9C4', c2: '#D2547E' },
+  { href: '/?world=lamarcy', label: 'LamarCy', sub: 'the songwriter · the music', kind: 'egg', c1: '#09B1AB', c2: '#067A76' },
+  { href: '/art/#music', label: 'Ashley Smith', sub: 'the voice · her stories', kind: 'egg', c1: '#F4C531', c2: '#C79312' },
+  { href: '/art/#about', label: 'Durrell Smith', sub: 'ux · the design work', kind: 'egg', c1: '#58B368', c2: '#2E7D42' },
+];
+---
+<nav id="orbnav" aria-label="DASH Creatives worlds">
+  <div class="omenu" id="orbmenu" role="menu">
+    {WORLDS.map((w) => (
+      <a class="oitem" role="menuitem" href={w.href}>
+        {w.kind === 'heart' ? (
+          <img class="oicon" src="/gateway/heart.png" alt="" />
+        ) : (
+          <svg class="oicon" viewBox="0 0 24 30" aria-hidden="true">
+            <ellipse cx="12" cy="15.4" rx="10" ry="13.2" fill={w.c1} stroke="#141412" stroke-width="1.6" />
+            <circle cx="8" cy="10" r="1.5" fill={w.c2} />
+            <circle cx="14" cy="13" r="1.5" fill={w.c2} />
+            <circle cx="9" cy="18" r="1.5" fill={w.c2} />
+            <circle cx="15" cy="21" r="1.5" fill={w.c2} />
+            <circle cx="16" cy="8.5" r="1.2" fill={w.c2} />
+            <ellipse cx="8.4" cy="8.6" rx="2.4" ry="3.8" fill="rgba(255,255,255,.55)" transform="rotate(24 8.4 8.6)" />
+          </svg>
+        )}
+        <span class="otext">
+          <span class="olabel">{w.label}</span>
+          <span class="osub">{w.sub}</span>
+        </span>
+      </a>
+    ))}
+  </div>
+  <button class="oball" id="orbball" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="orbmenu" title="Navigate the worlds">
+    <span class="otilt t1" aria-hidden="true"><span class="ospin"><img src="/gateway/orb-heart.png" alt="" /></span></span>
+    <span class="otilt t2" aria-hidden="true"><span class="ospin"><img src="/gateway/orb-heart.png" alt="" /></span></span>
+    <span class="otilt t3" aria-hidden="true"><span class="ospin"><img src="/gateway/orb-heart.png" alt="" /></span></span>
+    <span class="osheen" aria-hidden="true"></span>
+  </button>
+</nav>
+
+<style is:global>
+@font-face{font-family:'Oswald';src:url('/gateway/Oswald.ttf')}
+#orbnav{all:unset;display:block;position:fixed;top:auto;left:auto;right:20px;bottom:20px;
+  width:auto;height:auto;margin:0;padding:0;background:none;border:0;z-index:40}
+#orbnav .oball{position:relative;display:block;width:64px;height:64px;border-radius:50%;cursor:pointer;padding:0;
+  border:1.5px solid rgba(20,20,18,.4);
+  background:rgba(247,243,232,.16);
+  -webkit-backdrop-filter:blur(7px) saturate(1.15);backdrop-filter:blur(7px) saturate(1.15);
+  box-shadow:0 10px 24px rgba(20,20,18,.28),inset 0 1px 6px rgba(255,255,255,.55),inset 0 -6px 12px rgba(20,20,18,.08);
+  perspective:230px;transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease}
+#orbnav .oball:hover{transform:scale(1.07);border-color:#09B1AB}
+#orbnav.open .oball{border-color:#09B1AB;box-shadow:0 10px 26px rgba(9,177,171,.4),inset 0 1px 6px rgba(255,255,255,.55)}
+#orbnav .osheen{position:absolute;inset:0;border-radius:50%;pointer-events:none;
+  background:radial-gradient(ellipse 42% 30% at 32% 24%,rgba(255,255,255,.6),rgba(255,255,255,0) 70%)}
+#orbnav .otilt{position:absolute;inset:7px;pointer-events:none;transform-style:preserve-3d}
+#orbnav .t1{transform:rotateX(12deg)}
+#orbnav .t2{transform:rotateZ(62deg) rotateX(18deg);opacity:.82}
+#orbnav .t3{transform:rotateZ(-58deg) rotateX(-14deg);opacity:.66}
+#orbnav .ospin{position:absolute;inset:0;transform-style:preserve-3d;animation:orbnav-spin 7.5s linear infinite}
+#orbnav .t2 .ospin{animation-duration:11s;animation-direction:reverse}
+#orbnav .t3 .ospin{animation-duration:15s}
+#orbnav .ospin img{width:100%;height:100%;object-fit:contain;backface-visibility:visible}
+@keyframes orbnav-spin{from{transform:rotateY(0deg)}to{transform:rotateY(360deg)}}
+@media (prefers-reduced-motion:reduce){#orbnav .ospin{animation:none}}
+
+#orbnav .omenu{position:absolute;bottom:78px;right:0;min-width:288px;padding:8px;
+  background:rgba(247,243,232,.86);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+  border:3px solid #141412;box-shadow:7px 7px 0 rgba(20,20,18,.8);
+  opacity:0;visibility:hidden;transform:translateY(8px) scale(.94);transform-origin:bottom right;
+  pointer-events:none;transition:opacity .16s ease,transform .16s ease,visibility 0s linear .16s}
+#orbnav.open .omenu{opacity:1;visibility:visible;transform:none;pointer-events:auto;transition:opacity .16s ease,transform .16s ease}
+#orbnav .oitem{display:flex;align-items:center;gap:12px;padding:10px 12px;text-decoration:none;color:#141412}
+#orbnav .oitem + .oitem{border-top:1px solid rgba(20,20,18,.14)}
+#orbnav .oitem:hover{background:#141412;color:#F7F3E8}
+#orbnav .oicon{width:22px;height:28px;flex:0 0 22px;object-fit:contain}
+#orbnav img.oicon{width:24px;height:22px;flex-basis:24px}
+#orbnav .olabel{display:block;font-family:'Oswald',sans-serif;text-transform:uppercase;font-size:12.5px;letter-spacing:2.5px;font-weight:700}
+#orbnav .osub{display:block;font-family:'DejaVu Sans Mono',Menlo,monospace;text-transform:uppercase;font-size:9.5px;letter-spacing:1.5px;color:#5a564b;margin-top:2px}
+#orbnav .oitem:hover .osub{color:rgba(247,243,232,.75)}
+#orbnav .oitem.current{box-shadow:inset 3px 0 0 #09B1AB}
+@media (max-width:560px){
+  #orbnav{right:14px;bottom:14px}
+  #orbnav .oball{width:56px;height:56px}
+  #orbnav .omenu{min-width:238px;bottom:70px}
+}
+</style>
+
+<script is:inline>
+(function(){
+  const root = document.getElementById('orbnav'), ball = document.getElementById('orbball');
+  if (!root || !ball) return;
+  const setOpen = (v) => { root.classList.toggle('open', v); ball.setAttribute('aria-expanded', String(v)); };
+  ball.addEventListener('click', (e) => { e.stopPropagation(); setOpen(!root.classList.contains('open')); });
+  document.addEventListener('click', (e) => { if (!root.contains(e.target)) setOpen(false); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setOpen(false); });
+
+  const path = location.pathname.replace(/\/$/, '');
+  const isLamarcy = new URLSearchParams(location.search).get('world') === 'lamarcy';
+  for (const a of root.querySelectorAll('.oitem')){
+    const href = a.getAttribute('href');
+    let cur = false;
+    if (href === '/') cur = path === '' && !isLamarcy;
+    else if (href.indexOf('world=lamarcy') !== -1) cur = path === '' && isLamarcy;
+    else if (href.indexOf('/art') === 0) cur = path === '/art' && (location.hash ? href.slice(-location.hash.length) === location.hash : href === '/art/#gallery');
+    if (cur) a.classList.add('current');
+  }
+})();
+</script>
