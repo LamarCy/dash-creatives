@@ -35,9 +35,10 @@ const WORLDS = [
     ))}
   </div>
   <button class="oball" id="orbball" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="orbmenu" title="Navigate the worlds">
-    <span class="otilt t1" aria-hidden="true"><span class="ospin"><img src="/gateway/orb-heart.png" alt="" /></span></span>
-    <span class="otilt t2" aria-hidden="true"><span class="ospin"><img src="/gateway/orb-heart.png" alt="" /></span></span>
-    <span class="otilt t3" aria-hidden="true"><span class="ospin"><img src="/gateway/orb-heart.png" alt="" /></span></span>
+    <span class="onucleus" aria-hidden="true"><img src="/gateway/orb-heart.png" alt="" /></span>
+    <span class="oplane p1" aria-hidden="true"><span class="oring"></span><span class="ocarrier"><img class="oelectron" src="/gateway/orb-heart.png" alt="" /></span></span>
+    <span class="oplane p2" aria-hidden="true"><span class="oring"></span><span class="ocarrier"><img class="oelectron" src="/gateway/orb-heart.png" alt="" /></span></span>
+    <span class="oplane p3" aria-hidden="true"><span class="oring"></span><span class="ocarrier"><img class="oelectron" src="/gateway/orb-heart.png" alt="" /></span></span>
     <span class="osheen" aria-hidden="true"></span>
   </button>
 </nav>
@@ -56,16 +57,22 @@ const WORLDS = [
 #orbnav.open .oball{border-color:#09B1AB;box-shadow:0 10px 26px rgba(9,177,171,.4),inset 0 1px 6px rgba(255,255,255,.55)}
 #orbnav .osheen{position:absolute;inset:0;border-radius:50%;pointer-events:none;
   background:radial-gradient(ellipse 42% 30% at 32% 24%,rgba(255,255,255,.6),rgba(255,255,255,0) 70%)}
-#orbnav .otilt{position:absolute;inset:7px;pointer-events:none;transform-style:preserve-3d}
-#orbnav .t1{transform:rotateX(12deg)}
-#orbnav .t2{transform:rotateZ(62deg) rotateX(18deg);opacity:.82}
-#orbnav .t3{transform:rotateZ(-58deg) rotateX(-14deg);opacity:.66}
-#orbnav .ospin{position:absolute;inset:0;transform-style:preserve-3d;animation:orbnav-spin 7.5s linear infinite}
-#orbnav .t2 .ospin{animation-duration:11s;animation-direction:reverse}
-#orbnav .t3 .ospin{animation-duration:15s}
-#orbnav .ospin img{width:100%;height:100%;object-fit:contain;backface-visibility:visible}
-@keyframes orbnav-spin{from{transform:rotateY(0deg)}to{transform:rotateY(360deg)}}
-@media (prefers-reduced-motion:reduce){#orbnav .ospin{animation:none}}
+/* The atom: nucleus = the painting; electrons = small copies of it
+   traveling inclined ink orbits, one per plane, different periods. */
+#orbnav .onucleus{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
+#orbnav .onucleus img{width:42%;height:42%;object-fit:contain}
+#orbnav .oplane{position:absolute;inset:8%;pointer-events:none;transform-style:preserve-3d}
+#orbnav .p1{transform:rotateZ(0deg) rotateX(68deg)}
+#orbnav .p2{transform:rotateZ(60deg) rotateX(68deg)}
+#orbnav .p3{transform:rotateZ(-60deg) rotateX(68deg)}
+#orbnav .oring{position:absolute;inset:0;border-radius:50%;border:1.2px solid rgba(20,20,18,.5)}
+#orbnav .ocarrier{position:absolute;inset:0;animation:orbnav-orbit 6.5s linear infinite}
+#orbnav .p2 .ocarrier{animation-duration:9s;animation-direction:reverse}
+#orbnav .p3 .ocarrier{animation-duration:12s}
+#orbnav .oelectron{position:absolute;top:0;left:50%;width:26%;height:26%;object-fit:contain;
+  transform:translate(-50%,-50%) rotateX(-68deg)}
+@keyframes orbnav-orbit{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){#orbnav .ocarrier{animation:none}}
 
 #orbnav .omenu{position:absolute;bottom:78px;right:0;min-width:288px;padding:8px;
   background:rgba(247,243,232,.86);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
