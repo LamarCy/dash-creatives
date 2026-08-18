@@ -148,9 +148,20 @@
         const speed = par[name] || 1;
         dx = -Math.round(frame * speed * (state.parallax.speed || 1));
       }
+      // Manual offsets move a layer in BOTH axes. They accept either a plain
+      // number (older presets, treated as x) or {x, y}. x wraps around the
+      // scene width; y does not — sliding a band up or down should reveal what
+      // is behind it, not tile it vertically.
       const manual = (state.parallax && state.parallax.offsets) || {};
-      dx += Math.round(manual[name] || 0);
-      blit(buf, grid, dx, 0, { wrap: true });
+      const off = manual[name];
+      let dy = 0;
+      if (typeof off === "number") {
+        dx += Math.round(off);
+      } else if (off && typeof off === "object") {
+        dx += Math.round(off.x || 0);
+        dy = Math.round(off.y || 0);
+      }
+      blit(buf, grid, dx, dy, { wrap: true });
     }
   }
 

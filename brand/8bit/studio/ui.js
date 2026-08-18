@@ -510,21 +510,49 @@
       return;
     }
     state.parallax.offsets = state.parallax.offsets || {};
+    const fmt = A().formats[state.format];
     for (const name of layers) {
+      // migrate the old single-number form to {x, y}
+      const cur = state.parallax.offsets[name];
+      if (typeof cur === "number") {
+        state.parallax.offsets[name] = { x: cur, y: 0 };
+      } else if (!cur) {
+        state.parallax.offsets[name] = { x: 0, y: 0 };
+      }
+      const off = state.parallax.offsets[name];
+
       const l = document.createElement("label");
       l.textContent = name + " offset";
-      const inp = document.createElement("input");
-      inp.type = "range";
-      inp.min = -A().formats[state.format].w;
-      inp.max = A().formats[state.format].w;
-      inp.step = 1;
-      inp.value = state.parallax.offsets[name] || 0;
-      inp.oninput = () => {
-        state.parallax.offsets[name] = parseInt(inp.value, 10);
-        render();
-      };
       host.appendChild(l);
-      host.appendChild(inp);
+
+      const mk = (axis, extent) => {
+        const wrap = document.createElement("div");
+        wrap.style.cssText = "display:flex;align-items:center;gap:7px";
+        const tag = document.createElement("span");
+        tag.textContent = axis.toUpperCase();
+        tag.style.cssText = "font-size:11px;width:10px;color:#4a4a44";
+        const inp = document.createElement("input");
+        inp.type = "range";
+        inp.min = -extent;
+        inp.max = extent;
+        inp.step = 1;
+        inp.value = off[axis] || 0;
+        const out = document.createElement("span");
+        out.style.cssText =
+          "font-family:ui-monospace,Menlo,monospace;font-size:11px;width:34px;text-align:right";
+        out.textContent = off[axis] || 0;
+        inp.oninput = () => {
+          off[axis] = parseInt(inp.value, 10);
+          out.textContent = off[axis];
+          render();
+        };
+        wrap.appendChild(tag);
+        wrap.appendChild(inp);
+        wrap.appendChild(out);
+        return wrap;
+      };
+      host.appendChild(mk("x", fmt.w));
+      host.appendChild(mk("y", Math.round(fmt.h / 2)));
     }
   }
 

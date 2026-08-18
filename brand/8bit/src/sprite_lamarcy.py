@@ -88,22 +88,18 @@ KDKTTTCTTTKDK
 """
 )
 
-LEGS = parse_grid(
-    """
-KCCKCCK
-KCCKCCK
-KCCKCCK
-KCCKCCK
-KCCKCCK
-"""
-)
+# ONE leg, stamped twice with the middle outline column shared. The previous
+# version was a single fused 7-wide block, which is why the walk could only
+# shift both legs sideways together — a waddle, not a gait.
+LEG = ["KCCK"] * 5
+LEG_SPAN = 4          # x gap between the legs; at 3 the two shoes were
+                      # adjacent and merged into one solid bar
 
 CAP_X, CAP_Y = 7, 0
 HEAD_X, HEAD_Y = 7, 3
 TORSO_X, TORSO_Y = 5, 10
 LEGS_X, LEGS_Y = 8, 17
 SHOE_Y = 22
-SHOE_L_DX, SHOE_R_DX = 0, 3        # shoe offsets from the leg block's x
 
 
 def stamp(grid: list, x: int, y: int, cells: list) -> None:
@@ -137,35 +133,51 @@ def _upper(g: list, dy: int = 0) -> None:
     stamp(g, TORSO_X, TORSO_Y + dy, TORSO)
 
 
-def _shoes(g: list, step: int, dy: int, lift_l: int, lift_r: int) -> None:
-    """Each shoe stamped separately so they can sit at different heights."""
-    for dx, lift in ((SHOE_L_DX, lift_l), (SHOE_R_DX, lift_r)):
-        x = LEGS_X + step + dx
-        for row in range(2):
-            stamp(g, x, SHOE_Y + dy - lift + row, ["KKKK"])
+def _leg(g: list, x: int, y: int, raise_by: int, dy: int = 0) -> None:
+    """One leg plus its shoe. `raise_by` lifts the knee: the leg gets shorter
+    and the shoe comes up, which is how a front-facing walk reads — the near
+    foot leaves the ground rather than sliding sideways.
+
+    dy has to reach the shoe too. Leaving it out detached the feet from the legs
+    on the body-bob frames.
+    """
+    for i in range(len(LEG) - raise_by):
+        stamp(g, x, y + i, [LEG[i]])
+    shoe = SHOE_Y + dy - raise_by
+    for row in range(2):
+        stamp(g, x, shoe + row, ["KKKK"])
 
 
-def build(step: int = 0, dy: int = 0, lift_l: int = 0, lift_r: int = 0) -> list:
-    """step shifts the leg block; lift raises one shoe.
+def build(dy: int = 0, raise_l: int = 0, raise_r: int = 0, swing: int = 0) -> list:
+    """A single walk/stand frame.
 
-    A front-facing figure cannot walk by splaying both legs outward — mirroring
-    a symmetric splay returns the same frame, which read as a bounce in two
-    earlier revisions. The pair shifts together and the feet alternate which one
-    is planted.
+    The gait alternates which knee comes UP. Shifting the pair sideways (the
+    previous approach) reads as a waddle; raising one foot at a time is what
+    makes it read as walking from the front. `swing` drops one hand a bead so
+    the arms counter the legs.
     """
     g = [["." for _ in range(GRID)] for _ in range(GRID)]
     _upper(g, dy)
-    stamp(g, LEGS_X + step, LEGS_Y + dy, LEGS)
-    _shoes(g, step, dy, lift_l, lift_r)
+    _leg(g, LEGS_X, LEGS_Y + dy, raise_l, dy)
+    _leg(g, LEGS_X + LEG_SPAN, LEGS_Y + dy, raise_r, dy)
+    if swing:
+        # Counter-swing: one hand a bead lower, the other a bead higher. Both
+        # x positions must be the torso's OWN hand columns (5 and 15) — using 17
+        # put a nub outside the silhouette.
+        lo, hi = (5, 15) if swing > 0 else (15, 5)
+        stamp(g, lo, TORSO_Y + dy + 6, ["KDK"])
+        stamp(g, hi, TORSO_Y + dy + 4, ["KDK"])
     return beads_to_cell(["".join(r) for r in g])
 
 
 IDLE = build()
+
+# contact, passing, contact (mirrored), passing — the classic four-frame cycle
 WALK = [
-    build(step=-1, lift_r=1),
+    build(raise_l=1, swing=+1),
     build(dy=-1),
-    build(step=1, lift_l=1),
-    build(dy=-1, lift_r=1),
+    build(raise_r=1, swing=-1),
+    build(dy=-1),
 ]
 
 # --- the guitar, playing position ------------------------------------------
@@ -200,8 +212,8 @@ KKKK
 def build_play() -> list:
     g = [["." for _ in range(GRID)] for _ in range(GRID)]
     _upper(g)
-    stamp(g, LEGS_X, LEGS_Y, LEGS)
-    _shoes(g, 0, 0, 0, 0)
+    _leg(g, LEGS_X, LEGS_Y, 0)
+    _leg(g, LEGS_X + LEG_SPAN, LEGS_Y, 0)
 
     stamp(g, 9, 12, GUITAR_BODY)              # body at the waist, not the hips
     for i in range(6):                        # neck, up and to his left

@@ -51,7 +51,7 @@ to bottom:
 | **Format** | 9:16 (1080×1920) · 1:1 (1080×1080) · 16:9 (1920×1080) |
 | **Palette** | Tiffany ramp or Sepia ramp |
 | **Scene** | Tideline day · Tideline night · Open water · Harbor · Blank cream · Blank ink |
-| **Parallax** | `Motion` on/off, speed, and a per-layer offset slider. `Preview ▶` animates in place. |
+| **Parallax** | `Motion` on/off, speed, and per-layer **X and Y** offset sliders — nudge the horizon down, lift the water, slide the skyline. `Preview ▶` animates in place. |
 | **Sprites** | Add LamarCy or the Keeper. Each gets pose, X/Y, integer scale 1–8, animate, flip, and layer order (↑/↓). |
 | **Text** | Title (Anton) · Subtitle (Oswald) · Date stamp (mono, pre-filled with today as `REC M.DD.YY`). Colour comes from four ramp swatches. |
 | **Texture** | Halftone dots on/off, density, pitch. |
@@ -60,6 +60,11 @@ to bottom:
 
 Positions and text sizes are **percentages**, not pixels, so a composition you
 build in 9:16 still lands sensibly when you flip it to 1:1 or 16:9.
+
+Layer offsets are in native pixels and move in both axes. X wraps around the
+scene width; Y does not — sliding a band up or down reveals what's behind it
+rather than tiling vertically, which is what you want when you're recomposing a
+horizon.
 
 ## 3. Export
 
