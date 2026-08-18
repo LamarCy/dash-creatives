@@ -78,7 +78,39 @@ in a zip file and cannot really break. Rebuild the video with:
 ffmpeg -framerate 12 -i frame_%04d.png -c:v libx264 -pix_fmt yuv420p -crf 18 out.mp4
 ```
 
-## 4. Add a preset
+## 4. Your own photographs
+
+**Import photo…** in the panel. Pick one or several. Each frame is reduced to
+the four-value ramp with a **Ben-Day halftone screen** — a clustered dot that
+grows outward from the centre of each cell as the tone darkens, the same
+texture as the brand's dot rule. It is a real screen, not a photo pasted on
+top of pixel art, so rule 2 still holds: a halftoned photograph renders in
+exactly four colours.
+
+Each import gives you two buttons:
+
+- **Backdrop** — full-bleed behind everything, in place of Tideline/Harbor.
+  Also appears at the bottom of the Scene dropdown.
+- **+ Panel** — behaves like a sprite: X/Y, integer scale, layer order. Good
+  for an inset or a Polaroid in a corner.
+
+Two knobs per photo. **Tone** shifts it lighter or darker — reach for this
+first, since four values is a narrow ladder. **Dot size** sets the screen cell:
+small for detail, large for a coarse printed look. Panels also have **Detail
+px**, the native size the photo is screened at before being scaled up; smaller
+means chunkier dots.
+
+Imports live in this browser's local storage, so they survive a reload. They
+are **not** in the repo and **not** in `presets.json` — if you clear browser
+data they're gone, and re-importing takes seconds. The original is kept (a
+downscaled JPEG) rather than the screened result, because the halftone has to
+be recomputed whenever the format, ramp or tone changes; re-screening an
+already-screened image turns to mush.
+
+For the CLI, pass a file instead: `--photo=path/to/frame.jpg`. The headless
+renderer loads and screens it the same way.
+
+## 5. Add a preset
 
 Edit `presets.json`, add an entry under `"presets"`, reload. You only list what
 differs from the defaults — everything else is inherited.
@@ -106,7 +138,7 @@ Remember `presets.json` needs `npm run dev` to load. If you want a new preset
 available when you double-click the file, also add it to `BUILTIN_PRESETS` near
 the top of `ui.js`.
 
-## 5. Add a sprite or a scene
+## 6. Add a sprite or a scene
 
 The Studio does **not** read the PNGs in `sprites/` and `scenes/`. It reads
 `assets.js`, which is generated. So the flow is always: change the Python,
@@ -133,7 +165,7 @@ as tainted and **every export would fail** with a security error. Second, the
 grids let the batch CLI use the exact same data with no image decoder. The
 whole bundle is ~112KB.
 
-## 6. Batch mode
+## 7. Batch mode
 
 Six episode cards in one command:
 
@@ -155,7 +187,7 @@ never drift from what you saw on screen, and Anton/Oswald need a real font
 engine, which Node doesn't have without native dependencies. If Chrome lives
 somewhere unusual, pass `--chrome=/path/to/chrome`.
 
-## 7. The rules it enforces for you
+## 8. The rules it enforces for you
 
 This is the actual point of the tool. You cannot go off-brand with it, even
 carelessly:
@@ -177,7 +209,7 @@ carelessly:
    not opacity — you asked for opacity, but alpha blending would manufacture a
    fifth colour and break rule 2. Ben-Day dots worked by dot size anyway.
 
-## 8. Tests
+## 9. Tests
 
 ```bash
 npm test
@@ -190,7 +222,7 @@ Pillow and compares every pixel. Worth keeping — the first version of that
 encoder bumped its LZW code width one dictionary entry too early and produced a
 file that decoded to 8 pixels instead of 2257.
 
-## 9. Files
+## 10. Files
 
 ```
 studio/
@@ -204,6 +236,8 @@ studio/
   generate.mjs    batch CLI
   serve.mjs       dev server for `npm run dev`
   tests/          GIF encoder round-trip
+  ui/             the LamarCy heart logo (real artwork, never pixelated)
+  samples/        one render per preset, for the contact sheet
 ```
 
 `LC-8BIT · STUDIO · REC 2026 · CHS→ATL`

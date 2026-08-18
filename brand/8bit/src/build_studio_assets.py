@@ -89,7 +89,7 @@ def outline(grid: list) -> list:
 def build() -> dict:
     sprites = {
         "lamarcy": {
-            "idle": pack(L_IDLE.strip("\n").splitlines()),
+            "idle": pack(L_IDLE),
             "play": pack(play_pose()),
         },
         "keeper": {

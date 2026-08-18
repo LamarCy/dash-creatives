@@ -49,6 +49,20 @@
     font-family: ui-monospace, Menlo, monospace; font-size: 12px;
     background: var(--ink); color: var(--cream); padding: 4px 9px;
   }
+  /* The LamarCy heart logo. This is the real artwork, not a sprite: it sits
+     on the beige as chrome, is never drawn into the canvas, and is explicitly
+     NOT pixelated — image-rendering:auto overrides nothing else here, but it
+     is spelled out so a future edit to the canvas rule cannot catch it. */
+  #logo {
+    position: absolute; left: 24px; bottom: 22px;
+    background: var(--cream); border: 4px solid var(--ink);
+    box-shadow: 8px 8px 0 var(--ink);
+    padding: 9px 11px; line-height: 0;
+  }
+  #logo img {
+    image-rendering: auto; -ms-interpolation-mode: bicubic;
+    width: 104px; height: auto; display: block;
+  }
 
   /* ---- panel ---- */
   #panel { background: var(--cream); border-left: var(--line); overflow-y: auto; padding: 0 0 40px; }
@@ -108,6 +122,7 @@
 <main id="stage">
   <div id="badge">—</div>
   <div id="wrap"><canvas id="cv" width="1080" height="1920"></canvas></div>
+  <div id="logo"><img src="ui/lamarcy-heart.png" alt="LamarCy"></div>
 </main>
 
 <aside id="panel">
@@ -143,6 +158,20 @@
     <label>Speed <span id="parSpeedV" class="mono"></span></label>
     <input type="range" id="parSpeed" min="0.25" max="4" step="0.25" value="1">
     <div id="offsets"></div>
+  </fieldset>
+
+  <fieldset>
+    <div class="grp">Your photographs</div>
+    <div class="row">
+      <label for="photoFile" style="margin:0"></label>
+      <input type="file" id="photoFile" accept="image/*" multiple hidden>
+      <button id="photoPick">Import photo&hellip;</button>
+    </div>
+    <div id="photoList" style="margin-top:9px"></div>
+    <p class="note">Imported frames are halftoned into the four-value ramp with a
+      Ben-Day screen &mdash; a real dot pattern, not a pasted photo. Use one as a
+      full-bleed backdrop, or drop it in as a panel. Kept in this browser, so
+      they survive a reload.</p>
   </fieldset>
 
   <fieldset>

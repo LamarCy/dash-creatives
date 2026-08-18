@@ -59,6 +59,81 @@
     heart: { on: false, x: 86, y: 91, scale: 3 },
   };
 
+  // ---- the photo library ------------------------------------------------
+  /*
+    Durrell's own frames. Stored as a downscaled JPEG data URL in
+    localStorage, NOT as the dithered result — because the halftone has to be
+    recomputed whenever the format, ramp, tone or screen changes, and
+    re-screening an already-screened image turns to mush.
+
+    They live in localStorage rather than in a preset because they are a
+    library, not part of one composition, and because the app has no server to
+    put them on.
+  */
+  const PHOTO_KEY = "LC_PHOTOS_V1";
+  const PHOTO_MAX = 1280;            // longest side kept; plenty for a 480px screen
+  let photoLib = {};
+
+  function loadPhotoLib() {
+    try {
+      photoLib = JSON.parse(localStorage.getItem(PHOTO_KEY) || "{}");
+    } catch (e) {
+      photoLib = {};
+    }
+  }
+
+  function savePhotoLib() {
+    try {
+      localStorage.setItem(PHOTO_KEY, JSON.stringify(photoLib));
+    } catch (e) {
+      status("Couldn't save photos locally — browser storage is full. " +
+        "They'll work until you reload.", true);
+    }
+  }
+
+  /** Decode, downscale, re-encode as JPEG, and hand the element to the engine. */
+  function ingest(file) {
+    return new Promise((resolve, reject) => {
+      const fr = new FileReader();
+      fr.onerror = () => reject(new Error("could not read " + file.name));
+      fr.onload = () => {
+        const img = new Image();
+        img.onerror = () => reject(new Error("not an image: " + file.name));
+        img.onload = () => {
+          const k = Math.min(1, PHOTO_MAX / Math.max(img.width, img.height));
+          const c = document.createElement("canvas");
+          c.width = Math.max(1, Math.round(img.width * k));
+          c.height = Math.max(1, Math.round(img.height * k));
+          const ctx = c.getContext("2d");
+          ctx.drawImage(img, 0, 0, c.width, c.height);
+          const id = "p" + Date.now().toString(36) + Math.floor(Math.random() * 1e4).toString(36);
+          photoLib[id] = {
+            label: file.name.replace(/\.[^.]+$/, "").slice(0, 28),
+            src: c.toDataURL("image/jpeg", 0.86),
+            ar: c.width / c.height,
+            tone: 0,
+            screen: 6,
+          };
+          resolve(id);
+        };
+        img.src = fr.result;
+      };
+      fr.readAsDataURL(file);
+    });
+  }
+
+  /** Give the engine a loaded <img> for every photo it may be asked to draw. */
+  function primePhotos() {
+    const jobs = Object.keys(photoLib).map((id) => new Promise((res) => {
+      if (E().hasPhoto(id)) return res();
+      const img = new Image();
+      img.onload = () => { E().registerPhoto(id, img); res(); };
+      img.onerror = () => res();
+      img.src = photoLib[id].src;
+    }));
+    return Promise.all(jobs);
+  }
+
   let state = structuredClone(DEFAULT_STATE);
   let presets = null;
   let presetsFromFile = false;
@@ -126,6 +201,7 @@
 
   // ---- render ----------------------------------------------------------
   function render() {
+    state.photos = photoLib;          // engine reads tone/screen/ar from here
     E().renderTo(cv, state, frame);
     const s = E().outputSize(state.format);
     // fit the preview to the stage without ever scaling the canvas pixels
@@ -223,7 +299,9 @@
       const hd = document.createElement("div");
       hd.className = "hd";
       const name = document.createElement("b");
-      name.textContent = sp.kind === "lamarcy" ? "LamarCy" : "Keeper";
+      name.textContent = sp.kind === "lamarcy" ? "LamarCy"
+        : sp.kind === "keeper" ? "Keeper"
+        : (photoLib[sp.photoId] && photoLib[sp.photoId].label) || "Photo";
       hd.appendChild(name);
 
       const btns = document.createElement("div");
@@ -235,13 +313,31 @@
         b.onclick = () => { fn(); build(); render(); };
         return b;
       };
-      btns.appendChild(mk("Anim", () => { sp.animate = !sp.animate; }, !!sp.animate));
+      if (sp.kind !== "photo") {
+        btns.appendChild(mk("Anim", () => { sp.animate = !sp.animate; }, !!sp.animate));
+      }
       btns.appendChild(mk("Flip", () => { sp.flip = !sp.flip; }, !!sp.flip));
       btns.appendChild(mk("↑", () => { sp.z = (sp.z || 0) + 1; }));
       btns.appendChild(mk("↓", () => { sp.z = (sp.z || 0) - 1; }));
       btns.appendChild(mk("✕", () => { state.sprites.splice(i, 1); }));
       hd.appendChild(btns);
       box.appendChild(hd);
+
+      if (sp.kind === "photo") {
+        const g2 = document.createElement("div");
+        g2.className = "mini";
+        g2.appendChild(numRow("X %", () => sp.x, (v) => { sp.x = v; }, -50, 150, 1));
+        g2.appendChild(numRow("Y %", () => sp.y, (v) => { sp.y = v; }, -50, 150, 1));
+        g2.appendChild(numRow("Scale 1-8", () => sp.scale,
+          (v) => { sp.scale = Math.round(v); }, 1, 8, 1));
+        g2.appendChild(numRow("Detail px", () => sp.base,
+          (v) => { sp.base = Math.round(v); }, 16, 160, 4));
+        g2.appendChild(numRow("Layer", () => sp.z || 0,
+          (v) => { sp.z = Math.round(v); }, -9, 9, 1));
+        box.appendChild(g2);
+        host.appendChild(box);
+        return;
+      }
 
       const pl = document.createElement("label");
       pl.textContent = "Pose";
@@ -267,6 +363,83 @@
     });
     if (!state.sprites.length) {
       host.innerHTML = '<p class="note">No sprites. Add LamarCy or the Keeper above.</p>';
+    }
+  }
+
+  // ---- photo library UI -------------------------------------------------
+  function buildPhotos() {
+    const host = $("photoList");
+    host.innerHTML = "";
+    const ids = Object.keys(photoLib);
+    if (!ids.length) {
+      host.innerHTML = '<p class="note">No photographs imported yet.</p>';
+      return;
+    }
+    for (const id of ids) {
+      const meta = photoLib[id];
+      const box = document.createElement("div");
+      box.className = "sprite";
+
+      const hd = document.createElement("div");
+      hd.className = "hd";
+      const b = document.createElement("b");
+      b.textContent = meta.label || "photo";
+      hd.appendChild(b);
+
+      const thumb = document.createElement("img");
+      thumb.src = meta.src;
+      thumb.style.cssText = "width:52px;height:auto;border:3px solid var(--ink);image-rendering:auto";
+      hd.appendChild(thumb);
+      box.appendChild(hd);
+
+      const row = document.createElement("div");
+      row.className = "row tight";
+      row.style.marginTop = "7px";
+
+      const backdrop = document.createElement("button");
+      const isBack = state.scene === "photo:" + id;
+      backdrop.textContent = "Backdrop";
+      backdrop.setAttribute("aria-pressed", String(isBack));
+      backdrop.onclick = () => {
+        state.scene = isBack ? "blank-cream" : "photo:" + id;
+        build(); render();
+        status(isBack ? "Backdrop cleared." : `"${meta.label}" set as the backdrop.`);
+      };
+      row.appendChild(backdrop);
+
+      const panel = document.createElement("button");
+      panel.textContent = "+ Panel";
+      panel.onclick = () => {
+        state.sprites.push({
+          kind: "photo", photoId: id, x: 52, y: 34, scale: 2, base: 56,
+          flip: false, z: state.sprites.length + 1,
+        });
+        build(); render();
+        status(`Added "${meta.label}" as a panel.`);
+      };
+      row.appendChild(panel);
+
+      const del = document.createElement("button");
+      del.textContent = "✕";
+      del.onclick = () => {
+        delete photoLib[id];
+        savePhotoLib();
+        if (state.scene === "photo:" + id) state.scene = "blank-cream";
+        state.sprites = state.sprites.filter((sp) => sp.photoId !== id);
+        build(); render();
+        status("Photo removed.");
+      };
+      row.appendChild(del);
+      box.appendChild(row);
+
+      const grid = document.createElement("div");
+      grid.className = "mini";
+      grid.appendChild(numRow("Tone", () => meta.tone,
+        (v) => { meta.tone = v; savePhotoLib(); }, -0.5, 0.5, 0.05));
+      grid.appendChild(numRow("Dot size", () => meta.screen,
+        (v) => { meta.screen = Math.round(v); savePhotoLib(); }, 2, 10, 1));
+      box.appendChild(grid);
+      host.appendChild(box);
     }
   }
 
@@ -361,14 +534,19 @@
       () => state.ramp, (v) => { state.ramp = v; });
 
     const sc = $("scene");
-    if (!sc.options.length) {
-      for (const [v, t] of SCENES) {
-        const o = document.createElement("option");
-        o.value = v; o.textContent = t;
-        sc.appendChild(o);
-      }
-      sc.onchange = () => { state.scene = sc.value; build(); render(); };
+    sc.innerHTML = "";
+    for (const [v, t] of SCENES) {
+      const o = document.createElement("option");
+      o.value = v; o.textContent = t;
+      sc.appendChild(o);
     }
+    for (const id of Object.keys(photoLib)) {
+      const o = document.createElement("option");
+      o.value = "photo:" + id;
+      o.textContent = "Photo — " + (photoLib[id].label || id);
+      sc.appendChild(o);
+    }
+    sc.onchange = () => { state.scene = sc.value; build(); render(); };
     sc.value = state.scene;
 
     toggle("parOn", () => state.parallax.on, (v) => { state.parallax.on = v; });
@@ -376,6 +554,7 @@
       (v) => { state.parallax.speed = v; }, (v) => v + "x");
     buildOffsets();
 
+    buildPhotos();
     buildSprites();
     buildText();
 
@@ -568,6 +747,8 @@
 
   // ---- boot -------------------------------------------------------------
   async function boot() {
+    loadPhotoLib();
+    await primePhotos();
     await loadPresets();
     // wait for Anton/Oswald before the first paint, or the title renders in
     // a fallback face and the quantise pass bakes that in
@@ -595,6 +776,28 @@
       clearTimeout(rafId);
       if (playing) tick();
     };
+    $("photoPick").onclick = () => $("photoFile").click();
+    $("photoFile").onchange = async (e) => {
+      const files = [...e.target.files];
+      e.target.value = "";
+      if (!files.length) return;
+      status(`importing ${files.length} photo(s)…`);
+      let last = null;
+      for (const f of files) {
+        try {
+          last = await ingest(f);
+        } catch (err) {
+          status(err.message, true);
+        }
+      }
+      savePhotoLib();
+      await primePhotos();
+      if (last) state.scene = "photo:" + last;   // show it straight away
+      build();
+      render();
+      status(`Imported ${files.length} photo(s), halftoned into the ramp.`);
+    };
+
     $("ePng").onclick = exportPng;
     $("eGif").onclick = exportGif;
     $("eWebm").onclick = exportWebm;

@@ -121,6 +121,17 @@
     if (scene === "blank-cream") return fillBuffer(buf, 4);
     if (scene === "blank-ink") return fillBuffer(buf, 1);
 
+    // an imported photograph, halftoned, used as a full-bleed backdrop
+    if (scene.startsWith("photo:")) {
+      const id = scene.slice(6);
+      const meta = (state.photos && state.photos[id]) || {};
+      const grid = ditherToGrid(id, buf.w, buf.h, state.ramp,
+        { tone: meta.tone, screen: meta.screen });
+      if (grid) blit(buf, grid, 0, 0, {});
+      else fillBuffer(buf, 4);
+      return;
+    }
+
     const layers = A().sceneLayers[scene] || [];
     const par = A().parallax;
     for (const name of layers) {
@@ -162,8 +173,20 @@
     const list = (state.sprites || []).slice();
     list.sort((a, b) => (a.z || 0) - (b.z || 0));
     for (const sp of list) {
-      const pose = poseFor(sp, frame);
-      const grid = spriteGrid(sp.kind, pose);
+      let grid;
+      if (sp.kind === "photo") {
+        // panels are dithered small then blown up by an integer factor, so the
+        // dots stay chunky instead of turning into fine grain
+        const meta = (state.photos && state.photos[sp.photoId]) || {};
+        const base = Math.max(16, Math.min(160, Math.round(sp.base || 56)));
+        const ar = meta.ar || 1;
+        const pw = ar >= 1 ? base : Math.round(base * ar);
+        const ph = ar >= 1 ? Math.round(base / ar) : base;
+        grid = ditherToGrid(sp.photoId, pw, ph, state.ramp,
+          { tone: meta.tone, screen: meta.screen });
+      } else {
+        grid = spriteGrid(sp.kind, poseFor(sp, frame));
+      }
       if (!grid) continue;
       // scale is clamped to an integer 1..8 — rule 1
       const scale = Math.max(1, Math.min(8, Math.round(sp.scale || 1)));
@@ -181,6 +204,133 @@
     blit(buf, grid, pctToPx(state.heart.x, buf.w), pctToPx(state.heart.y, buf.h), {
       scale: scale,
     });
+  }
+
+
+  // ---- photographs ------------------------------------------------------
+  /*
+    Durrell's own frames, reduced to the four-value ramp on the way in. A
+    photograph has thousands of colours; rule 2 allows four. So the import
+    path is a genuine halftone screen, not a paste.
+
+    The screen is CLUSTERED-DOT, built by ordering each cell's pixels by
+    distance from its centre, so as a tone darkens the dot grows outward from
+    the middle. That is what makes it read as Ben-Day rather than as the
+    scattered noise a Bayer/dispersed matrix would give. Alternate cell rows
+    are staggered half a cell so the dots sit on a diagonal lattice, the same
+    way the scene's sky dots do.
+
+    Tones are matched against the ramp's ACTUAL luminances (ink .08, deep
+    teal .38, tiffany .55, cream .95) rather than four equal steps — the ramp
+    is not evenly spaced, and pretending otherwise crushes the midtones.
+  */
+  const screenCache = new Map();
+
+  function halftoneScreen(n) {
+    if (screenCache.has(n)) return screenCache.get(n);
+    const c = (n - 1) / 2;
+    const cells = [];
+    for (let y = 0; y < n; y++) {
+      for (let x = 0; x < n; x++) {
+        const dx = x - c;
+        const dy = y - c;
+        // tiny bias breaks ties deterministically so the dot grows smoothly
+        cells.push({ x: x, y: y, d: dx * dx + dy * dy + x * 0.001 + y * 0.0007 });
+      }
+    }
+    cells.sort((a, b) => a.d - b.d);
+    const m = Array.from({ length: n }, () => new Array(n));
+    cells.forEach((cell, i) => { m[cell.y][cell.x] = (i + 0.5) / (n * n); });
+    screenCache.set(n, m);
+    return m;
+  }
+
+  function luminance(r, g, b) {
+    return (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+  }
+
+  const photos = new Map();          // id -> HTMLImageElement
+  const gridCache = new Map();       // id|w|h|ramp|tone|screen -> grid
+
+  function registerPhoto(id, img) {
+    photos.set(id, img);
+    for (const k of [...gridCache.keys()]) {
+      if (k.startsWith(id + "|")) gridCache.delete(k);
+    }
+  }
+
+  function hasPhoto(id) {
+    return photos.has(id);
+  }
+
+  /** Cover-fit, auto-level, then halftone into a 4-value grid. */
+  function ditherToGrid(id, w, h, rampName, opts) {
+    opts = opts || {};
+    const tone = opts.tone == null ? 0 : opts.tone;
+    const n = Math.max(2, Math.min(10, Math.round(opts.screen || 6)));
+    const key = [id, w, h, rampName, tone, n].join("|");
+    if (gridCache.has(key)) return gridCache.get(key);
+
+    const img = photos.get(id);
+    if (!img || !img.width) return null;
+
+    const c = document.createElement("canvas");
+    c.width = w;
+    c.height = h;
+    const ctx = c.getContext("2d", { willReadFrequently: true });
+    // cover-fit with a centre crop
+    const k = Math.max(w / img.width, h / img.height);
+    const dw = img.width * k;
+    const dh = img.height * k;
+    ctx.drawImage(img, (w - dw) / 2, (h - dh) / 2, dw, dh);
+    const d = ctx.getImageData(0, 0, w, h).data;
+
+    // luminance pass + auto-levels on the 2nd..98th percentile, or photos
+    // land muddy once they are squeezed into four values
+    const lums = new Float32Array(w * h);
+    const hist = new Uint32Array(256);
+    for (let i = 0, p = 0; i < d.length; i += 4, p++) {
+      const L = luminance(d[i], d[i + 1], d[i + 2]);
+      lums[p] = L;
+      hist[Math.min(255, Math.round(L * 255))]++;
+    }
+    const total = w * h;
+    let lo = 0;
+    let hi = 255;
+    let acc = 0;
+    for (let i = 0; i < 256; i++) { acc += hist[i]; if (acc >= total * 0.02) { lo = i / 255; break; } }
+    acc = 0;
+    for (let i = 255; i >= 0; i--) { acc += hist[i]; if (acc >= total * 0.02) { hi = i / 255; break; } }
+    const span = Math.max(0.05, hi - lo);
+
+    const rampLum = A().ramps[rampName].map((hex) => {
+      const rgb = hexToRgb(hex);
+      return luminance(rgb[0], rgb[1], rgb[2]);
+    });
+    const M = halftoneScreen(n);
+    const CODES = ["K", "D", "T", "C"];
+
+    const rows = new Array(h);
+    for (let y = 0; y < h; y++) {
+      const stagger = (Math.floor(y / n) % 2) * (n >> 1);
+      let row = "";
+      for (let x = 0; x < w; x++) {
+        let L = (lums[y * w + x] - lo) / span + tone;
+        L = L < 0 ? 0 : L > 1 ? 1 : L;
+        // find which pair of ramp values this tone falls between
+        let i = 0;
+        while (i < 2 && L > rampLum[i + 1]) i++;
+        const a = rampLum[i];
+        const b = rampLum[i + 1];
+        const frac = b > a ? (L - a) / (b - a) : 0;
+        const t = M[y % n][(x + stagger) % n];
+        row += CODES[frac > t ? i + 1 : i];
+      }
+      rows[y] = row;
+    }
+    const grid = { w: w, h: h, rows: rows };
+    gridCache.set(key, grid);
+    return grid;
   }
 
   // ---- indexed buffer -> canvas --------------------------------------
@@ -381,6 +531,9 @@
 
   globalThis.LCEngine = {
     renderTo: renderTo,
+    registerPhoto: registerPhoto,
+    hasPhoto: hasPhoto,
+    ditherToGrid: ditherToGrid,
     outputSize: outputSize,
     loopFrames: loopFrames,
     quantise: quantise,

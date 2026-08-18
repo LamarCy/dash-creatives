@@ -28,6 +28,9 @@
     --ramp=teal|sepia
     --scene=KEY
     --frame=N            which animation frame to render (default 0)
+    --photo=path         halftone a photograph and use it as the backdrop
+    --tone=N             photo tone, -0.5..0.5 (default 0)
+    --screen=N           photo halftone dot cell, 2..10 (default 6)
     --out=path.png
     --jobs=file.json     array of job objects using the same keys
     --chrome=path        override Chrome location
@@ -140,6 +143,20 @@ function buildState(job, presets) {
   if (job.subtitle != null) state.text.subtitle.v = String(job.subtitle);
   if (job.stamp != null) state.text.stamp.v = String(job.stamp);
   if (!state.text.stamp.v) state.text.stamp.v = todayStamp();
+  if (job.photo) {
+    // the headless renderer loads and halftones the file itself
+    const abs = resolve(process.cwd(), String(job.photo));
+    state.photos = Object.assign({}, state.photos, {
+      cli: {
+        label: "cli",
+        src: pathToFileURL(abs).href,
+        tone: job.tone == null ? 0 : Number(job.tone),
+        screen: job.screen == null ? 6 : Number(job.screen),
+        ar: 1,
+      },
+    });
+    if (!job.scene) state.scene = "photo:cli";
+  }
   if (job.state) state = deepMerge(state, job.state);
 
   return clampHearts(state);
@@ -163,6 +180,7 @@ function runChrome(chrome, url, out, w, h) {
   return new Promise((res, rej) => {
     const args = [
       "--headless",
+      "--allow-file-access-from-files",   // so render.html can read --photo
       "--disable-gpu",
       "--hide-scrollbars",
       "--force-device-scale-factor=1",

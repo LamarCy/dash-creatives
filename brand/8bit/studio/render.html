@@ -50,6 +50,23 @@
     try { await document.fonts.ready; } catch (e) {}
   }
 
+  // Photos referenced by the state have to be resident before renderTo, which
+  // is synchronous. Canvas tainting does not matter on this path: the CLI takes
+  // a screenshot of the page, it never reads the canvas back.
+  const photos = state.photos || {};
+  await Promise.all(Object.keys(photos).map((id) => new Promise((res) => {
+    const src = photos[id] && photos[id].src;
+    if (!src) return res();
+    const im = new Image();
+    im.onload = () => {
+      photos[id].ar = im.width / im.height;
+      globalThis.LCEngine.registerPhoto(id, im);
+      res();
+    };
+    im.onerror = () => { window.__LC_PHOTO_ERROR = src; res(); };
+    im.src = src;
+  })));
+
   const frame = parseInt(params.get("frame") || "0", 10) || 0;
   globalThis.LCEngine.renderTo(cv, state, frame);
 
