@@ -30,10 +30,6 @@ from scene_tideline import STUDIO_FORMATS, STUDIO_SCENES, Scene
 from sprite_keeper import BREACH as K_BREACH
 from sprite_keeper import IDLE as K_IDLE
 from sprite_keeper import SWIM as K_SWIM
-from sprite_lamarcy import IDLE as L_IDLE
-from sprite_lamarcy_play import play_pose
-from sprite_lamarcy_walk import FRAMES as WALK_KEYS
-from sprite_lamarcy_walk import build_frame as build_walk
 from pixel import HEART
 
 CODES = ".KDTC"
@@ -87,19 +83,14 @@ def outline(grid: list) -> list:
 
 
 def build() -> dict:
+    # The Keeper is the world's only character since revision 3.
     sprites = {
-        "lamarcy": {
-            "idle": pack(L_IDLE),
-            "play": pack(play_pose()),
-        },
         "keeper": {
             "idle": pack(K_IDLE),
             "breach": pack(K_BREACH),
         },
         "heart": pack(outline(HEART)),
     }
-    for i, key in enumerate(WALK_KEYS, start=1):
-        sprites["lamarcy"][f"walk{i}"] = pack(build_walk(key))
     for i, g in enumerate(K_SWIM, start=1):
         sprites["keeper"][f"swim{i}"] = pack(g)
 
@@ -147,7 +138,7 @@ def main() -> None:
     kb = out.stat().st_size / 1024
     n_layers = sum(len(f["layers"]) for s in data["scenes"].values() for f in s.values())
     print(f"wrote studio/assets.js  {kb:.0f}KB — "
-          f"{len(data['sprites']['lamarcy']) + len(data['sprites']['keeper']) + 1} sprites, "
+          f"{len(data['sprites']['keeper']) + 1} sprites, "
           f"{n_layers} scene layers across "
           f"{len(data['scenes'])} scenes x {len(data['formats'])} formats")
 

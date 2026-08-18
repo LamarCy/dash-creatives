@@ -113,14 +113,18 @@ def build(amp: float = 0.0, slope: float = 0.0, fluke_dy: float = 0.0,
                 not (0 <= x + ox < N and 0 <= y + oy < N and solid[y + oy][x + ox])
                 for ox, oy in ((1, 0), (-1, 0), (0, 1), (0, -1))
             )
+            # The body is DEEP TEAL, not tiffany. A tiffany dolphin on the
+            # tiffany water of the tideline dissolved to nothing but its
+            # outline — deep teal separates against cream, against the water,
+            # and against an ink night field, which is every place it lands.
             if edge:
                 grid[y][x] = "K"
             elif belly[y][x]:
                 grid[y][x] = "C"
             elif back[y][x]:
-                grid[y][x] = "D"
-            else:
                 grid[y][x] = "T"
+            else:
+                grid[y][x] = "D"
 
     # eye, set just behind the beak on the upper half
     ex, ey = spine_at(0.16)

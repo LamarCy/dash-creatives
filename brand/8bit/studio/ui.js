@@ -26,7 +26,6 @@
     ["blank-ink", "Blank ink"],
   ];
   const POSES = {
-    lamarcy: [["idle", "Idle"], ["walk", "Walk"], ["play", "Playing"]],
     keeper: [["idle", "Idle"], ["swim", "Swim"], ["breach", "Breaching"]],
   };
   const RAMP_NAMES = { teal: "Tiffany", sepia: "Sepia" };
@@ -146,7 +145,7 @@
   const BUILTIN_PRESETS = {
     "gbb-title": { label: "GBB Title Card", state: {
       format: "9x16", scene: "tideline-day", parallax: { on: true, speed: 1 },
-      sprites: [{ kind: "lamarcy", pose: "walk", x: 12, y: 47.5, scale: 2, animate: true, z: 1 }],
+      sprites: [{ kind: "keeper", pose: "swim", x: 38, y: 44, scale: 2, animate: true, z: 1 }],
       text: {
         title: { v: "GAME BOY\nBLUES", x: 7, y: 6, size: 9, color: 0, ghost: true },
         subtitle: { v: "EPISODE 01", x: 7, y: 24, size: 3.4, color: 1 },
@@ -175,7 +174,7 @@
       heart: { on: true, x: 87, y: 87, scale: 3 } } },
     "substack-header": { label: "Substack Header", state: {
       format: "16x9", ramp: "sepia", scene: "harbor", parallax: { on: true, speed: 1 },
-      sprites: [{ kind: "lamarcy", pose: "idle", x: 68, y: 33.3, scale: 2, flip: true, z: 1 }],
+      sprites: [{ kind: "keeper", pose: "breach", x: 66, y: 40, scale: 2, flip: true, z: 1 }],
       text: {
         title: { v: "LAMARCY", x: 5, y: 12, size: 15, color: 0, ghost: true },
         subtitle: { v: "GAME BOY BLUES - 90s HARDWARE, VINTAGE GEAR", x: 5, y: 40, size: 3.6, color: 1 },
@@ -299,8 +298,7 @@
       const hd = document.createElement("div");
       hd.className = "hd";
       const name = document.createElement("b");
-      name.textContent = sp.kind === "lamarcy" ? "LamarCy"
-        : sp.kind === "keeper" ? "Keeper"
+      name.textContent = sp.kind === "keeper" ? "Keeper"
         : (photoLib[sp.photoId] && photoLib[sp.photoId].label) || "Photo";
       hd.appendChild(name);
 
@@ -761,10 +759,6 @@
 
     $("load").onclick = () => applyPreset($("preset").value);
     $("rand").onclick = randomize;
-    $("addL").onclick = () => {
-      state.sprites.push({ kind: "lamarcy", pose: "walk", x: 12, y: 47.5, scale: 2, animate: true, z: state.sprites.length + 1 });
-      build(); render(); status("Added LamarCy.");
-    };
     $("addK").onclick = () => {
       state.sprites.push({ kind: "keeper", pose: "swim", x: 52, y: 40, scale: 2, animate: true, z: state.sprites.length + 1 });
       build(); render(); status("Added the Keeper.");

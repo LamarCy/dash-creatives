@@ -1,20 +1,14 @@
 """
-Task 5 — the hero composite. LamarCy walks the tideline; the Keeper arcs out
-of the water behind him. 9:16, 4x, seamless, ~11s.
+Task 5 — the hero composite. The Keeper travelling the Charleston tideline,
+breaching as it passes. 9:16, 4x, seamless, ~11s.
 
-Z-order: sky, horizon+boat, water, KEEPER, pier, marsh, LAMARCY. The Keeper
-sits behind the pier and the figure; LamarCy stands on the pier deck.
+Revision 3: the human figure was cut from the world, so the Keeper carries this
+asset alone. It now makes TWO passes per loop at different depths and scales —
+one large in the near water, one small and further out — because a single
+dolphin crossing an otherwise empty frame left long dead stretches.
 
-Two timing notes, both load-bearing:
-
-  * The scene loop is 135 frames, and 135 is odd, so a 4-frame walk cycle can
-    never complete a whole number of times at a fixed frames-per-step. The
-    walk index is therefore derived as a proportion of the loop
-    (f * 4 * CYCLES // L), which lands back on frame 0 at the wrap for any
-    integer CYCLES; individual steps vary by a frame, which is invisible.
-  * CYCLES is chosen so his stride roughly matches the pier scroll speed —
-    otherwise he moon-walks. Pier pans 6px/frame, so one stride should cover
-    about 6 * (L / CYCLES) px.
+Z-order: sky, horizon+boat, water, far Keeper, pier, near Keeper, marsh.
+The near pass is drawn in front of the pier so it reads as closer to camera.
 
 Run:  python3 brand/8bit/src/hero.py
 Out:  scenes/hero/hero@4x.{mp4,gif} + hero-still@4x.png
@@ -27,28 +21,25 @@ import math
 from PIL import Image
 
 from anim_tideline import FPS, SCALE, write_gif, write_mp4
-from pixel import EIGHTBIT, RAMPS, render
-from scene_tideline import LAYERS, Scene
+from pixel import EIGHTBIT, render
+from scene_tideline import Scene
 from sprite_keeper import build as build_keeper
-from sprite_lamarcy_walk import FRAMES as WALK_KEYS
-from sprite_lamarcy_walk import build_frame as build_walk
 
 W, H, HZ_FRAC = 270, 480, 0.40
-SPRITE_SCALE = 2                 # native upscale before the global 4x
-KEEPER_SCALE = 2                 # a dolphin should not be smaller than the man
-CYCLES = 20                      # stride cycles per loop; see docstring
 
-KEEPER_IN, KEEPER_OUT = 26, 104  # frames the Keeper is visible
-KEEPER_BASE = 40                 # depth below the waterline when submerged
-KEEPER_ARC = 36                  # peak height of the arc, px.
-# Tuned by eye against the render: at 74 the whole dolphin cleared the water
-# and read as flying, and with a 3x figure the arc peak passed straight
-# through his head. At 36 the back and dorsal break the surface while the
-# belly stays under, which is what porpoising actually looks like.
+# Each pass: (first frame, last frame, scale, x start %, x end %, depth below
+# the waterline, arc height, draw in front of the pier?)
+PASSES = [
+    {"a": 8, "b": 78, "scale": 2, "x0": 0.98, "x1": 0.30,
+     "base": 40, "arc": 36, "front": False},
+    {"a": 62, "b": 130, "scale": 3, "x0": 1.02, "x1": 0.10,
+     "base": 74, "arc": 52, "front": True},
+]
+
+POSE_STEPS = 24
 
 
 def scale_grid(grid: list, k: int) -> list:
-    """Integer nearest-neighbour upscale of an ASCII grid."""
     if k == 1:
         return grid
     out = []
@@ -69,46 +60,45 @@ def stamp(canvas: list, grid: list, ox: int, oy: int) -> None:
                 canvas[ty][tx] = code
 
 
-WALK = [scale_grid(build_walk(k), SPRITE_SCALE) for k in WALK_KEYS]
-
-
 def keeper_at(t: float) -> list:
-    """Keeper rotating through its arc: nose up on the way out, level at the
-    peak, nose down on the way in. Slope is the same knob the sprite script
-    uses for the breach pose."""
-    slope = 13.0 * (1.0 - 2.0 * t)
-    return build_keeper(amp=2.0, slope=slope, fluke_dy=0.0, cy=25.0)
+    """Nose up on the way out, level at the peak, nose down on the way in —
+    driven by the same spine-slope knob the breach pose uses."""
+    return build_keeper(amp=2.0, slope=13.0 * (1.0 - 2.0 * t), fluke_dy=0.0, cy=25.0)
 
 
-KEEPER_POSES = [keeper_at(i / 24) for i in range(25)]
+POSES = [keeper_at(i / POSE_STEPS) for i in range(POSE_STEPS + 1)]
 
 
-def hero_frame(sc: Scene, f: int, L: int) -> Image.Image:
+def draw_pass(canvas: list, sc: Scene, spec: dict, f: int) -> None:
+    if not (spec["a"] <= f < spec["b"]):
+        return
+    t = (f - spec["a"]) / (spec["b"] - spec["a"])
+    pose = POSES[min(POSE_STEPS, int(t * POSE_STEPS + 0.5))]
+    k = spec["scale"]
+    x = int(W * (spec["x0"] + t * (spec["x1"] - spec["x0"])))
+    y = int(sc.hz + spec["base"] - spec["arc"] * math.sin(math.pi * t))
+    half = 24 * k
+    stamp(canvas, scale_grid(pose, k), x - half, y - half)
+
+
+def hero_frame(sc: Scene, f: int) -> Image.Image:
     canvas = [["." for _ in range(W)] for _ in range(H)]
     pans = sc.pans(f)
 
     for name in ("sky", "horizon", "water"):
         stamp(canvas, sc.layer(name, pans[name]), 0, 0)
 
-    # the Keeper, behind everything in the foreground
-    if KEEPER_IN <= f < KEEPER_OUT:
-        t = (f - KEEPER_IN) / (KEEPER_OUT - KEEPER_IN)
-        pose = KEEPER_POSES[min(24, int(t * 24 + 0.5))]
-        # travels right to left, the way the scenery scrolls, so the sprite
-        # reads as facing its direction of travel
-        kx = int(W * 0.98 - t * W * 0.62)
-        ky = int(sc.hz + KEEPER_BASE - KEEPER_ARC * math.sin(math.pi * t))
-        half = 24 * KEEPER_SCALE
-        stamp(canvas, scale_grid(pose, KEEPER_SCALE), kx - half, ky - half)
+    for spec in PASSES:
+        if not spec["front"]:
+            draw_pass(canvas, sc, spec, f)
 
-    for name in ("pier", "marsh"):
-        stamp(canvas, sc.layer(name, pans[name]), 0, 0)
+    stamp(canvas, sc.layer("pier", pans["pier"]), 0, 0)
 
-    # LamarCy, walking in place on the pier deck. His sneaker bottom is row 45
-    # of the 48-row grid, so the offset puts that row on the deck surface.
-    walk = WALK[(f * 4 * CYCLES // L) % 4]
-    feet = sc.deck_y + 2
-    stamp(canvas, walk, int(W * 0.12), feet - 45 * SPRITE_SCALE)
+    for spec in PASSES:
+        if spec["front"]:
+            draw_pass(canvas, sc, spec, f)
+
+    stamp(canvas, sc.layer("marsh", pans["marsh"]), 0, 0)
 
     img = render(["".join(r) for r in canvas], "teal")
     return img.resize((img.width * SCALE, img.height * SCALE), Image.NEAREST)
@@ -117,14 +107,16 @@ def hero_frame(sc: Scene, f: int, L: int) -> Image.Image:
 def main() -> None:
     sc = Scene(W, H, HZ_FRAC, night=False)
     L = sc.loop_frames
-    frames = [hero_frame(sc, f, L) for f in range(L)]
+    for spec in PASSES:
+        assert spec["b"] <= L, f"pass ends at {spec['b']} but the loop is {L} frames"
+    frames = [hero_frame(sc, f) for f in range(L)]
 
-    if frames[0].tobytes() != hero_frame(sc, L, L).tobytes():
+    if frames[0].tobytes() != hero_frame(sc, L).tobytes():
         raise AssertionError("hero composite does not loop seamlessly")
 
     out = EIGHTBIT / "scenes" / "hero"
     out.mkdir(parents=True, exist_ok=True)
-    frames[KEEPER_IN + (KEEPER_OUT - KEEPER_IN) // 2].save(out / "hero-still@4x.png")
+    frames[96].save(out / "hero-still@4x.png")
     write_gif(frames, out / "hero@4x.gif")
     write_mp4(frames, out / "hero@4x.mp4")
     g = (out / "hero@4x.gif").stat().st_size / 1e6

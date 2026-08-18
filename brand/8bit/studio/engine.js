@@ -63,7 +63,13 @@
   }
 
   function spriteGrid(kind, pose) {
-    const p = A().sprites[kind][pose];
+    // Tolerate unknown kinds and poses rather than throwing. An old preset or
+    // a saved job can name a sprite that no longer ships — removing the human
+    // figure made exactly that happen — and one stale entry should be skipped,
+    // not take the whole render down.
+    const set = A().sprites[kind];
+    if (!set) return null;
+    const p = set[pose];
     return p ? unpack(p, kind + "/" + pose) : null;
   }
 
@@ -149,16 +155,16 @@
   }
 
   // ---- sprites --------------------------------------------------------
-  const WALK = ["walk1", "walk2", "walk3", "walk4"];
+  // The Keeper is the only character in the world. The human figure was cut,
+  // so there is a single animated cycle rather than one per kind.
   const SWIM = ["swim1", "swim2", "swim3", "swim4"];
 
   function poseFor(sp, frame) {
     if (!sp.animate) return sp.pose;
-    const cycle = sp.kind === "lamarcy" ? WALK : SWIM;
-    if (!cycle.includes(sp.pose) && sp.pose !== "walk" && sp.pose !== "swim") {
-      return sp.pose; // idle / play / breach do not animate
+    if (sp.pose !== "swim" && !SWIM.includes(sp.pose)) {
+      return sp.pose;            // idle and breach hold still
     }
-    return cycle[Math.floor(frame / 3) % 4];
+    return SWIM[Math.floor(frame / 3) % 4];
   }
 
   // Positions are stored as PERCENTAGES of the canvas, not pixels, so a

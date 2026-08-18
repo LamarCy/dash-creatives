@@ -12,9 +12,9 @@
     "  0 = ink, 1 = deep teal, 2 = tiffany, 3 = cream (or harbor sepia).",
     "There is no free colour field anywhere — that is deliberate.",
     "",
-    "sprites[].kind is 'lamarcy' or 'keeper'.",
-    "  lamarcy poses: idle, walk, play      keeper poses: idle, swim, breach",
-    "  'walk' and 'swim' animate when animate:true; the others hold still.",
+    "sprites[].kind is 'keeper' (the world's only character) or 'photo'.",
+    "  keeper poses: idle, swim, breach",
+    "  'swim' animates when animate:true; idle and breach hold still.",
     "  scale must be a whole number 1-8. z sets layer order, low draws first.",
     "",
     "Only ONE heart per composition. The app refuses to add a second."
@@ -29,7 +29,7 @@
         "scene": "tideline-day",
         "parallax": { "on": true, "speed": 1 },
         "sprites": [
-          { "kind": "lamarcy", "pose": "walk", "x": 12, "y": 47.5, "scale": 2, "animate": true, "flip": false, "z": 1 }
+          { "kind": "keeper", "pose": "swim", "x": 38, "y": 44, "scale": 2, "animate": true, "flip": false, "z": 1 }
         ],
         "text": {
           "title": { "v": "GAME BOY\nBLUES", "x": 7, "y": 6, "size": 9, "color": 0, "ghost": true },
@@ -92,7 +92,7 @@
         "scene": "harbor",
         "parallax": { "on": true, "speed": 1 },
         "sprites": [
-          { "kind": "lamarcy", "pose": "idle", "x": 68, "y": 33.3, "scale": 2, "animate": false, "flip": true, "z": 1 }
+          { "kind": "keeper", "pose": "breach", "x": 66, "y": 40, "scale": 2, "animate": false, "flip": true, "z": 1 }
         ],
         "text": {
           "title": { "v": "LAMARCY", "x": 5, "y": 12, "size": 15, "color": 0, "ghost": true },
