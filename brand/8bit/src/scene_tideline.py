@@ -41,6 +41,20 @@ from pixel import EIGHTBIT, render, save_scaled
 
 LAYERS = ["sky", "horizon", "water", "shore", "marsh"]
 
+# Parallax speed per layer, nearest to camera fastest. Harbor uses its own
+# furniture (skyline, seawall) which sits at the same depths as the tideline's
+# horizon and shore.
+LAYER_SPEED = {
+    "sky": 0.5, "horizon": 1, "skyline": 1, "water": 2,
+    "shore": 3, "seawall": 3, "marsh": 4,
+}
+
+KIND_LAYERS = {
+    "tideline": ["sky", "horizon", "water", "shore", "marsh"],
+    "open-water": ["sky", "water"],
+    "harbor": ["sky", "skyline", "water", "seawall"],
+}
+
 # Seamlessness has two conditions, and BOTH must hold or the loop ticks at
 # the seam:
 #   1. every layer's pattern period divides the scene width W, and
@@ -164,11 +178,13 @@ class Scene:
         # scene menu needs "open water" (bare horizon) and "harbor" (boat and
         # pier, no marsh) alongside the full tideline.
         self.kind = kind
+        self.layers = KIND_LAYERS.get(kind, LAYERS)
         self.w, self.h = w, h
         self.hz = int(h * horizon_frac)
         self.night = night
-        # where the water meets the sand
-        self.shore_y = int(h * 0.62)
+        # where the water meets the land. The harbour's seawall sits lower so
+        # the masonry reads as a band rather than filling half the frame.
+        self.shore_y = int(h * (0.76 if kind == "harbor" else 0.62))
         # pitch must divide the sky's pan distance (w // 2), not just w
         self.sky_pitch = _divisor_near(w // 2, 12)
         self.wave_period = _divisor_near(w, 48)
@@ -176,21 +192,24 @@ class Scene:
         self.marsh_period = _divisor_near(w, 32)
         # each ripple band's dash+gap total must also divide w
         self.dash_totals = [_divisor_near(w, t) for t in (24, 30, 40, 48)]
+        # harbor furniture
+        self.block_w = _divisor_near(w, 16)      # skyline building width
+        self.post_period = _divisor_near(w, 15)  # seawall rail posts
+        self.joint_period = _divisor_near(w, 12) # masonry vertical joints
 
     # Pan distance per layer over one loop. Sky moves in whole dot pitches;
     # every other layer moves whole scene widths, which is what lets the
     # unique boat and the piling lattice wrap invisibly.
     def pan_for(self, name: str) -> int:
-        mult = {"horizon": 1, "water": 2, "shore": 3, "marsh": 4}
         if name == "sky":
             return self.w // 2
-        return mult[name] * self.w
+        return int(LAYER_SPEED[name]) * self.w
 
     @property
     def loop_frames(self) -> int:
         """Frames per loop: the largest count that keeps every layer's
         per-frame offset a whole number of pixels."""
-        pans = [self.pan_for(n) for n in LAYERS]
+        pans = [self.pan_for(n) for n in self.layers]
         g = pans[0]
         for v in pans[1:]:
             g = math.gcd(g, v)
@@ -199,7 +218,7 @@ class Scene:
 
     def pans(self, f: int) -> dict:
         n = self.loop_frames
-        return {name: self.pan_for(name) * f // n for name in LAYERS}
+        return {name: self.pan_for(name) * f // n for name in self.layers}
 
     def _blank(self) -> list:
         return [["." for _ in range(self.w)] for _ in range(self.h)]
@@ -352,6 +371,110 @@ class Scene:
                     g[y][(x + 1) % self.w] = "K"
         return self._fin(g)
 
+    def skyline(self, pan: int = 0) -> list:
+        """Charleston across the water: a city roofline with church steeples,
+        and a forest of sailboat masts at the waterline.
+
+        This exists because the harbor scene was previously the tideline minus
+        the marsh — same treeline, same single boat — and read as the same
+        place. A steepled skyline and a mast cluster are what actually make a
+        harbour look like a harbour, and both are in Durrell's frames
+        (IMG_2899 for the rigging, IMG_2881/2971/2973 for the rooflines).
+        """
+        g = self._blank()
+        tone = "T" if self.night else "D"
+        lit = "T" if self.night else "C"
+        bw = self.block_w
+        n = max(1, self.w // bw)
+
+        for i in range(n):
+            seed = (i * 2654435761) % 97
+            hgt = 4 + seed % 9
+            x0 = i * bw - pan
+            for dx in range(bw):
+                x = (x0 + dx) % self.w
+                for y in range(self.hz - hgt, self.hz):
+                    if 0 <= y < self.h:
+                        g[y][x] = tone
+            # a couple of lit windows
+            if seed % 3 == 0:
+                for wy in range(self.hz - hgt + 2, self.hz - 1, 3):
+                    wx = (x0 + 2 + seed % 3) % self.w
+                    if 0 <= wy < self.h:
+                        g[wy][wx] = lit
+            # steeples — the Holy City silhouette
+            if seed % 5 == 0:
+                sx = (x0 + bw // 2) % self.w
+                spire = hgt + 9 + seed % 6
+                for y in range(self.hz - spire, self.hz - hgt):
+                    if 0 <= y < self.h:
+                        g[y][sx] = tone
+                        g[y][(sx + 1) % self.w] = tone
+                tip = self.hz - spire
+                for k in range(3):                    # tapering tip
+                    y = tip - 1 - k
+                    if 0 <= y < self.h and k < 2:
+                        g[y][sx] = tone
+                if 0 <= tip - 4 < self.h:              # cross
+                    g[tip - 4][sx] = tone
+                    g[tip - 3][(sx - 1) % self.w] = tone
+                    g[tip - 3][(sx + 1) % self.w] = tone
+
+        # mast forest at anchor, right on the waterline
+        step = max(2, bw // 3)
+        for i in range(self.w // step):
+            seed = (i * 40503) % 89
+            if seed % 3:
+                continue
+            mx = (i * step - pan) % self.w
+            mh = 7 + seed % 11
+            for y in range(self.hz - mh, self.hz):
+                if 0 <= y < self.h:
+                    g[y][mx] = "K"
+            cy = self.hz - mh + 3                      # one short spar
+            if 0 <= cy < self.h:
+                g[cy][(mx + (1 if seed % 2 else -1)) % self.w] = "K"
+        return self._fin(g)
+
+    def seawall(self, pan: int = 0) -> list:
+        """A masonry seawall with a rail on top, in place of the beach. The
+        Battery, not Folly — hard edge, running-bond stonework, no sand."""
+        g = self._blank()
+        top = self.shore_y
+        rail = max(2, top - 8)
+
+        for x in range(self.w):                        # two rail lines
+            g[rail][x] = "K"
+            if rail + 3 < self.h:
+                g[rail + 3][x] = "K"
+        for px in range(0, self.w, self.post_period):   # posts
+            x = (px - pan) % self.w
+            for y in range(rail, top):
+                if 0 <= y < self.h:
+                    g[y][x] = "K"
+
+        for x in range(self.w):                        # wall cap
+            for y in range(top, min(self.h, top + 3)):
+                g[y][x] = "K"
+
+        course = 7
+        for y in range(top + 3, self.h):
+            for x in range(self.w):
+                g[y][x] = "C"
+            if (y - (top + 3)) % course == 0:          # horizontal mortar
+                for x in range(self.w):
+                    g[y][x] = "D"
+
+        rows = (self.h - top - 3) // course + 1
+        for r in range(rows):                          # running-bond joints
+            y0 = top + 3 + r * course
+            offset = (r % 2) * (self.joint_period // 2)
+            for jx in range(0, self.w, self.joint_period):
+                x = (jx + offset - pan) % self.w
+                for y in range(y0 + 1, min(self.h, y0 + course)):
+                    g[y][x] = "D"
+        return self._fin(g)
+
     def marsh(self, pan: int = 0) -> list:
         g = self._blank()
         base = self.h - 1
@@ -388,7 +511,7 @@ class Scene:
 
     def flat(self, pans: dict = None) -> list:
         out = self._blank()
-        for name in LAYERS:
+        for name in self.layers:
             pan = 0 if pans is None else pans.get(name, 0)
             for y, row in enumerate(self.layer(name, pan)):
                 for x, code in enumerate(row):
@@ -412,9 +535,9 @@ STUDIO_SCENES = {
     "tideline-day":   {"kind": "tideline",   "night": False, "layers": LAYERS},
     "tideline-night": {"kind": "tideline",   "night": True,  "layers": LAYERS},
     "open-water":     {"kind": "open-water", "night": False,
-                       "layers": ["sky", "water"]},
+                       "layers": KIND_LAYERS["open-water"]},
     "harbor":         {"kind": "harbor",     "night": False,
-                       "layers": ["sky", "horizon", "water", "shore"]},
+                       "layers": KIND_LAYERS["harbor"]},
 }
 
 

@@ -93,7 +93,7 @@
         "scene": "harbor",
         "parallax": { "on": true, "speed": 1 },
         "sprites": [
-          { "kind": "lamarcy", "pose": "idle", "x": 72, "y": 37.4, "scale": 2, "animate": false, "flip": false, "z": 1 },
+          { "kind": "lamarcy", "pose": "idle", "x": 72, "y": 42.2, "scale": 2, "animate": false, "flip": false, "z": 1 },
           { "kind": "keeper", "pose": "breach", "x": 40, "y": 26, "scale": 2, "animate": false, "flip": false, "z": 2 }
         ],
         "text": {

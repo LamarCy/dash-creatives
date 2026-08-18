@@ -176,7 +176,7 @@
       heart: { on: true, x: 87, y: 87, scale: 3 } } },
     "substack-header": { label: "Substack Header", state: {
       format: "16x9", ramp: "sepia", scene: "harbor", parallax: { on: true, speed: 1 },
-      sprites: [{ kind: "lamarcy", pose: "idle", x: 72, y: 37.4, scale: 2, z: 1 },
+      sprites: [{ kind: "lamarcy", pose: "idle", x: 72, y: 42.2, scale: 2, z: 1 },
                 { kind: "keeper", pose: "breach", x: 40, y: 26, scale: 2, z: 2 }],
       text: {
         title: { v: "LAMARCY", x: 5, y: 12, size: 15, color: 0, ghost: true },

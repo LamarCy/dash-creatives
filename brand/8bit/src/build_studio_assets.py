@@ -26,7 +26,7 @@ import json
 import re
 
 from pixel import EIGHTBIT, RAMPS
-from scene_tideline import STUDIO_FORMATS, STUDIO_SCENES, Scene
+from scene_tideline import LAYER_SPEED, STUDIO_FORMATS, STUDIO_SCENES, Scene
 from sprite_lamarcy import POSES as L_POSES
 from sprite_keeper import BREACH as K_BREACH
 from sprite_keeper import IDLE as K_IDLE
@@ -114,7 +114,7 @@ def build() -> dict:
             for name in RAMPS
         },
         # relative parallax speed per layer, from Scene.pan_for
-        "parallax": {"sky": 0.5, "horizon": 1, "water": 2, "shore": 3, "marsh": 4},
+        "parallax": dict(LAYER_SPEED),
         "formats": {
             k: {"w": v[0], "h": v[1], "out": [v[0] * 4, v[1] * 4]}
             for k, v in STUDIO_FORMATS.items()
