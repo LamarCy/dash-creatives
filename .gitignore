@@ -33,3 +33,7 @@ legacy/index.html
 
 # Extractor scratch output
 tools/index.stripped.html
+
+# Python
+__pycache__/
+*.pyc
