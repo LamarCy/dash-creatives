@@ -168,19 +168,51 @@ WALK = [
     build(dy=-1, lift_r=1),
 ]
 
-# Playing: forearms come up across the body and a few ink ticks fly off. The
-# guitar itself is deliberately absent — six placements across four revisions
-# all read as a lollipop, a padlock or a key at this resolution, and the
-# standalone guitar sprite was rejected too. An honest gesture beats a bad prop.
-_p = [["." for _ in range(GRID)] for _ in range(GRID)]
-_upper(_p)
-stamp(_p, LEGS_X, LEGS_Y, LEGS)
-_shoes(_p, 0, 0, 0, 0)
-stamp(_p, 4, 13, ["KDDK"])
-stamp(_p, 16, 13, ["KDDK"])
-for _t in ((2, 8), (20, 7), (1, 5)):
-    stamp(_p, _t[0], _t[1], ["K"])
-PLAY = beads_to_cell(["".join(r) for r in _p])
+# --- the guitar, playing position ------------------------------------------
+# DEEP TEAL body. That is the whole reason this attempt works where six earlier
+# ones did not: the jacket is tiffany and the tee placket is cream, so a cream
+# guitar merged into the placket and a tiffany one merged into the jacket. Deep
+# teal separates from both, and from the cream pants underneath.
+#
+# It is worn low and across, neck angling up to his left — the same geometry a
+# strap gives you. Nothing here is a lollipop, a padlock or a key.
+GUITAR_BODY = parse_grid(
+    """
+..KKKK..
+.KDDDDK.
+KDDDDDDK
+KDDKDDDK
+KDDDDDDK
+.KDDDDK.
+..KKKK..
+"""
+)
+
+HEADSTOCK = parse_grid(
+    """
+KKKK
+KDTK
+KKKK
+"""
+)
+
+
+def build_play() -> list:
+    g = [["." for _ in range(GRID)] for _ in range(GRID)]
+    _upper(g)
+    stamp(g, LEGS_X, LEGS_Y, LEGS)
+    _shoes(g, 0, 0, 0, 0)
+
+    stamp(g, 9, 12, GUITAR_BODY)              # body at the waist, not the hips
+    for i in range(6):                        # neck, up and to his left
+        stamp(g, 8 - i, 12 - i, ["KDK"])
+    stamp(g, 1, 6, HEADSTOCK)
+    stamp(g, 3, 8, ["KDDK"])                  # fretting hand on the neck
+    stamp(g, 13, 12, ["KDDK"])                # strumming hand over the body
+    return beads_to_cell(["".join(r) for r in g])
+
+
+PLAY = build_play()
 
 POSES = ([("idle", IDLE), ("play", PLAY)]
          + [(f"walk{i}", g) for i, g in enumerate(WALK, start=1)])

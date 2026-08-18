@@ -8,22 +8,37 @@ Illustrator, no subscriptions. Written assuming you have forgotten everything.
 
 ## 1. Run it
 
-**The lazy way.** Double-click `brand/8bit/studio/index.html`. It opens in your
-browser and works — offline, on a plane, anywhere. Everything except one thing:
-your edits to `presets.json` won't load, because browsers refuse to read local
-files over `file://`. The app notices, says so in the status line at the bottom
-right, and falls back to the same five presets compiled in. Fine for making
-posts.
+**Double-click `Open LamarCy Studio.command`.** That is the whole answer. It
+starts the local server, waits for it, and opens the app in your browser. Leave
+the Terminal window it opens alone while you work; close it when you're done.
+If it's already running it just opens the browser again.
 
-**The full way.** From this folder:
+If that file ever stops being double-clickable (macOS does this after some
+copies), run once in Terminal:
+
+```bash
+chmod +x "Open LamarCy Studio.command"
+```
+
+**Without Node.** Open `index.html` directly. Everything works — including all
+four exports — except loading your edits to `presets.json`, because browsers
+refuse to read local files over `file://`. The app notices, says so in the
+status line, and uses the five presets compiled into `ui.js`. The launcher falls
+back to this automatically if it can't find Node.
+
+**From a terminal**, if you prefer:
 
 ```bash
 npm run dev            # -> http://localhost:4173/
 ```
 
-No `npm install`. There are no dependencies — `npm run dev` just runs
-`serve.mjs`, about eighty lines of Node's own http module. Use this whenever
-you want to edit `presets.json` and see it live.
+No `npm install`, ever. There are no dependencies — that command just runs
+`serve.mjs`, about ninety lines of Node's own http module.
+
+**Taking it with you.** The `studio/` folder is self-contained: Anton and Oswald
+live in `studio/fonts/`, and the art is inside `assets.js`. Copy the folder to a
+USB stick or another machine and it renders identically. (It also looks for the
+repo's copy of the fonts as a fallback, so both locations work.)
 
 ## 2. Make a post
 
@@ -52,7 +67,10 @@ Four buttons. What each is for:
 
 - **PNG still** — exact pixel dimensions for the chosen format. Your default.
 - **Animated GIF** — looping, 12fps, good for a quick post. The encoder is
-  written into `export.js`; no library.
+  written into `export.js`; no library. **Expect a big file**: a full parallax
+  loop at 1080px is 130+ frames, which lands around 6MB. That's fine for
+  Substack or a DM, but for a reel use WebM or the frame sequence instead. A
+  faster parallax speed means fewer frames and a smaller GIF.
 - **WebM video** — via `MediaRecorder`.
 - **Frames .zip** — every frame as a numbered PNG. Drop the folder straight
   into Premiere as an image sequence.
@@ -237,7 +255,9 @@ studio/
   serve.mjs       dev server for `npm run dev`
   tests/          GIF encoder round-trip
   ui/             the LamarCy heart logo (real artwork, never pixelated)
+  fonts/          Anton + Oswald, so the folder is portable
   samples/        one render per preset, for the contact sheet
+  Open LamarCy Studio.command    double-click this
 ```
 
 `LC-8BIT · STUDIO · REC 2026 · CHS→ATL`

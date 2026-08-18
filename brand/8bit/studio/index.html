@@ -20,8 +20,13 @@
   compiled in, and says so in the status line.
 -->
 <style>
-  @font-face { font-family: Anton;  src: url("../../../web/public/gateway/Anton.ttf");  font-display: block; }
-  @font-face { font-family: Oswald; src: url("../../../web/public/gateway/Oswald.ttf"); font-display: block; }
+  /* Fonts live INSIDE this folder so the whole studio/ directory is portable —
+     copy it to a USB stick or another machine and it still renders correctly.
+     The repo copy is listed second as a fallback. */
+  @font-face { font-family: Anton;  font-display: block;
+    src: url("fonts/Anton.ttf"),  url("../../../web/public/gateway/Anton.ttf"); }
+  @font-face { font-family: Oswald; font-display: block;
+    src: url("fonts/Oswald.ttf"), url("../../../web/public/gateway/Oswald.ttf"); }
 
   :root {
     --ink:#141412; --deep:#067A76; --tiff:#09B1AB; --cream:#F7F3E8; --sepia:#E3DECB;

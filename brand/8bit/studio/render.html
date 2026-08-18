@@ -14,6 +14,12 @@
   --force-device-scale-factor=1 is byte-for-byte the canvas.
 -->
 <style>
+  /* same self-contained fonts as index.html, so a batch render on another
+     machine does not silently fall back to Impact/Arial */
+  @font-face { font-family: Anton;  font-display: block;
+    src: url("fonts/Anton.ttf"),  url("../../../web/public/gateway/Anton.ttf"); }
+  @font-face { font-family: Oswald; font-display: block;
+    src: url("fonts/Oswald.ttf"), url("../../../web/public/gateway/Oswald.ttf"); }
   html, body { margin: 0; padding: 0; background: #000; overflow: hidden; }
   canvas { display: block; image-rendering: pixelated; }
 </style>
