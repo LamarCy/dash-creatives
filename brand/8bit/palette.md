@@ -12,8 +12,8 @@ exclusively with nearest-neighbor.
 | --- | --- | --- |
 | Ink | darkest — outlines, type, hats, shadows | `#141412` |
 | Deep teal | dark mid — skin, water shade, form shading | `#067A76` |
-| Tiffany | light mid — the signature accent, sky, guitar body | `#09B1AB` |
-| Cream | lightest — paper field, shirts, highlights | `#F7F3E8` |
+| Tiffany | light mid — the signature accent, denim jacket, sky, guitar body | `#09B1AB` |
+| Cream | lightest — paper field, tees, white jeans, highlights | `#F7F3E8` |
 
 Deep teal is derived from Tiffany (same hue family, dropped value) so the
 ramp reads as one material — like a Game Boy screen made of Tiffany glass.
