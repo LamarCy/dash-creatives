@@ -1,0 +1,12 @@
+{
+  "name": "lamarcy-world-studio",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Composes the LamarCy 8-bit world into reel-ready posts. No dependencies, ever.",
+  "scripts": {
+    "dev": "node serve.mjs",
+    "generate": "node generate.mjs",
+    "test": "node tests/test_lzw.mjs && node tests/test_gif.mjs && python3 tests/verify_gif.py"
+  }
+}

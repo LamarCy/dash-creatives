@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>LamarCy Studio — headless renderer</title>
+<!--
+  The page generate.mjs drives. It is the SAME engine.js the app uses, so a
+  batch render and the on-screen preview cannot drift apart.
+
+  Usage:  render.html?state=<base64url of the state JSON>[&frame=N]
+
+  The body is stripped to a single canvas at 1:1 CSS pixels with no margin, so
+  a headless Chrome screenshot at --window-size=W,H and
+  --force-device-scale-factor=1 is byte-for-byte the canvas.
+-->
+<style>
+  html, body { margin: 0; padding: 0; background: #000; overflow: hidden; }
+  canvas { display: block; image-rendering: pixelated; }
+</style>
+</head>
+<body>
+<canvas id="cv"></canvas>
+<script src="assets.js"></script>
+<script src="engine.js"></script>
+<script>
+(async function () {
+  const params = new URLSearchParams(location.search);
+  const cv = document.getElementById("cv");
+
+  function b64urlToText(s) {
+    const b64 = s.replace(/-/g, "+").replace(/_/g, "/");
+    const bin = atob(b64 + "=".repeat((4 - (b64.length % 4)) % 4));
+    return new TextDecoder().decode(Uint8Array.from(bin, (c) => c.charCodeAt(0)));
+  }
+
+  let state;
+  try {
+    state = JSON.parse(b64urlToText(params.get("state") || ""));
+  } catch (e) {
+    document.title = "ERROR: bad state — " + e.message;
+    window.__LC_ERROR = String(e);
+    return;
+  }
+
+  // Anton/Oswald must be resident before the first paint: the engine's
+  // quantise pass would otherwise bake a fallback typeface into the output.
+  if (document.fonts) {
+    try { await document.fonts.load("16px Anton"); } catch (e) {}
+    try { await document.fonts.load("16px Oswald"); } catch (e) {}
+    try { await document.fonts.ready; } catch (e) {}
+  }
+
+  const frame = parseInt(params.get("frame") || "0", 10) || 0;
+  globalThis.LCEngine.renderTo(cv, state, frame);
+
+  // 1:1 CSS pixels so a viewport screenshot equals the canvas exactly
+  cv.style.width = cv.width + "px";
+  cv.style.height = cv.height + "px";
+
+  document.title = `READY ${cv.width}x${cv.height}`;
+  window.__LC_READY = true;
+  window.__LC_PNG = () => cv.toDataURL("image/png");
+})();
+</script>
+</body>
+</html>

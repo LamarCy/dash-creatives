@@ -136,6 +136,32 @@ of the four folders. Loop is asserted pixel-identical at the wrap.</p>
     <p class="cap">Slots for pedal time/feedback/mix, amp, and Game Boy volume</p></div>
 </div>
 
+<h2>Phase 2 &middot; The LamarCy World Studio</h2>
+<p class="lede">Vanilla HTML/CSS/JS + canvas &middot; no framework, no build step, no dependencies &middot; works offline from file://</p>
+<div class="row">
+  <div class="cell"><img src="studio/samples/studio-app.png" width="1100" alt="the Studio app">
+    <p class="cap">studio/index.html &mdash; canvas preview left, controls right</p></div>
+</div>
+<p class="lede" style="margin-top:22px">The five shipped presets, rendered by the batch CLI</p>
+<div class="row">
+  <div class="cell"><img src="studio/samples/title-9x16.png" width="216" alt="GBB title card">
+    <p class="cap">GBB Title Card &middot; 9:16</p></div>
+  <div class="cell"><img src="studio/samples/lyric-9x16.png" width="216" alt="lyric card">
+    <p class="cap">Lyric Card &middot; 9:16 night</p></div>
+  <div class="cell"><img src="studio/samples/release-1x1.png" width="240" alt="release announcement">
+    <p class="cap">Release Announcement &middot; 1:1</p></div>
+</div>
+<div class="row">
+  <div class="cell"><img src="studio/samples/substack-16x9.png" width="540" alt="substack header">
+    <p class="cap">Substack Header &middot; 16:9 sepia ramp</p></div>
+</div>
+<p class="cap" style="margin-top:14px">
+  Enforced automatically: integer scaling and nearest-neighbour only &middot;
+  exactly four ramp values (verified across all 36 format&times;ramp&times;scene
+  combinations) &middot; one heart per layout &middot; Anton/Oswald/mono only &middot;
+  no gradients, glow or blur. Batch: <code>node brand/8bit/studio/generate.mjs --jobs=episodes.json</code>
+</p>
+
 <div class="stamp">
   <span class="mono">LC-8BIT · CONTACT SHEET · REC 2026 · CHS&rarr;ATL</span>
   <img class="heart" src="sprites/heart@8x.png" alt="heart mark">

@@ -1,0 +1,156 @@
+"""
+Phase 2 — generate brand/8bit/studio/assets.js from the Phase 1 art.
+
+WHY THE ASSETS ARE GRIDS, NOT PNGs. The Studio has to run by double-clicking
+index.html. If it loaded sprites as <img src="...png"> from file://, Chrome
+would treat the canvas as tainted and every export (toBlob, getImageData,
+captureStream) would throw a SecurityError. Base64 data URIs would dodge that
+but cost a lot of bytes. So instead each sprite and scene layer ships as an
+indexed pixel grid — the same ".KDTC" codes the Python authored — run-length
+encoded with identical rows deduplicated.
+
+That buys three things at once:
+  * no tainted canvas, so exports work straight from file://
+  * the Node CLI (generate.mjs) decodes the exact same data with no PNG
+    decoder and no dependencies
+  * the ramp is applied at draw time, so switching teal/sepia cannot
+    introduce a fifth colour — the grid only knows four codes
+
+Run:  python3 brand/8bit/src/build_studio_assets.py
+Out:  brand/8bit/studio/assets.js
+"""
+
+from __future__ import annotations
+
+import json
+import re
+
+from pixel import EIGHTBIT, RAMPS
+from scene_tideline import STUDIO_FORMATS, STUDIO_SCENES, Scene
+from sprite_keeper import BREACH as K_BREACH
+from sprite_keeper import IDLE as K_IDLE
+from sprite_keeper import SWIM as K_SWIM
+from sprite_lamarcy import IDLE as L_IDLE
+from sprite_lamarcy_play import play_pose
+from sprite_lamarcy_walk import FRAMES as WALK_KEYS
+from sprite_lamarcy_walk import build_frame as build_walk
+from pixel import HEART
+
+CODES = ".KDTC"
+
+
+def rle(row: str) -> str:
+    """'CCCTT' -> '3C2T'. Always emits the count so the decoder is one regex."""
+    out = []
+    for m in re.finditer(r"(.)\1*", row):
+        out.append(f"{len(m.group(0))}{m.group(1)}")
+    return "".join(out)
+
+
+def pack(grid: list) -> dict:
+    """Grid of code strings -> {w, h, table of unique RLE rows, row indices}."""
+    table: list = []
+    index: dict = {}
+    rows = []
+    for row in grid:
+        enc = rle(row)
+        if enc not in index:
+            index[enc] = len(table)
+            table.append(enc)
+        rows.append(index[enc])
+    return {"w": len(grid[0]), "h": len(grid), "t": table, "r": rows}
+
+
+def outline(grid: list) -> list:
+    """Add a 1px ink border around a shape.
+
+    The Studio can drop the heart on any of the four values, and a bare
+    tiffany heart on tiffany water is invisible — that is exactly what the
+    first render did. An ink outline makes it read on cream, tiffany, deep
+    teal and ink alike.
+    """
+    h, w = len(grid), len(grid[0])
+    pad = ["." * (w + 2)] + ["." + r + "." for r in grid] + ["." * (w + 2)]
+    out = [list(r) for r in pad]
+    for y in range(len(pad)):
+        for x in range(len(pad[0])):
+            if pad[y][x] != ".":
+                continue
+            near = any(
+                0 <= y + dy < len(pad) and 0 <= x + dx < len(pad[0])
+                and pad[y + dy][x + dx] not in ".K"
+                for dy in (-1, 0, 1) for dx in (-1, 0, 1)
+            )
+            if near:
+                out[y][x] = "K"
+    return ["".join(r) for r in out]
+
+
+def build() -> dict:
+    sprites = {
+        "lamarcy": {
+            "idle": pack(L_IDLE.strip("\n").splitlines()),
+            "play": pack(play_pose()),
+        },
+        "keeper": {
+            "idle": pack(K_IDLE),
+            "breach": pack(K_BREACH),
+        },
+        "heart": pack(outline(HEART)),
+    }
+    for i, key in enumerate(WALK_KEYS, start=1):
+        sprites["lamarcy"][f"walk{i}"] = pack(build_walk(key))
+    for i, g in enumerate(K_SWIM, start=1):
+        sprites["keeper"][f"swim{i}"] = pack(g)
+
+    scenes = {}
+    for sname, cfg in STUDIO_SCENES.items():
+        scenes[sname] = {}
+        for fname, (w, h, hf) in STUDIO_FORMATS.items():
+            sc = Scene(w, h, hf, cfg["night"], cfg["kind"])
+            entry = {"w": w, "h": h, "hz": sc.hz, "deck": sc.deck_y, "layers": {}}
+            for layer in cfg["layers"]:
+                entry["layers"][layer] = pack(sc.layer(layer))
+            scenes[sname][fname] = entry
+
+    return {
+        "codes": CODES,
+        # ramp arrays are ordered darkest -> lightest, matching palette.md
+        "ramps": {
+            name: ["#%02X%02X%02X" % RAMPS[name][c][:3] for c in "KDTC"]
+            for name in RAMPS
+        },
+        # relative parallax speed per layer, from Scene.pan_for
+        "parallax": {"sky": 0.5, "horizon": 1, "water": 2, "pier": 3, "marsh": 4},
+        "formats": {
+            k: {"w": v[0], "h": v[1], "out": [v[0] * 4, v[1] * 4]}
+            for k, v in STUDIO_FORMATS.items()
+        },
+        "sceneLayers": {k: v["layers"] for k, v in STUDIO_SCENES.items()},
+        "sprites": sprites,
+        "scenes": scenes,
+    }
+
+
+def main() -> None:
+    data = build()
+    out = EIGHTBIT / "studio" / "assets.js"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    body = json.dumps(data, separators=(",", ":"))
+    out.write_text(
+        "// GENERATED by brand/8bit/src/build_studio_assets.py — do not hand-edit.\n"
+        "// Re-run that script after changing any sprite or scene.\n"
+        "// Assigns a global so the same file works via <script src> in the\n"
+        "// browser and `await import()` in Node.\n"
+        f"globalThis.LC_ASSETS = {body};\n"
+    )
+    kb = out.stat().st_size / 1024
+    n_layers = sum(len(f["layers"]) for s in data["scenes"].values() for f in s.values())
+    print(f"wrote studio/assets.js  {kb:.0f}KB — "
+          f"{len(data['sprites']['lamarcy']) + len(data['sprites']['keeper']) + 1} sprites, "
+          f"{n_layers} scene layers across "
+          f"{len(data['scenes'])} scenes x {len(data['formats'])} formats")
+
+
+if __name__ == "__main__":
+    main()

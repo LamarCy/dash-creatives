@@ -155,7 +155,12 @@ BOAT = boat_cells()
 class Scene:
     """Draws one tideline layer set at a given pan offset."""
 
-    def __init__(self, w: int, h: int, horizon_frac: float, night: bool):
+    def __init__(self, w: int, h: int, horizon_frac: float, night: bool,
+                 kind: str = "tideline"):
+        # kind picks which furniture the horizon layer carries. The Studio's
+        # scene menu needs "open water" (bare horizon) and "harbor" (boat and
+        # pier, no marsh) alongside the full tideline.
+        self.kind = kind
         self.w, self.h = w, h
         self.hz = int(h * horizon_frac)
         self.night = night
@@ -225,6 +230,8 @@ class Scene:
 
     def horizon(self, pan: int = 0) -> list:
         g = self._blank()
+        if self.kind == "open-water":
+            return self._fin(g)          # open water: no treeline, no boat
         tone = "T" if self.night else "D"
         for x in range(self.w):
             hx = treeline_h((x + pan) % self.w, self.w)
@@ -352,6 +359,24 @@ class Scene:
 
 
 FORMATS = {"16x9": (480, 270, 0.46), "9x16": (270, 480, 0.40)}
+
+# What the Studio ships. All three give an exact 4x from native to export
+# pixels (270->1080, 480->1920), which is why the app can promise integer
+# scaling with no interpolation anywhere.
+STUDIO_FORMATS = {
+    "9x16": (270, 480, 0.40),
+    "1x1": (270, 270, 0.44),
+    "16x9": (480, 270, 0.46),
+}
+
+STUDIO_SCENES = {
+    "tideline-day":   {"kind": "tideline",   "night": False, "layers": LAYERS},
+    "tideline-night": {"kind": "tideline",   "night": True,  "layers": LAYERS},
+    "open-water":     {"kind": "open-water", "night": False,
+                       "layers": ["sky", "water"]},
+    "harbor":         {"kind": "harbor",     "night": False,
+                       "layers": ["sky", "horizon", "water", "pier"]},
+}
 
 
 def main() -> None:

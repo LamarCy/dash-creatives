@@ -1,0 +1,8 @@
+[
+  { "preset": "gbb-title", "text": "GAME BOY BLUES\\n01", "subtitle": "EPISODE 01", "out": "exports/gbb-01.png" },
+  { "preset": "gbb-title", "text": "GAME BOY BLUES\\n02", "subtitle": "EPISODE 02", "out": "exports/gbb-02.png" },
+  { "preset": "gbb-title", "text": "GAME BOY BLUES\\n03", "subtitle": "EPISODE 03", "out": "exports/gbb-03.png" },
+  { "preset": "gbb-title", "text": "GAME BOY BLUES\\n04", "subtitle": "EPISODE 04", "scene": "tideline-night", "out": "exports/gbb-04.png" },
+  { "preset": "gbb-title", "text": "GAME BOY BLUES\\n05", "subtitle": "EPISODE 05", "scene": "harbor", "out": "exports/gbb-05.png" },
+  { "preset": "gbb-title", "text": "GAME BOY BLUES\\n06", "subtitle": "EPISODE 06", "ramp": "sepia", "out": "exports/gbb-06.png" }
+]

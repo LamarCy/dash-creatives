@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LamarCy World Studio</title>
+<!--
+  Phase 2 — the LamarCy World Studio.
+
+  Vanilla HTML/CSS/JS with a <canvas>. No framework, no build step, no
+  dependencies. Open this file directly (double-click) or serve it with
+  `npm run dev`. It works offline and should still open in five years.
+
+  Why it works from file:// — the sprites and scenes are indexed pixel grids
+  inside assets.js, not <img> files. Loading images from file:// would taint
+  the canvas and every export would throw a SecurityError.
+
+  The only thing that needs the dev server is presets.json, because browsers
+  block fetch() on file://. Without it the app falls back to the same presets
+  compiled in, and says so in the status line.
+-->
+<style>
+  @font-face { font-family: Anton;  src: url("../../../web/public/gateway/Anton.ttf");  font-display: block; }
+  @font-face { font-family: Oswald; src: url("../../../web/public/gateway/Oswald.ttf"); font-display: block; }
+
+  :root {
+    --ink:#141412; --deep:#067A76; --tiff:#09B1AB; --cream:#F7F3E8; --sepia:#E3DECB;
+    --line:3px solid var(--ink);
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body {
+    background: var(--sepia); color: var(--ink);
+    font-family: Oswald, system-ui, sans-serif;
+    display: grid; grid-template-columns: minmax(0,1fr) 430px;
+    height: 100vh; overflow: hidden;
+  }
+
+  /* ---- preview ---- */
+  #stage {
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px; overflow: hidden; position: relative;
+    background-image: radial-gradient(#cdc7b2 2px, transparent 2.5px);
+    background-size: 18px 18px;
+  }
+  #wrap { border: 6px solid var(--ink); box-shadow: 14px 14px 0 var(--ink); background: var(--cream); }
+  canvas { display: block; image-rendering: pixelated; max-width: 100%; }
+  #badge {
+    position: absolute; left: 24px; top: 18px;
+    font-family: ui-monospace, Menlo, monospace; font-size: 12px;
+    background: var(--ink); color: var(--cream); padding: 4px 9px;
+  }
+
+  /* ---- panel ---- */
+  #panel { background: var(--cream); border-left: var(--line); overflow-y: auto; padding: 0 0 40px; }
+  header { background: var(--ink); color: var(--cream); padding: 14px 16px; position: sticky; top: 0; z-index: 5; }
+  header h1 { font-family: Anton, sans-serif; font-size: 25px; letter-spacing: .02em; text-transform: uppercase; }
+  header p { font-size: 11px; letter-spacing: .16em; color: var(--tiff); text-transform: uppercase; margin-top: 2px; }
+
+  fieldset { border: 0; border-top: var(--line); padding: 13px 16px; }
+  legend { display: none; }
+  .grp { font-family: Anton, sans-serif; font-size: 15px; text-transform: uppercase;
+         letter-spacing: .06em; margin-bottom: 9px; }
+  label { display: block; font-size: 11px; letter-spacing: .13em; text-transform: uppercase;
+          color: #4a4a44; margin: 8px 0 3px; }
+  .row { display: flex; gap: 7px; flex-wrap: wrap; align-items: center; }
+  .row.tight { gap: 4px; }
+
+  button, select, input[type=text] {
+    font-family: Oswald, sans-serif; font-size: 12px; letter-spacing: .07em;
+    text-transform: uppercase; background: var(--cream); color: var(--ink);
+    border: var(--line); padding: 6px 9px; cursor: pointer;
+  }
+  input[type=text] { text-transform: none; letter-spacing: 0; cursor: text; width: 100%; }
+  button:hover { background: var(--tiff); }
+  button[aria-pressed=true], .seg button[aria-pressed=true] { background: var(--ink); color: var(--cream); }
+  button.warn:hover { background: var(--tiff); }
+  select { width: 100%; }
+  input[type=range] { width: 100%; accent-color: var(--deep); }
+  input[type=number] { width: 62px; font-family: ui-monospace, Menlo, monospace; font-size: 12px;
+                       border: var(--line); padding: 4px 5px; background: var(--cream); }
+  textarea { width: 100%; font-family: Oswald, sans-serif; font-size: 13px; border: var(--line);
+             padding: 6px; background: var(--cream); resize: vertical; min-height: 48px; }
+
+  .seg { display: flex; }
+  .seg button { flex: 1; border-right-width: 0; }
+  .seg button:last-child { border-right-width: 3px; }
+
+  /* ramp swatches — the ONLY way to pick a colour. No colour picker anywhere. */
+  .swatches { display: flex; gap: 5px; }
+  .sw { width: 30px; height: 24px; border: var(--line); cursor: pointer; padding: 0; }
+  .sw[aria-pressed=true] { outline: 3px solid var(--tiff); outline-offset: 2px; }
+
+  .sprite { border: var(--line); padding: 9px; margin-bottom: 8px; background: #fff; }
+  .sprite .hd { display: flex; justify-content: space-between; align-items: center; gap: 6px; }
+  .sprite .hd b { font-family: Anton, sans-serif; font-size: 13px; text-transform: uppercase; }
+  .sprite .hd button { padding: 3px 7px; font-size: 11px; }
+  .mini { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 9px; }
+
+  #status { font-family: ui-monospace, Menlo, monospace; font-size: 11px; line-height: 1.5;
+            padding: 10px 16px; border-top: var(--line); color: #4a4a44; }
+  #status b { color: var(--ink); }
+  .note { font-size: 11px; color: #4a4a44; letter-spacing: .04em; line-height: 1.45; margin-top: 6px; }
+  .bad { color: #A3202A; }
+</style>
+</head>
+<body>
+
+<main id="stage">
+  <div id="badge">—</div>
+  <div id="wrap"><canvas id="cv" width="1080" height="1920"></canvas></div>
+</main>
+
+<aside id="panel">
+  <header>
+    <h1>LamarCy World Studio</h1>
+    <p>Original IP &middot; four values &middot; hard pixels</p>
+  </header>
+
+  <fieldset>
+    <div class="grp">Preset</div>
+    <select id="preset"></select>
+    <div class="row" style="margin-top:8px">
+      <button id="load">Load preset</button>
+      <button id="rand">Randomize</button>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <div class="grp">Format</div>
+    <div class="seg" id="format"></div>
+    <div class="grp" style="margin-top:14px">Palette</div>
+    <div class="seg" id="ramp"></div>
+    <div class="grp" style="margin-top:14px">Scene</div>
+    <select id="scene"></select>
+  </fieldset>
+
+  <fieldset>
+    <div class="grp">Parallax</div>
+    <div class="row">
+      <button id="parOn" aria-pressed="false">Motion</button>
+      <button id="play" aria-pressed="false">Preview &#9654;</button>
+    </div>
+    <label>Speed <span id="parSpeedV" class="mono"></span></label>
+    <input type="range" id="parSpeed" min="0.25" max="4" step="0.25" value="1">
+    <div id="offsets"></div>
+  </fieldset>
+
+  <fieldset>
+    <div class="grp">Sprites</div>
+    <div class="row">
+      <button id="addL">+ LamarCy</button>
+      <button id="addK">+ Keeper</button>
+    </div>
+    <div id="sprites" style="margin-top:9px"></div>
+  </fieldset>
+
+  <fieldset>
+    <div class="grp">Text</div>
+    <div id="text"></div>
+  </fieldset>
+
+  <fieldset>
+    <div class="grp">Texture</div>
+    <div class="row"><button id="texOn" aria-pressed="false">Halftone dots</button></div>
+    <label>Density <span id="texDenV"></span></label>
+    <input type="range" id="texDen" min="0.05" max="1" step="0.05" value="0.35">
+    <label>Dot pitch <span id="texPitchV"></span></label>
+    <input type="range" id="texPitch" min="6" max="48" step="2" value="16">
+    <p class="note">Density varies dot <em>size</em>, not opacity &mdash; alpha would
+      blend a fifth colour and break the four-value rule.</p>
+  </fieldset>
+
+  <fieldset>
+    <div class="grp">Frame</div>
+    <div class="row">
+      <button id="brdOn" aria-pressed="false">Ink border</button>
+      <button id="shdOn" aria-pressed="false">Offset shadow</button>
+    </div>
+    <label>Thickness <span id="brdV"></span></label>
+    <input type="range" id="brd" min="0" max="48" step="2" value="18">
+    <div class="grp" style="margin-top:14px">Heart mark</div>
+    <div class="row"><button id="heartOn" aria-pressed="false">One heart</button></div>
+    <p class="note" id="heartNote">Exactly one per composition. The app refuses a second.</p>
+  </fieldset>
+
+  <fieldset>
+    <div class="grp">Export</div>
+    <div class="row">
+      <button id="ePng">PNG still</button>
+      <button id="eGif">Animated GIF</button>
+    </div>
+    <div class="row" style="margin-top:6px">
+      <button id="eWebm">WebM video</button>
+      <button id="eZip">Frames .zip</button>
+    </div>
+    <p class="note">MediaRecorder gives WebM in Chromium; MP4 support varies.
+      Convert with the ffmpeg line in README.md. If a browser export ever
+      misbehaves, use Frames .zip &mdash; that path is bulletproof.</p>
+  </fieldset>
+
+  <div id="status">booting&hellip;</div>
+</aside>
+
+<script src="assets.js"></script>
+<script src="engine.js"></script>
+<script src="export.js"></script>
+<script src="ui.js"></script>
+</body>
+</html>

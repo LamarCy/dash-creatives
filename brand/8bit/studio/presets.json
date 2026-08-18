@@ -1,0 +1,127 @@
+{
+  "_readme": [
+    "Presets for the LamarCy World Studio. Edit this file to add your own —",
+    "no code changes needed. Each preset is a partial state merged over the",
+    "app's defaults, so you only list what differs.",
+    "",
+    "POSITIONS AND SIZES ARE PERCENTAGES of the canvas (0-100), not pixels,",
+    "so a preset built in 9:16 still lands sensibly in 1:1 and 16:9.",
+    "text.size is a percentage of canvas HEIGHT.",
+    "",
+    "text.color / texture.value are INDEXES into the active ramp:",
+    "  0 = ink, 1 = deep teal, 2 = tiffany, 3 = cream (or harbor sepia).",
+    "There is no free colour field anywhere — that is deliberate.",
+    "",
+    "sprites[].kind is 'lamarcy' or 'keeper'.",
+    "  lamarcy poses: idle, walk, play      keeper poses: idle, swim, breach",
+    "  'walk' and 'swim' animate when animate:true; the others hold still.",
+    "  scale must be a whole number 1-8. z sets layer order, low draws first.",
+    "",
+    "Only ONE heart per composition. The app refuses to add a second."
+  ],
+
+  "presets": {
+    "gbb-title": {
+      "label": "GBB Title Card",
+      "state": {
+        "format": "9x16",
+        "ramp": "teal",
+        "scene": "tideline-day",
+        "parallax": { "on": true, "speed": 1 },
+        "sprites": [
+          { "kind": "lamarcy", "pose": "walk", "x": 12, "y": 47.5, "scale": 2, "animate": true, "flip": false, "z": 1 }
+        ],
+        "text": {
+          "title": { "v": "GAME BOY\nBLUES", "x": 7, "y": 6, "size": 9, "color": 0, "ghost": true },
+          "subtitle": { "v": "EPISODE 01", "x": 7, "y": 24, "size": 3.4, "color": 1 },
+          "stamp": { "v": "", "x": 7, "y": 92, "size": 2.1, "color": 0 }
+        },
+        "texture": { "on": true, "density": 0.3, "pitch": 18, "value": 1 },
+        "frameStyle": { "border": true, "thickness": 18, "shadow": false },
+        "heart": { "on": true, "x": 86, "y": 91, "scale": 3 }
+      }
+    },
+
+    "lyric-card": {
+      "label": "Lyric Card",
+      "state": {
+        "format": "9x16",
+        "ramp": "teal",
+        "scene": "tideline-night",
+        "parallax": { "on": true, "speed": 0.5 },
+        "sprites": [
+          { "kind": "keeper", "pose": "breach", "x": 46, "y": 36, "scale": 3, "animate": false, "flip": false, "z": 1 }
+        ],
+        "text": {
+          "title": { "v": "I BET IT'S\nDOLPHINS\nWHO KNOW", "x": 7, "y": 8, "size": 8.4, "color": 3, "ghost": true },
+          "subtitle": { "v": "LOWCOUNTRY BEACH", "x": 7, "y": 86, "size": 3, "color": 2 },
+          "stamp": { "v": "LC-001", "x": 7, "y": 92, "size": 2.1, "color": 3 }
+        },
+        "texture": { "on": false, "density": 0.3, "pitch": 18, "value": 1 },
+        "frameStyle": { "border": true, "thickness": 18, "shadow": false },
+        "heart": { "on": true, "x": 86, "y": 91, "scale": 3 }
+      }
+    },
+
+    "release": {
+      "label": "Release Announcement",
+      "state": {
+        "format": "1x1",
+        "ramp": "teal",
+        "scene": "blank-cream",
+        "parallax": { "on": false, "speed": 1 },
+        "sprites": [
+          { "kind": "keeper", "pose": "breach", "x": 56, "y": 52, "scale": 2, "animate": false, "flip": false, "z": 1 }
+        ],
+        "text": {
+          "title": { "v": "CHA'ANNOLOG", "x": 7, "y": 22, "size": 12, "color": 0, "ghost": true },
+          "subtitle": { "v": "LAMARCY RECORDING CO.", "x": 7, "y": 12, "size": 3.2, "color": 0 },
+          "stamp": { "v": "LC-001 - REC 2026 - CHS>ATL", "x": 7, "y": 86, "size": 2.6, "color": 0 }
+        },
+        "texture": { "on": true, "density": 0.34, "pitch": 16, "value": 1 },
+        "frameStyle": { "border": true, "thickness": 22, "shadow": true },
+        "heart": { "on": true, "x": 87, "y": 87, "scale": 3 }
+      }
+    },
+
+    "substack-header": {
+      "label": "Substack Header",
+      "state": {
+        "format": "16x9",
+        "ramp": "sepia",
+        "scene": "harbor",
+        "parallax": { "on": true, "speed": 1 },
+        "sprites": [
+          { "kind": "lamarcy", "pose": "idle", "x": 68, "y": 33.3, "scale": 2, "animate": false, "flip": true, "z": 1 }
+        ],
+        "text": {
+          "title": { "v": "LAMARCY", "x": 5, "y": 12, "size": 15, "color": 0, "ghost": true },
+          "subtitle": { "v": "GAME BOY BLUES - 90s HARDWARE, VINTAGE GEAR", "x": 5, "y": 40, "size": 3.6, "color": 1 },
+          "stamp": { "v": "CHS>ATL", "x": 5, "y": 86, "size": 3, "color": 0 }
+        },
+        "texture": { "on": true, "density": 0.26, "pitch": 20, "value": 1 },
+        "frameStyle": { "border": true, "thickness": 14, "shadow": false },
+        "heart": { "on": true, "x": 90, "y": 82, "scale": 3 }
+      }
+    },
+
+    "blank": {
+      "label": "Blank",
+      "state": {
+        "format": "9x16",
+        "ramp": "teal",
+        "scene": "blank-cream",
+        "parallax": { "on": false, "speed": 1 },
+        "sprites": [],
+        "text": {
+          "title": { "v": "", "x": 7, "y": 8, "size": 9, "color": 0, "ghost": false },
+          "subtitle": { "v": "", "x": 7, "y": 26, "size": 3.4, "color": 1 },
+          "stamp": { "v": "", "x": 7, "y": 92, "size": 2.1, "color": 0 }
+        },
+        "texture": { "on": false, "density": 0.35, "pitch": 16, "value": 1 },
+        "frameStyle": { "border": false, "thickness": 18, "shadow": false },
+        "heart": { "on": false, "x": 86, "y": 91, "scale": 3 }
+      }
+    }
+  }
+}
