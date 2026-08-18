@@ -155,16 +155,17 @@
   }
 
   // ---- sprites --------------------------------------------------------
-  // The Keeper is the only character in the world. The human figure was cut,
-  // so there is a single animated cycle rather than one per kind.
+  const WALK = ["walk1", "walk2", "walk3", "walk4"];
   const SWIM = ["swim1", "swim2", "swim3", "swim4"];
 
   function poseFor(sp, frame) {
     if (!sp.animate) return sp.pose;
-    if (sp.pose !== "swim" && !SWIM.includes(sp.pose)) {
-      return sp.pose;            // idle and breach hold still
+    const cycle = sp.kind === "lamarcy" ? WALK : SWIM;
+    const animatable = sp.kind === "lamarcy" ? "walk" : "swim";
+    if (sp.pose !== animatable && !cycle.includes(sp.pose)) {
+      return sp.pose;            // idle, play and breach hold still
     }
-    return SWIM[Math.floor(frame / 3) % 4];
+    return cycle[Math.floor(frame / 3) % 4];
   }
 
   // Positions are stored as PERCENTAGES of the canvas, not pixels, so a

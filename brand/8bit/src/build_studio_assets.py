@@ -27,6 +27,7 @@ import re
 
 from pixel import EIGHTBIT, RAMPS
 from scene_tideline import STUDIO_FORMATS, STUDIO_SCENES, Scene
+from sprite_lamarcy import POSES as L_POSES
 from sprite_keeper import BREACH as K_BREACH
 from sprite_keeper import IDLE as K_IDLE
 from sprite_keeper import SWIM as K_SWIM
@@ -83,8 +84,9 @@ def outline(grid: list) -> list:
 
 
 def build() -> dict:
-    # The Keeper is the world's only character since revision 3.
     sprites = {
+        # the figure, revision 4: authored on a 24x24 bead grid, doubled here
+        "lamarcy": {name: pack(grid) for name, grid in L_POSES},
         "keeper": {
             "idle": pack(K_IDLE),
             "breach": pack(K_BREACH),
@@ -99,7 +101,7 @@ def build() -> dict:
         scenes[sname] = {}
         for fname, (w, h, hf) in STUDIO_FORMATS.items():
             sc = Scene(w, h, hf, cfg["night"], cfg["kind"])
-            entry = {"w": w, "h": h, "hz": sc.hz, "deck": sc.deck_y, "layers": {}}
+            entry = {"w": w, "h": h, "hz": sc.hz, "shore": sc.shore_y, "layers": {}}
             for layer in cfg["layers"]:
                 entry["layers"][layer] = pack(sc.layer(layer))
             scenes[sname][fname] = entry
@@ -112,7 +114,7 @@ def build() -> dict:
             for name in RAMPS
         },
         # relative parallax speed per layer, from Scene.pan_for
-        "parallax": {"sky": 0.5, "horizon": 1, "water": 2, "pier": 3, "marsh": 4},
+        "parallax": {"sky": 0.5, "horizon": 1, "water": 2, "shore": 3, "marsh": 4},
         "formats": {
             k: {"w": v[0], "h": v[1], "out": [v[0] * 4, v[1] * 4]}
             for k, v in STUDIO_FORMATS.items()
@@ -138,7 +140,7 @@ def main() -> None:
     kb = out.stat().st_size / 1024
     n_layers = sum(len(f["layers"]) for s in data["scenes"].values() for f in s.values())
     print(f"wrote studio/assets.js  {kb:.0f}KB — "
-          f"{len(data['sprites']['keeper']) + 1} sprites, "
+          f"{len(data['sprites']['lamarcy']) + len(data['sprites']['keeper']) + 1} sprites, "
           f"{n_layers} scene layers across "
           f"{len(data['scenes'])} scenes x {len(data['formats'])} formats")
 

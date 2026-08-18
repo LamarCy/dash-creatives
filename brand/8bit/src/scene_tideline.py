@@ -12,21 +12,24 @@ does not exist. These are the same frames, in Downloads.
                  aft of amidships, tall mast carrying two crosstrees, and the
                  A-frame boom angling aft. Durrell's "squat hull, tall
                  rigging arms".
-  IMG_2922.heic  concrete pier on evenly spaced pilings over flat rippled
-                 water. Deck thickness, piling rhythm and the dark band under
-                 the deck come from here.
+  IMG_2922.heic  flat rippled water against a hard edge; the wave-dash
+                 spacing and the dark band where water meets structure. The
+                 pier this frame documented was replaced by a beach shore at
+                 Durrell's request, but the water reading still comes from it.
   IMG_2916 / IMG_2925 / IMG_2943   low pale harbour horizon with a distant
                  treeline; sets horizon height and the flatness of the water.
   IMG_2940       open water ripple texture; wave-dash length and spacing.
 
-  HONEST GAP: no moodboard frame shows marsh grass. The marsh is the one
-  element here not derived from a photograph. Shoot one and I'll redraw it.
+  HONEST GAP: no moodboard frame shows marsh grass, and none shows a sand
+  beach either — the harbour frames are all water against seawall or pier. The
+  marsh and the shore are the two elements not derived from a photograph.
+  Shoot a Folly or Sullivan's shoreline and I'll redraw both from it.
 
 Everything is periodic in x so the scene scrolls seamlessly — each layer's
 pattern period divides the distance that layer pans in one loop (see PAN).
 
 Run:  python3 brand/8bit/src/scene_tideline.py
-Out:  scenes/tideline/{day,night}/{16x9,9x16}/{sky,horizon,water,pier,marsh}@{1,4}x.png
+Out:  scenes/tideline/{day,night}/{16x9,9x16}/{sky,horizon,water,shore,marsh}@{1,4}x.png
       + flat@{1,4}x.png
 """
 
@@ -36,7 +39,7 @@ import math
 
 from pixel import EIGHTBIT, render, save_scaled
 
-LAYERS = ["sky", "horizon", "water", "pier", "marsh"]
+LAYERS = ["sky", "horizon", "water", "shore", "marsh"]
 
 # Seamlessness has two conditions, and BOTH must hold or the loop ticks at
 # the seam:
@@ -164,9 +167,8 @@ class Scene:
         self.w, self.h = w, h
         self.hz = int(h * horizon_frac)
         self.night = night
-        self.deck_y = int(h * 0.66)
-        self.piling_bottom = int(h * 0.88)   # pilings end in the water,
-        # above the marsh band — the marsh reads as the nearest thing to camera
+        # where the water meets the sand
+        self.shore_y = int(h * 0.62)
         # pitch must divide the sky's pan distance (w // 2), not just w
         self.sky_pitch = _divisor_near(w // 2, 12)
         self.wave_period = _divisor_near(w, 48)
@@ -179,7 +181,7 @@ class Scene:
     # every other layer moves whole scene widths, which is what lets the
     # unique boat and the piling lattice wrap invisibly.
     def pan_for(self, name: str) -> int:
-        mult = {"horizon": 1, "water": 2, "pier": 3, "marsh": 4}
+        mult = {"horizon": 1, "water": 2, "shore": 3, "marsh": 4}
         if name == "sky":
             return self.w // 2
         return mult[name] * self.w
@@ -287,30 +289,67 @@ class Scene:
                             g[y][gx + 1] = "C"
         return self._fin(g)
 
-    def pier(self, pan: int = 0) -> list:
+    def shore(self, pan: int = 0) -> list:
+        """The beach. Replaces the pier — Durrell asked for the dock to become
+        the shore of a beach.
+
+        Four bands, from the water down: a broken cream FOAM line at the
+        waterline, a second receding foam line below it, a band of dark WET
+        SAND, then dry sand in the light value with scattered grit.
+
+        The waterline is deliberately NOT straight. A flat edge reads as a
+        painted line; an undulating one reads as surf. The undulation is a sum
+        of integer harmonics of the scene width, so it stays periodic and the
+        parallax scroll still wraps invisibly.
+        """
         g = self._blank()
-        deck, thick = self.deck_y, 8
+        base = self.shore_y
+        light = "C"
+        wet = "D"
         for x in range(self.w):
-            g[deck][x] = "K"
-            for y in range(deck + 1, deck + 4):
-                g[y][x] = "C"                   # deck surface — the walkable plane
-            g[deck + 4][x] = "K"
-            for y in range(deck + 5, deck + thick):
-                g[y][x] = "D"                   # deck edge, in shadow
-            g[deck + thick][x] = "K"
-        for x in range(0, self.w, 7):           # plank joints
-            g[deck + 2][x] = "D"
-        for px in range(0, self.w, self.piling_period):
-            x0 = px - pan
-            for dx in range(5):
-                x = (x0 + dx) % self.w
-                for y in range(deck + thick, self.piling_bottom):
-                    g[y][x] = "D" if dx == 4 else "K"
-            for dx in range(-3, 8):             # short brace at each piling
-                x = (x0 + dx) % self.w
-                y = deck + thick + 12
+            t = (x + pan) % self.w
+            e = (2.4 * math.sin(2 * math.pi * t * 3 / self.w)
+                 + 1.5 * math.sin(2 * math.pi * t * 7 / self.w + 1.1)
+                 + 0.9 * math.sin(2 * math.pi * t * 11 / self.w + 2.3))
+            edge = base + int(round(e))
+
+            # foam at the waterline, broken into surf rather than a solid band
+            foam = (t % 13) < 8 or (t % 29) < 4
+            for y in range(edge, edge + 2):
                 if 0 <= y < self.h:
+                    g[y][x] = light if foam else wet
+            for y in range(edge + 2, edge + 11):        # wet sand
+                if 0 <= y < self.h:
+                    g[y][x] = wet
+            for y in range(edge + 11, self.h):          # dry sand
+                g[y][x] = light
+
+            # a second foam line further up the beach, from the last wave
+            if (t % 17) < 9:
+                y = edge + 13 + int(round(1.6 * math.sin(2 * math.pi * t * 5 / self.w)))
+                if 0 <= y < self.h:
+                    g[y][x] = light
+                    if y + 1 < self.h:
+                        g[y + 1][x] = wet
+
+        # grit and shell fragments on the dry sand. Index-based so the pattern
+        # is periodic in w and the scroll wraps cleanly.
+        step = _divisor_near(self.w, 9)
+        for i in range(self.w // step):
+            x = (i * step - pan) % self.w
+            seed = (i * 2654435761) % 101
+            t = (i * step) % self.w
+            e = (2.4 * math.sin(2 * math.pi * t * 3 / self.w)
+                 + 1.5 * math.sin(2 * math.pi * t * 7 / self.w + 1.1)
+                 + 0.9 * math.sin(2 * math.pi * t * 11 / self.w + 2.3))
+            top = base + int(round(e)) + 15
+            span = max(1, self.h - top)
+            y = top + (seed * 7) % span
+            if 0 <= y < self.h:
+                g[y][x] = wet
+                if seed % 9 == 0 and x + 1 < self.w:    # a shell: two ink px
                     g[y][x] = "K"
+                    g[y][(x + 1) % self.w] = "K"
         return self._fin(g)
 
     def marsh(self, pan: int = 0) -> list:
@@ -375,7 +414,7 @@ STUDIO_SCENES = {
     "open-water":     {"kind": "open-water", "night": False,
                        "layers": ["sky", "water"]},
     "harbor":         {"kind": "harbor",     "night": False,
-                       "layers": ["sky", "horizon", "water", "pier"]},
+                       "layers": ["sky", "horizon", "water", "shore"]},
 }
 
 

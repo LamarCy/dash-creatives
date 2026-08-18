@@ -7,8 +7,8 @@ asset alone. It now makes TWO passes per loop at different depths and scales —
 one large in the near water, one small and further out — because a single
 dolphin crossing an otherwise empty frame left long dead stretches.
 
-Z-order: sky, horizon+boat, water, far Keeper, pier, near Keeper, marsh.
-The near pass is drawn in front of the pier so it reads as closer to camera.
+Z-order: sky, horizon+boat, water, far Keeper, shore, near Keeper, marsh.
+The near pass is drawn in front of the shore so it reads as closer to camera.
 
 Run:  python3 brand/8bit/src/hero.py
 Out:  scenes/hero/hero@4x.{mp4,gif} + hero-still@4x.png
@@ -28,7 +28,7 @@ from sprite_keeper import build as build_keeper
 W, H, HZ_FRAC = 270, 480, 0.40
 
 # Each pass: (first frame, last frame, scale, x start %, x end %, depth below
-# the waterline, arc height, draw in front of the pier?)
+# the waterline, arc height, draw in front of the shore?)
 PASSES = [
     {"a": 8, "b": 78, "scale": 2, "x0": 0.98, "x1": 0.30,
      "base": 40, "arc": 36, "front": False},
@@ -92,7 +92,7 @@ def hero_frame(sc: Scene, f: int) -> Image.Image:
         if not spec["front"]:
             draw_pass(canvas, sc, spec, f)
 
-    stamp(canvas, sc.layer("pier", pans["pier"]), 0, 0)
+    stamp(canvas, sc.layer("shore", pans["shore"]), 0, 0)
 
     for spec in PASSES:
         if spec["front"]:
