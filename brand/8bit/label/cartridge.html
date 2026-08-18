@@ -1,0 +1,108 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Cha'Annolog cartridge label</title>
+<!--
+  Task 6 — cartridge label for CHA'ANNOLOG.
+
+  SIZE WARNING, read this before you send anything to a printer:
+  this is built at 62mm x 36mm + 2mm bleed, at 300dpi, because that is the
+  figure Durrell gave. MEASURE YOUR OWN CARTRIDGE FIRST. Original DMG labels
+  and Game Boy Color labels are NOT the same size — GBC carts are a little
+  taller and the label well is shaped differently, and third-party repro
+  shells vary again. The numbers live in one place (the :root vars below), so
+  once you have calipers on the real thing, change --label-w / --label-h and
+  re-render.
+
+    62mm x 36mm at 300dpi = 732 x 425 px
+    + 2mm bleed all round  = 779 x 472 px  (bleed box)
+
+  Render:  bash brand/8bit/src/shoot.sh brand/8bit/label/cartridge.html out.png 779 1
+-->
+<style>
+  @font-face { font-family: Anton;  src: url("../../../web/public/gateway/Anton.ttf"); }
+  @font-face { font-family: Oswald; src: url("../../../web/public/gateway/Oswald.ttf"); }
+
+  :root {
+    --ink:#141412; --deep:#067A76; --tiff:#09B1AB; --cream:#F7F3E8; --sepia:#E3DECB;
+    /* 62mm x 36mm at 300dpi, 2mm bleed. Measure the real cart and change these. */
+    --label-w: 732px; --label-h: 425px; --bleed: 24px;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body { background: #808080; }          /* not printed — just shows the bleed */
+
+  .bleed {
+    width: calc(var(--label-w) + var(--bleed) * 2);
+    height: calc(var(--label-h) + var(--bleed) * 2);
+    background: var(--cream);
+    padding: var(--bleed);
+    position: relative;
+  }
+  .trim {
+    width: var(--label-w); height: var(--label-h);
+    background: var(--cream);
+    border: 9px solid var(--ink);
+    position: relative;
+    overflow: hidden;
+  }
+  /* Ben-Day dot texture in the field — real dots, no gradient */
+  .trim::before {
+    content:""; position:absolute; inset:0;
+    background-image: radial-gradient(var(--sepia) 2.6px, transparent 2.7px);
+    background-size: 16px 16px;
+  }
+  .inner { position: relative; height: 100%; padding: 26px 30px; display: flex;
+           flex-direction: column; }
+
+  .top { display: flex; justify-content: space-between; align-items: flex-start; }
+  .co { font-family: Oswald, sans-serif; font-size: 25px; letter-spacing: .13em;
+        text-transform: uppercase; color: var(--ink); }
+  .hifi { font-family: Oswald, sans-serif; font-size: 21px; letter-spacing: .11em;
+          text-transform: uppercase; color: var(--deep); border: 4px solid var(--ink);
+          padding: 3px 11px; background: var(--cream); }
+
+  /* Two-pass off-register print: a tiffany ghost sits a few px behind the
+     ink title, the way a misaligned second plate would land. */
+  .titlewrap { position: relative; margin: 20px 0 0; flex: 1; display: flex;
+               align-items: center; }
+  .title, .ghost {
+    font-family: Anton, sans-serif; font-size: 132px; line-height: .84;
+    letter-spacing: -.012em; text-transform: uppercase; white-space: nowrap;
+  }
+  .ghost { position: absolute; left: 7px; top: 7px; color: var(--tiff); }
+  .title { color: var(--ink); position: relative; }
+
+  .bottom { display: flex; justify-content: space-between; align-items: flex-end;
+            gap: 16px; }
+  .cat { font-family: ui-monospace, Menlo, monospace; font-size: 22px;
+         letter-spacing: .04em; color: var(--ink); background: var(--cream);
+         padding: 2px 6px; }
+  .catwrap { display: flex; align-items: center; gap: 13px; }
+  img { image-rendering: pixelated; display: block; }
+  .keeper { width: 144px; margin-right: 6px; }   /* 48px sprite at 3x; 3.5x clipped
+                                                    the fluke against the border */
+  .heart  { width: 42px; }               /* the ONE heart mark on this layout */
+</style>
+
+<div class="bleed">
+  <div class="trim">
+    <div class="inner">
+      <div class="top">
+        <div class="co">LamarCy Recording Co.</div>
+        <div class="hifi">Full Stereo &middot; Hi-Fi</div>
+      </div>
+
+      <div class="titlewrap">
+        <div class="ghost" aria-hidden="true">CHA&rsquo;ANNOLOG</div>
+        <div class="title">CHA&rsquo;ANNOLOG</div>
+      </div>
+
+      <div class="bottom">
+        <div class="catwrap">
+          <span class="cat">LC-001 &middot; REC 2026 &middot; CHS&rarr;ATL</span>
+          <img class="heart" src="../sprites/heart@8x.png" alt="">
+        </div>
+        <img class="keeper" src="../sprites/keeper/teal/breach@8x.png" alt="">
+      </div>
+    </div>
+  </div>
+</div>

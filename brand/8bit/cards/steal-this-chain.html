@@ -1,0 +1,142 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>STEAL THIS CHAIN — gear card</title>
+<!--
+  Task 7 — the end-of-reel gear card. 1080x1920.
+
+  TO USE THIS: edit the SETTINGS block below — that is the only thing you need
+  to touch. Every value on the card comes from it. Then re-render:
+
+    bash brand/8bit/src/shoot.sh brand/8bit/cards/steal-this-chain.html \
+         brand/8bit/cards/steal-this-chain.png 1080 1 1920
+
+  Add or remove rows in `pedal` / `amp` / `gameboy` freely; the panels grow to
+  fit. Keep the chain to 4 or 5 boxes so the type stays large enough to read
+  on a phone.
+-->
+<script>
+const SETTINGS = {
+  episode:  "EPISODE 01",
+  chain:    ["GAME BOY", "DELAY", "TUBE AMP", "ROOM MIC"],
+  pedal: {
+    name: "ANALOG DELAY",
+    rows: [["TIME", "310 ms"], ["FEEDBACK", "35%"], ["MIX", "28%"]],
+  },
+  amp: {
+    name: "TUBE COMBO",
+    rows: [["VOLUME", "4"], ["TREBLE", "6"], ["BASS", "5"], ["REVERB", "3"]],
+  },
+  gameboy: {
+    name: "GAME BOY",
+    rows: [["VOLUME", "7 / 8"], ["OUTPUT", "HEADPHONE JACK"]],
+  },
+  note:     "PUSH THE PREAMP, NOT THE PEDAL. LET THE ROOM DO THE REST.",
+  catalog:  "LC-001 · REC 2026 · CHS→ATL",
+};
+</script>
+<style>
+  @font-face { font-family: Anton;  src: url("../../../web/public/gateway/Anton.ttf"); }
+  @font-face { font-family: Oswald; src: url("../../../web/public/gateway/Oswald.ttf"); }
+
+  :root { --ink:#141412; --deep:#067A76; --tiff:#09B1AB; --cream:#F7F3E8; --sepia:#E3DECB; }
+  * { box-sizing: border-box; margin: 0; }
+  body { width: 1080px; height: 1920px; background: var(--cream);
+         font-family: Georgia, serif; overflow: hidden; }
+
+  /* flex column with the footer as the last item: the first pass positioned
+     the footer absolutely and it sat on top of the last panel */
+  .card { width: 1080px; height: 1920px; position: relative;
+          border: 22px solid var(--ink); padding: 56px 58px 48px;
+          display: flex; flex-direction: column; }
+  /* Ben-Day dots in the field — actual dots, never a gradient */
+  .card::before { content:""; position:absolute; inset:0; z-index:0;
+    background-image: radial-gradient(var(--sepia) 3.4px, transparent 3.5px);
+    background-size: 22px 22px; }
+  .card > * { position: relative; z-index: 1; }
+
+  .kicker { font-family: Oswald, sans-serif; font-size: 34px; letter-spacing: .22em;
+            text-transform: uppercase; color: var(--deep); }
+  .titlewrap { position: relative; margin: 12px 0 6px; }
+  .title, .tghost { font-family: Anton, sans-serif; font-size: 126px; line-height: .95;
+                    text-transform: uppercase; letter-spacing: -.015em; }
+  .tghost { position: absolute; left: 9px; top: 9px; color: var(--tiff); }
+  .title  { color: var(--ink); position: relative; }
+  .rule { height: 12px; background: var(--ink); margin: 16px 0 22px; }
+
+  .chain { display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+           margin-bottom: 22px; }
+  .box { font-family: Oswald, sans-serif; font-size: 27px; letter-spacing: .09em;
+         text-transform: uppercase; border: 6px solid var(--ink); padding: 12px 17px;
+         background: var(--cream); box-shadow: 8px 8px 0 var(--ink); }
+  .arrow { font-family: Oswald, sans-serif; font-size: 34px; color: var(--tiff);
+           font-weight: 700; }
+
+  .panel { border: 8px solid var(--ink); background: var(--cream);
+           box-shadow: 12px 12px 0 var(--ink); margin-bottom: 20px; }
+  .phead { background: var(--ink); color: var(--cream); font-family: Oswald, sans-serif;
+           font-size: 33px; letter-spacing: .15em; text-transform: uppercase;
+           padding: 12px 24px; display: flex; justify-content: space-between; }
+  .phead .n { color: var(--tiff); }
+  .prow { display: flex; justify-content: space-between; align-items: baseline;
+          padding: 12px 24px; border-bottom: 4px dotted var(--ink); }
+  .prow:last-child { border-bottom: none; }
+  .plabel { font-family: Oswald, sans-serif; font-size: 34px; letter-spacing: .13em;
+            text-transform: uppercase; color: var(--ink); }
+  /* the blank you write in — a real slot, not decoration */
+  .pval { font-family: ui-monospace, Menlo, monospace; font-size: 38px;
+          color: var(--ink); border-bottom: 5px solid var(--tiff);
+          min-width: 300px; text-align: right; padding-bottom: 3px; }
+
+  .note { font-family: Oswald, sans-serif; font-size: 27px; line-height: 1.4;
+          letter-spacing: .05em; text-transform: uppercase; color: var(--deep);
+          border-left: 12px solid var(--tiff); padding-left: 22px; }
+
+  .foot { margin-top: auto; padding-top: 20px;
+          display: flex; justify-content: space-between; align-items: flex-end; }
+  .cat { font-family: ui-monospace, Menlo, monospace; font-size: 27px;
+         letter-spacing: .04em; color: var(--ink); }
+  img { image-rendering: pixelated; display: block; }
+  .sprite { width: 144px; }              /* 48px play pose at 3x */
+  .heart  { width: 56px; }               /* the ONE heart mark on this layout */
+</style>
+
+<div class="card">
+  <div class="kicker">GAME BOY BLUES &middot; <span id="ep"></span> &middot; GEAR RECIPE</div>
+  <div class="titlewrap">
+    <div class="tghost" aria-hidden="true">STEAL THIS<br>CHAIN</div>
+    <div class="title">STEAL THIS<br>CHAIN</div>
+  </div>
+  <div class="rule"></div>
+
+  <div class="chain" id="chain"></div>
+  <div id="panels"></div>
+  <div class="note" id="note"></div>
+
+  <div class="foot">
+    <div style="display:flex;align-items:center;gap:20px;">
+      <span class="cat" id="cat"></span>
+      <img class="heart" src="../sprites/heart@8x.png" alt="">
+    </div>
+    <img class="sprite" src="../sprites/lamarcy/teal/play@8x.png" alt="">
+  </div>
+</div>
+
+<script>
+  const $ = (id) => document.getElementById(id);
+  $("ep").textContent = SETTINGS.episode;
+  $("note").textContent = SETTINGS.note;
+  $("cat").textContent = SETTINGS.catalog;
+
+  $("chain").innerHTML = SETTINGS.chain
+    .map((s) => `<span class="box">${s}</span>`)
+    .join('<span class="arrow">&rarr;</span>');
+
+  $("panels").innerHTML = ["pedal", "amp", "gameboy"].map((key) => {
+    const p = SETTINGS[key];
+    const rows = p.rows.map(([label, val]) =>
+      `<div class="prow"><span class="plabel">${label}</span>
+       <span class="pval">${val}</span></div>`).join("");
+    return `<div class="panel"><div class="phead"><span>${key}</span>
+            <span class="n">${p.name}</span></div>${rows}</div>`;
+  }).join("");
+</script>

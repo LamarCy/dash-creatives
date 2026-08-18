@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Cha'Annolog cartridge label. Editable: the <text> nodes below are real
+     text, so retype them freely. Sizes are in px at 300dpi;
+     trim is 62x36mm with 2mm bleed. MEASURE YOUR CARTRIDGE:
+     DMG and Game Boy Color label wells are not the same. -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="780" height="473" viewBox="0 0 780 473">
+  <defs>
+    <pattern id="benday" width="16" height="16" patternUnits="userSpaceOnUse">
+      <circle cx="8" cy="8" r="2.6" fill="#E3DECB"/>
+    </pattern>
+    <clipPath id="trim">
+      <rect x="24" y="24" width="732" height="425"/>
+    </clipPath>
+  </defs>
+
+  <rect width="780" height="473" fill="#F7F3E8"/>
+  <g clip-path="url(#trim)">
+    <rect x="24" y="24" width="732" height="425" fill="#F7F3E8"/>
+    <rect x="24" y="24" width="732" height="425" fill="url(#benday)"/>
+    <rect x="28.5" y="28.5" width="723" height="416"
+          fill="none" stroke="#141412" stroke-width="9"/>
+
+    <text x="63" y="82" font-family="Oswald" font-size="25"
+          letter-spacing="3.2" fill="#141412">LAMARCY RECORDING CO.</text>
+
+    <rect x="518" y="54" width="200" height="38"
+          fill="#F7F3E8" stroke="#141412" stroke-width="4"/>
+    <text x="532" y="81" font-family="Oswald" font-size="21"
+          letter-spacing="2.3" fill="#067A76">FULL STEREO &#183; HI-FI</text>
+
+    <!-- off-register two-pass print: tiffany ghost plate, then the ink plate -->
+    <text x="67" y="282" font-family="Anton" font-size="132"
+          letter-spacing="-1.6" fill="#09B1AB">CHA&#8217;ANNOLOG</text>
+    <text x="60" y="275" font-family="Anton" font-size="132"
+          letter-spacing="-1.6" fill="#141412">CHA&#8217;ANNOLOG</text>
+
+    <text x="63" y="410" font-family="monospace" font-size="22"
+          letter-spacing="0.9" fill="#141412">LC-001 &#183; REC 2026 &#183; CHS&#8594;ATL</text>
+
+    <!-- exactly one heart mark on this layout -->
+    <image xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADgAAAAwCAYAAABE1blzAAAAlElEQVR4nO3YsQ3DIBQA0eO6TJcqU6bKdC6TESiQZevIqxEg/eIEg4nH5/1lwfF8jSv3lziJkziJkziJk7ix2qG7kziJkziJkziJkziJkziJkziJkziJk7gxW3D39+Lx/xeNkziJkziJk907eHUnZ51j9wlKnMRJnMRJnMSNsw+YdXK1c+w+QYmTOImTOInz6guc7QfdExbAMD4OXgAAAABJRU5ErkJggg==" x="396" y="388"
+           width="42" height="36" style="image-rendering:pixelated"/>
+    <image xlink:href="data:image/png;base64,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" x="570" y="276"
+           width="144" height="144" style="image-rendering:pixelated"/>
+  </g>
+</svg>
