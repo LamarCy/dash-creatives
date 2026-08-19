@@ -774,7 +774,7 @@
     // dropped the way a realtime screen capture would drop it.
     const stream = cv.captureStream(0);
     const track = stream.getVideoTracks()[0];
-    const rec = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: 12e6 });
+    const rec = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: 40e6 });
     const chunks = [];
     rec.ondataavailable = (e) => { if (e.data.size) chunks.push(e.data); };
     const done = new Promise((res) => { rec.onstop = res; });
@@ -833,6 +833,28 @@
     return out;
   }
 
+  /*
+    Cues for playback/export. If nothing is timestamped yet we spread the typed
+    lines evenly across the track instead of drawing nothing — requiring
+    timestamps first meant a first-time export came out silent-looking, with the
+    world animating and no words on it at all. Evenly spaced is rarely perfect
+    but it is always visible, and Auto-time / Tap sync refine from there.
+  */
+  function lyricCues() {
+    const raw = $("lyrics").value;
+    const timed = parseLyrics(raw);
+    if (timed.length) return { cues: timed, spread: false };
+    const lines = raw.split("\n").map((l) => l.trim()).filter(Boolean);
+    if (!lines.length) return { cues: [], spread: false };
+    const total = audioEl && isFinite(audioEl.duration) ? audioEl.duration : lines.length * 3;
+    const lead = 0.35;
+    const span = Math.max(0.8, (total - lead) / lines.length);
+    return {
+      cues: lines.map((line, i) => ({ t: lead + i * span, line: line })),
+      spread: true,
+    };
+  }
+
   function lyricAt(cues, t) {
     let cur = "";
     for (const c of cues) {
@@ -847,10 +869,12 @@
   function stateWithLyric(line) {
     const st = JSON.parse(JSON.stringify(state));
     st.text = st.text || {};
+    // The engine reads t.v, NOT t.value. Setting .value silently skipped the
+    // lyric on every frame — the whole reason the first lyric videos came out
+    // with the world animating and no words on it.
     st.text.title = st.text.title ||
-      { on: true, value: "", x: 50, y: 34, size: 12, color: 1 };
-    st.text.title.on = true;
-    st.text.title.value = line;
+      { v: "", x: 7, y: 34, size: 9, color: 0, ghost: true };
+    st.text.title.v = line;
     return st;
   }
 
@@ -910,11 +934,17 @@
     if (!audioEl) { status("Import a track first.", true); return; }
     ensureAudioGraph();
     if (actx.state === "suspended") actx.resume();
-    const cues = parseLyrics($("lyrics").value);
+    const lc = lyricCues();
+    if (!lc.cues.length) { status("Type your lyrics first, one line each.", true); return; }
+    if (lc.spread) {
+      $("lyricNote").textContent =
+        "No timestamps yet — spacing " + lc.cues.length +
+        " line(s) evenly for now. Auto-time or Tap sync to place them properly.";
+    }
     audioEl.play();
     const tick = () => {
       const t = audioEl.currentTime;
-      E().renderTo(cv, stateWithLyric(lyricAt(cues, t)), Math.round(t * 12));
+      E().renderTo(cv, stateWithLyric(lyricAt(lc.cues, t)), Math.round(t * 12));
       if (!audioEl.paused) lyricRaf = requestAnimationFrame(tick);
     };
     tick();
@@ -1184,17 +1214,35 @@
       return;
     }
     const ext = mime.indexOf("video/mp4") === 0 ? "mp4" : "webm";
-    const cues = parseLyrics($("lyrics").value);
+    const lc = lyricCues();
+    if (!lc.cues.length) { status("Type your lyrics first, one line each.", true); return; }
+    const cues = lc.cues;
     const dest = ensureAudioGraph();
     if (actx.state === "suspended") await actx.resume();
 
-    // captureStream at a fixed rate plus a rAF redraw loop: the track pulls
-    // frames on its own schedule while we keep the canvas current from audio
-    const vStream = cv.captureStream(24);
+    /*
+      FRAME ATOMICITY — this is what made the first lyric videos glitchy.
+      captureStream(24) samples the visible canvas on its own schedule, which can
+      land midway through a render: after the background blit but before the text
+      is drawn, giving torn frames and flickering type. So each frame is composed
+      on an OFFSCREEN canvas, blitted to the visible one in a single drawImage,
+      and only then handed to the recorder via requestFrame. Nothing is ever
+      captured half-drawn.
+    */
+    const off = document.createElement("canvas");
+    off.width = cv.width;
+    off.height = cv.height;
+    const vctx = cv.getContext("2d");
+    vctx.imageSmoothingEnabled = false;
+    const vStream = cv.captureStream(0);
+    const vTrack = vStream.getVideoTracks()[0];
     const stream = new MediaStream(
       vStream.getVideoTracks().concat(dest.stream.getAudioTracks())
     );
-    const rec = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: 12e6 });
+    // Pixel art is pathological for H.264: 1px halftone dots and hard edges are
+    // all high-frequency detail, and at 12Mbps 1080x1920 came back smeared and
+    // glitchy. 40Mbps keeps the dots crisp.
+    const rec = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: 40e6 });
     const chunks = [];
     rec.ondataavailable = (e) => { if (e.data.size) chunks.push(e.data); };
     const done = new Promise((res) => { rec.onstop = res; });
@@ -1203,16 +1251,20 @@
     rec.start();
     await audioEl.play();
     const total = isFinite(audioEl.duration) ? audioEl.duration : 0;
-    let raf = 0;
+    let timer = 0;
+    const FPS = 20;                 // steady cadence; content still comes from audio time
     await new Promise((finish) => {
+      const stop = () => { clearTimeout(timer); finish(); };
       const tick = () => {
         const t = audioEl.currentTime;
-        E().renderTo(cv, stateWithLyric(lyricAt(cues, t)), Math.round(t * 12));
+        E().renderTo(off, stateWithLyric(lyricAt(cues, t)), Math.round(t * 12));
+        vctx.drawImage(off, 0, 0);              // one atomic blit
+        if (vTrack.requestFrame) vTrack.requestFrame();
         if (total) status("recording lyric video — " + t.toFixed(1) + "s / " + total.toFixed(1) + "s");
-        if (audioEl.paused || audioEl.ended) { finish(); return; }
-        raf = requestAnimationFrame(tick);
+        if (audioEl.paused || audioEl.ended) { stop(); return; }
+        timer = setTimeout(tick, 1000 / FPS);
       };
-      audioEl.onended = () => { cancelAnimationFrame(raf); finish(); };
+      audioEl.onended = stop;
       tick();
     });
     rec.stop();
@@ -1224,7 +1276,7 @@
     render();
     status("Lyric video exported — " + ext.toUpperCase() + " with audio, " +
       total.toFixed(1) + "s, " + (blob.size / 1e6).toFixed(1) + "MB, " +
-      cues.length + " cues.");
+      cues.length + " lyric line(s)" + (lc.spread ? " (evenly spaced)" : "") + ".");
   }
 
   async function boot() {

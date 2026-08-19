@@ -72,7 +72,9 @@ Four buttons. What each is for:
 
 - **PNG still** — exact pixel dimensions for the chosen format. Your default.
 - **MP4 video** — H.264 / yuv420p, recorded straight by Chrome. This is the one
-  to upload. Note it is captured in *real time*, so on a heavy composition the
+  to upload; recorded at 40Mbps because pixel art is all high-frequency detail
+  and a lower rate smears the halftone dots into mush. Note it is captured in
+  *real time*, so on a heavy composition the
   measured frame rate can land under 12 and the clip plays a touch slow. When
   that matters use the CLI, which is frame-exact.
 - **Lyric video (MP4)** — your track plus timed lyrics over the world. See §5.
