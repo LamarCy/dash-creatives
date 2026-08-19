@@ -771,8 +771,27 @@
     }
     const n = Math.max(frameCount(), 12);
     const fps = 12;
-    // captureStream(0) + requestFrame means WE drive every frame, so nothing is
-    // dropped the way a realtime screen capture would drop it.
+    /*
+      Two things caused a glitch at the START of a recording, both fixed here.
+
+      1. renderTo() assigns canvas.width every call, and assigning width RESETS
+         the bitmap — do that to a canvas with a live captureStream and Chrome
+         emits a black frame and renegotiates the track. So frames are composed
+         on an OFFSCREEN canvas and blitted in, and the visible canvas is sized
+         once, before the stream exists.
+      2. rec.start() used to run before the first render, so the recorder's
+         opening frame was whatever happened to be on the canvas. Frame 0 is now
+         primed before recording begins.
+    */
+    const size = E().outputSize(state.format);
+    cv.width = size.w;
+    cv.height = size.h;
+    const off = document.createElement("canvas");
+    const vctx = cv.getContext("2d");
+    vctx.imageSmoothingEnabled = false;
+    E().renderTo(off, state, 0);
+    vctx.drawImage(off, 0, 0);
+
     const stream = cv.captureStream(0);
     const track = stream.getVideoTracks()[0];
     const rec = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: 40e6 });
@@ -782,7 +801,8 @@
     rec.start();
     status(`recording ${kind.toUpperCase()}, ${n} frames…`);
     for (let f = 0; f < n; f++) {
-      E().renderTo(cv, state, f);
+      E().renderTo(off, state, f);
+      vctx.drawImage(off, 0, 0);            // one atomic blit, no resize
       if (track.requestFrame) track.requestFrame();
       await new Promise((r) => setTimeout(r, 1000 / fps));
     }
@@ -1239,11 +1259,15 @@
       and only then handed to the recorder via requestFrame. Nothing is ever
       captured half-drawn.
     */
+    const lsize = E().outputSize(state.format);
+    cv.width = lsize.w;
+    cv.height = lsize.h;
     const off = document.createElement("canvas");
-    off.width = cv.width;
-    off.height = cv.height;
     const vctx = cv.getContext("2d");
     vctx.imageSmoothingEnabled = false;
+    // prime frame 0 so the recorder's opening frame is a real one, not black
+    E().renderTo(off, stateWithLyric(lyricAt(cues, 0)), 0);
+    vctx.drawImage(off, 0, 0);
     const vStream = cv.captureStream(0);
     const vTrack = vStream.getVideoTracks()[0];
     const stream = new MediaStream(

@@ -51,7 +51,7 @@ to bottom:
 | **Format** | 9:16 (1080×1920) · 1:1 (1080×1080) · 16:9 (1920×1080) |
 | **Palette** | Tiffany ramp or Sepia ramp |
 | **Scene** | Tideline day · Tideline night · Open water · Harbor · Blank cream · Blank ink |
-| **Parallax** | `Motion` on/off, speed, and per-layer **X and Y** offset sliders — nudge the horizon down, lift the water, slide the skyline. `Preview ▶` animates in place. |
+| **Parallax** | `Motion` on/off, speed (which sets the loop length — 240 frames at speed 1, 60 at speed 4), and per-layer **X and Y** offset sliders — nudge the horizon down, lift the water, slide the skyline. `Preview ▶` animates in place. |
 | **Sprites** | Add LamarCy or the Keeper. Each gets pose, X/Y, integer scale 1–8, animate, flip, and layer order (↑/↓). |
 | **Text** | Title (Anton) · Subtitle (Oswald) · Date stamp (mono, pre-filled with today as `REC M.DD.YY`). Colour comes from four ramp swatches. |
 | **Texture** | Halftone dots on/off, density, pitch. |

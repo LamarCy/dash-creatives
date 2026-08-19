@@ -145,8 +145,22 @@
       if (!grid) continue;
       let dx = 0;
       if (state.parallax && state.parallax.on) {
-        const speed = par[name] || 1;
-        dx = -Math.round(frame * speed * (state.parallax.speed || 1));
+        /*
+          Each layer travels a WHOLE NUMBER of scene widths per loop, so the
+          loop closes by construction at any frame count.
+
+          The old form was `frame * layerSpeed * speed`, which only came back
+          around after 2*nw/speed frames — 540 at speed 1. loopFrames clamped to
+          240, so nothing ever actually looped: every export jumped when it
+          repeated, in every format. Deriving the offset FROM the loop length
+          instead makes the seam exact whatever the speed.
+
+          Cycles are the layer speeds doubled (0.5,1,2,3,4 -> 1,2,4,6,8) so the
+          relative parallax between layers is unchanged.
+        */
+        const cycles = Math.max(1, Math.round((par[name] || 1) * 2));
+        const N = loopFrames(state);
+        dx = -Math.round(((frame % N) * buf.w * cycles) / N);
       }
       // Manual offsets move a layer in BOTH axes. They accept either a plain
       // number (older presets, treated as x) or {x, y}. x wraps around the
@@ -550,15 +564,21 @@
     return canvas;
   }
 
-  /** Frames in one full parallax loop, so exports come back around cleanly. */
+  /*
+    Frames in one full parallax loop.
+
+    Because each layer's offset is derived from this number (see drawScene), ANY
+    value here produces a seamless loop — so this is purely a speed/length
+    choice: the slider trades frame count for motion. 240 frames at 12fps is a
+    20s loop; speed 4 gives 60 frames, 5s.
+  */
+  const LOOP_BASE = 240;
+
   function loopFrames(state) {
     if (!state.parallax || !state.parallax.on) return 1;
-    const size = outputSize(state.format);
     const speed = state.parallax.speed || 1;
-    // marsh is the fastest layer at 4x base; a full loop is the scene width
-    // travelled by the slowest MOVING layer, in whole frames
-    const n = Math.round(size.nw / (0.5 * speed));
-    return Math.max(8, Math.min(240, n));
+    const n = Math.round(LOOP_BASE / speed);
+    return Math.max(24, Math.min(240, n));
   }
 
   globalThis.LCEngine = {
