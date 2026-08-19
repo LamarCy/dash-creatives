@@ -525,10 +525,18 @@ FORMATS = {"16x9": (480, 270, 0.46), "9x16": (270, 480, 0.40)}
 # What the Studio ships. All three give an exact 4x from native to export
 # pixels (270->1080, 480->1920), which is why the app can promise integer
 # scaling with no interpolation anywhere.
+# (native_w, native_h, horizon_fraction, export_scale, label)
+#
+# Export scale is PER FORMAT because it has to stay a whole number — the upscale
+# is a nearest-neighbour drawImage, so a fractional ratio would render some
+# pixels 4 wide and some 5 and break the integer-scaling rule the whole app
+# rests on. Instagram's 4:5 is 1080x1350, which is not 4x anything sensible, but
+# it is exactly 5x 216x270. Pixels there are a touch chunkier as a result.
 STUDIO_FORMATS = {
-    "9x16": (270, 480, 0.40),
-    "1x1": (270, 270, 0.44),
-    "16x9": (480, 270, 0.46),
+    "9x16": (270, 480, 0.40, 4, "9:16 Reels"),
+    "4x5":  (216, 270, 0.42, 5, "4:5 IG post"),
+    "1x1":  (270, 270, 0.44, 4, "1:1 Square"),
+    "16x9": (480, 270, 0.46, 4, "16:9 YouTube"),
 }
 
 STUDIO_SCENES = {

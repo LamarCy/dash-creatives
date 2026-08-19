@@ -99,7 +99,7 @@ def build() -> dict:
     scenes = {}
     for sname, cfg in STUDIO_SCENES.items():
         scenes[sname] = {}
-        for fname, (w, h, hf) in STUDIO_FORMATS.items():
+        for fname, (w, h, hf, _scale, _label) in STUDIO_FORMATS.items():
             sc = Scene(w, h, hf, cfg["night"], cfg["kind"])
             entry = {"w": w, "h": h, "hz": sc.hz, "shore": sc.shore_y, "layers": {}}
             for layer in cfg["layers"]:
@@ -116,7 +116,12 @@ def build() -> dict:
         # relative parallax speed per layer, from Scene.pan_for
         "parallax": dict(LAYER_SPEED),
         "formats": {
-            k: {"w": v[0], "h": v[1], "out": [v[0] * 4, v[1] * 4]}
+            k: {
+                "w": v[0],
+                "h": v[1],
+                "out": [v[0] * v[3], v[1] * v[3]],
+                "label": v[4],
+            }
             for k, v in STUDIO_FORMATS.items()
         },
         "sceneLayers": {k: v["layers"] for k, v in STUDIO_SCENES.items()},

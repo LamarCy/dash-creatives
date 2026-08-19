@@ -558,7 +558,8 @@
 
   // ---- build all --------------------------------------------------------
   function build() {
-    segmented($("format"), Object.keys(A().formats).map((k) => [k, k.replace("x", ":")]),
+    segmented($("format"),
+      Object.keys(A().formats).map((k) => [k, A().formats[k].label || k.replace("x", ":")]),
       () => state.format, (v) => { state.format = v; });
     segmented($("ramp"), Object.keys(A().ramps).map((k) => [k, RAMP_NAMES[k]]),
       () => state.ramp, (v) => { state.ramp = v; });
@@ -813,6 +814,10 @@
     (The plain MP4 button does use a frame counter, which is why its measured
     frame rate can land under 12.)
   */
+  // Percent of frame height. Instagram Reels' top chrome eats roughly the first
+  // 12%; this sits just below it and still reads as "at the top".
+  const LYRIC_SAFE_TOP = 15;
+
   let audioEl = null;
   let audioName = "";
   let actx = null;
@@ -873,8 +878,13 @@
     // lyric on every frame — the whole reason the first lyric videos came out
     // with the world animating and no words on it.
     st.text.title = st.text.title ||
-      { v: "", x: 7, y: 34, size: 9, color: 0, ghost: true };
+      { v: "", x: 7, y: LYRIC_SAFE_TOP, size: 9, color: 0, ghost: true };
     st.text.title.v = line;
+    // Keep the lyric clear of Instagram's chrome. Reels puts its header and
+    // account line across the top of the frame, so anything at 6-8% gets
+    // covered. Clamped DOWN to the safe line but never pushed up, so if you
+    // deliberately move the title lower that choice is kept.
+    st.text.title.y = Math.max(LYRIC_SAFE_TOP, st.text.title.y || 0);
     return st;
   }
 

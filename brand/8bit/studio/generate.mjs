@@ -175,9 +175,19 @@ function toB64Url(text) {
 }
 
 const SIZES = {
-  "9x16": [1080, 1920],
-  "1x1": [1080, 1080],
-  "16x9": [1920, 1080],
+  "9x16": [1080, 1920],   // Reels / Shorts / TikTok
+  "4x5": [1080, 1350],    // Instagram portrait post
+  "1x1": [1080, 1080],    // Instagram square
+  "16x9": [1920, 1080],   // YouTube
+};
+
+// Native grid per format. Not simply out/4 — 4:5 is 5x 216x270, because 1080x1350
+// is not a whole multiple of anything near 270 and the upscale must stay integer.
+const NATIVE = {
+  "9x16": [270, 480],
+  "4x5": [216, 270],
+  "1x1": [270, 270],
+  "16x9": [480, 270],
 };
 
 function runChrome(chrome, url, out, w, h) {
@@ -284,7 +294,7 @@ async function renderVideo(chrome, job, state, out, w, h, i, total) {
 function loopFrames(state) {
   const px = state.parallax || {};
   if (!px.on) return 48;
-  const nw = SIZES[state.format] ? SIZES[state.format][0] / 4 : 270;
+  const nw = NATIVE[state.format] ? NATIVE[state.format][0] : 270;
   const speed = px.speed || 1;
   return Math.max(24, Math.min(240, Math.round(nw / (0.5 * speed))));
 }
