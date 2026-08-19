@@ -740,19 +740,38 @@
     status(`Frame sequence exported — ${n} PNGs, ${(blob.size / 1e6).toFixed(1)}MB.`);
   }
 
-  async function exportWebm() {
+  // Container preference order. Chrome on macOS records H.264 in MP4 directly,
+  // which is what Instagram wants, so MP4 is a first-class button rather than a
+  // WebM-then-convert dance. The list degrades if a browser lacks a codec.
+  const VIDEO_TYPES = {
+    mp4: [
+      "video/mp4;codecs=avc1.42E01E",   // baseline — widest player support
+      "video/mp4;codecs=avc1.640028",   // high profile
+      "video/mp4",
+    ],
+    webm: ["video/webm;codecs=vp9", "video/webm;codecs=vp8", "video/webm"],
+  };
+
+  async function exportVideo(kind) {
     if (!window.MediaRecorder) {
       status("MediaRecorder unavailable in this browser — use Frames .zip.", true);
       return;
     }
-    const types = ["video/webm;codecs=vp9", "video/webm;codecs=vp8", "video/webm"];
-    const mime = types.find((t) => MediaRecorder.isTypeSupported(t));
+    const mime = VIDEO_TYPES[kind].find((t) => MediaRecorder.isTypeSupported(t));
     if (!mime) {
-      status("No WebM codec here — use Frames .zip and ffmpeg.", true);
+      status(
+        kind === "mp4"
+          ? "This browser can't record MP4. Use Frames .zip, or the CLI: " +
+            "node generate.mjs --out=clip.mp4 (frame-exact, needs ffmpeg)."
+          : "No WebM codec here — use Frames .zip and ffmpeg.",
+        true
+      );
       return;
     }
     const n = Math.max(frameCount(), 12);
     const fps = 12;
+    // captureStream(0) + requestFrame means WE drive every frame, so nothing is
+    // dropped the way a realtime screen capture would drop it.
     const stream = cv.captureStream(0);
     const track = stream.getVideoTracks()[0];
     const rec = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: 12e6 });
@@ -760,7 +779,7 @@
     rec.ondataavailable = (e) => { if (e.data.size) chunks.push(e.data); };
     const done = new Promise((res) => { rec.onstop = res; });
     rec.start();
-    status(`recording WebM, ${n} frames…`);
+    status(`recording ${kind.toUpperCase()}, ${n} frames…`);
     for (let f = 0; f < n; f++) {
       E().renderTo(cv, state, f);
       if (track.requestFrame) track.requestFrame();
@@ -769,13 +788,445 @@
     rec.stop();
     await done;
     const blob = new Blob(chunks, { type: mime });
-    X().download(blob, `lamarcy-${state.format}-${stamp()}.webm`);
+    X().download(blob, `lamarcy-${state.format}-${stamp()}.${kind}`);
     render();
-    status(`WebM exported (${mime.split(";")[0]}, ${(blob.size / 1e6).toFixed(1)}MB). ` +
-      "Convert to MP4 with the ffmpeg line in README.md.");
+    const codec = (mime.match(/codecs=([\w.]+)/) || [, mime.split("/")[1]])[1];
+    status(`${kind.toUpperCase()} exported — ${codec}, ${n} frames, ` +
+      `${(blob.size / 1e6).toFixed(1)}MB.`);
   }
 
+
   // ---- boot -------------------------------------------------------------
+
+  // ==== music + lyric video ================================================
+  /*
+    Durrell's constraint, verbatim: "my own original music only". Import is
+    therefore gated behind an explicit attestation — the picker stays disabled
+    until the box is ticked, and the claim is echoed back on the track note.
+    This is a guardrail in the same spirit as the four-colour rule: the tool
+    refuses to help you post something you don't own.
+
+    SYNC. The lyric video drives every frame from audio.currentTime rather than
+    from a frame counter. That makes MediaRecorder's real-time capture the
+    CORRECT approach here instead of a compromise — picture and sound come off
+    the same clock, so they cannot drift apart however slow rendering gets.
+    (The plain MP4 button does use a frame counter, which is why its measured
+    frame rate can land under 12.)
+  */
+  let audioEl = null;
+  let audioName = "";
+  let actx = null;
+  let audioDest = null;
+  let lyricRaf = 0;
+
+  function parseLyrics(text) {
+    // [m:ss.cc] or [m:ss] prefix; lines without one are ignored
+    const out = [];
+    for (const raw of String(text || "").split("\n")) {
+      const m = raw.match(/^\s*\[(\d+):(\d{1,2}(?:\.\d+)?)\]\s*(.*)$/);
+      if (!m) continue;
+      const t = parseInt(m[1], 10) * 60 + parseFloat(m[2]);
+      const line = m[3].trim();
+      if (line) out.push({ t: t, line: line });
+    }
+    out.sort((a, b) => a.t - b.t);
+    return out;
+  }
+
+  function lyricAt(cues, t) {
+    let cur = "";
+    for (const c of cues) {
+      if (c.t <= t) cur = c.line;
+      else break;
+    }
+    return cur;
+  }
+
+  /* State with the active lyric swapped into the title slot, so it inherits
+     Anton, the auto-fit and the ramp colours already wired up. */
+  function stateWithLyric(line) {
+    const st = JSON.parse(JSON.stringify(state));
+    st.text = st.text || {};
+    st.text.title = st.text.title ||
+      { on: true, value: "", x: 50, y: 34, size: 12, color: 1 };
+    st.text.title.on = true;
+    st.text.title.value = line;
+    return st;
+  }
+
+  function ensureAudioGraph() {
+    if (!audioEl) return null;
+    if (!actx) {
+      actx = new (window.AudioContext || window.webkitAudioContext)();
+      const src = actx.createMediaElementSource(audioEl);
+      audioDest = actx.createMediaStreamDestination();
+      src.connect(audioDest);          // the copy that gets recorded
+      src.connect(actx.destination);   // the copy Durrell hears
+    }
+    return audioDest;
+  }
+
+  function musicStatus() {
+    const note = $("musicNote");
+    if (!audioEl) {
+      note.textContent = "No track loaded. MP3, WAV, M4A or FLAC.";
+      $("eLyric").disabled = true;
+      return;
+    }
+    const d = audioEl.duration;
+    const len = isFinite(d)
+      ? Math.floor(d / 60) + ":" + String(Math.round(d % 60)).padStart(2, "0")
+      : "…";
+    note.textContent = audioName + " — " + len +
+      ". Declared as your own original recording.";
+    $("eLyric").disabled = false;
+  }
+
+  function loadMusic(file) {
+    if (audioEl) {
+      URL.revokeObjectURL(audioEl.src);
+      audioEl.pause();
+    }
+    actx = null;                       // a new element needs a new graph
+    audioDest = null;
+    audioEl = new Audio();
+    audioEl.src = URL.createObjectURL(file);
+    audioEl.preload = "auto";
+    audioName = file.name;
+    audioEl.onloadedmetadata = musicStatus;
+    audioEl.onended = stopLyricPreview;
+    musicStatus();
+    status("Loaded " + file.name + " — your own original recording.");
+  }
+
+  function stopLyricPreview() {
+    if (lyricRaf) cancelAnimationFrame(lyricRaf);
+    lyricRaf = 0;
+    if (audioEl) audioEl.pause();
+    render();
+  }
+
+  function playLyricPreview() {
+    if (!audioEl) { status("Import a track first.", true); return; }
+    ensureAudioGraph();
+    if (actx.state === "suspended") actx.resume();
+    const cues = parseLyrics($("lyrics").value);
+    audioEl.play();
+    const tick = () => {
+      const t = audioEl.currentTime;
+      E().renderTo(cv, stateWithLyric(lyricAt(cues, t)), Math.round(t * 12));
+      if (!audioEl.paused) lyricRaf = requestAnimationFrame(tick);
+    };
+    tick();
+  }
+
+  function tapSync() {
+    if (!audioEl) { status("Import a track first.", true); return; }
+    const ta = $("lyrics");
+    const lines = ta.value.split("\n");
+    const t = audioEl.currentTime;
+    const mm = Math.floor(t / 60);
+    const ss = (t % 60).toFixed(1).padStart(4, "0");
+    for (let i = 0; i < lines.length; i++) {
+      if (lines[i].trim() && !/^\s*\[\d+:/.test(lines[i])) {
+        lines[i] = "[" + mm + ":" + ss + "] " + lines[i].trim();
+        ta.value = lines.join("\n");
+        $("lyricNote").textContent = "Stamped line " + (i + 1) + " at " + mm + ":" + ss + ".";
+        return;
+      }
+    }
+    $("lyricNote").textContent = "Every line already has a timestamp.";
+  }
+
+
+  /*
+    AUTO-TIMING. Durrell asked for the app to "auto-detect when the words are
+    spoken and time them correctly".
+
+    BE CLEAR ABOUT WHAT THIS IS. True word-level alignment means speech
+    recognition, which would mean either shipping a multi-megabyte model or
+    calling a cloud service — and this tool's whole promise is that it runs
+    offline, with no accounts, and still opens in five years. So instead of
+    recognising words, this finds where PHRASES START in the audio and places
+    the typed lines on them in order.
+
+    How: decode the track, band-pass it to roughly the vocal range so bass and
+    cymbals stop dominating, take a short-time RMS envelope, then mark an onset
+    wherever energy jumps after a quiet gap. Lines land on successive onsets.
+    On a sparse blues vocal that is usually close; on a dense mix it will need
+    nudging, which is what Tap sync and hand-editing are for.
+  */
+  /* Iterative radix-2 FFT, in place. Needed because onset detection on a dense
+     mix has to look at how the SPECTRUM changes, not just how loud it is. */
+  function fft(re, im) {
+    const n = re.length;
+    for (let i = 1, j = 0; i < n; i++) {
+      let bit = n >> 1;
+      for (; j & bit; bit >>= 1) j ^= bit;
+      j ^= bit;
+      if (i < j) {
+        let t = re[i]; re[i] = re[j]; re[j] = t;
+        t = im[i]; im[i] = im[j]; im[j] = t;
+      }
+    }
+    for (let len = 2; len <= n; len <<= 1) {
+      const ang = (-2 * Math.PI) / len;
+      const wr = Math.cos(ang);
+      const wi = Math.sin(ang);
+      for (let i = 0; i < n; i += len) {
+        let cr = 1;
+        let ci = 0;
+        for (let k = 0; k < len / 2; k++) {
+          const ar = re[i + k];
+          const ai = im[i + k];
+          const br = re[i + k + len / 2] * cr - im[i + k + len / 2] * ci;
+          const bi = re[i + k + len / 2] * ci + im[i + k + len / 2] * cr;
+          re[i + k] = ar + br;
+          im[i + k] = ai + bi;
+          re[i + k + len / 2] = ar - br;
+          im[i + k + len / 2] = ai - bi;
+          const ncr = cr * wr - ci * wi;
+          ci = cr * wi + ci * wr;
+          cr = ncr;
+        }
+      }
+    }
+  }
+
+  /*
+    Onset detection by SPECTRAL FLUX with an adaptive threshold.
+
+    The first version gated on absolute energy dropping to near-silence to
+    re-arm. On a solo vocal that works; on a full band mix the floor never gets
+    that low, so it found three phrase starts in forty seconds and the lines
+    bunched at the end. Flux measures how much the spectrum CHANGES frame to
+    frame, which is what a sung entrance actually looks like, and the threshold
+    is a local median so it adapts to a loud chorus or a quiet verse.
+  */
+  async function detectOnsets() {
+    const res = await fetch(audioEl.src);
+    const raw = await res.arrayBuffer();
+    const tmp = new (window.AudioContext || window.webkitAudioContext)();
+    const buf = await tmp.decodeAudioData(raw);
+    tmp.close();
+
+    // band-pass toward the vocal range so bass and cymbals stop dominating
+    const off = new OfflineAudioContext(1, buf.length, buf.sampleRate);
+    const src = off.createBufferSource();
+    src.buffer = buf;
+    const hp = off.createBiquadFilter();
+    hp.type = "highpass";
+    hp.frequency.value = 200;
+    const lp = off.createBiquadFilter();
+    lp.type = "lowpass";
+    lp.frequency.value = 4500;
+    src.connect(hp); hp.connect(lp); lp.connect(off.destination);
+    src.start();
+    const filtered = await off.startRendering();
+    const d = filtered.getChannelData(0);
+    const sr = filtered.sampleRate;
+
+    const N = 2048;
+    const HOP = 512;
+    const secPerFrame = HOP / sr;
+    const frames = Math.max(1, Math.floor((d.length - N) / HOP));
+    const win = new Float32Array(N);
+    for (let i = 0; i < N; i++) win[i] = 0.5 - 0.5 * Math.cos((2 * Math.PI * i) / (N - 1));
+
+    const kLo = Math.max(1, Math.floor((200 / sr) * N));
+    const kHi = Math.min(N / 2, Math.ceil((4500 / sr) * N));
+
+    const flux = new Float32Array(frames);
+    let prev = new Float32Array(kHi - kLo);
+    const re = new Float32Array(N);
+    const im = new Float32Array(N);
+    for (let f = 0; f < frames; f++) {
+      const s0 = f * HOP;
+      for (let i = 0; i < N; i++) { re[i] = d[s0 + i] * win[i]; im[i] = 0; }
+      fft(re, im);
+      let sum = 0;
+      for (let k = kLo; k < kHi; k++) {
+        const mag = Math.sqrt(re[k] * re[k] + im[k] * im[k]);
+        const diff = mag - prev[k - kLo];
+        if (diff > 0) sum += diff;
+        prev[k - kLo] = mag;
+      }
+      flux[f] = sum;
+    }
+
+    // normalise, then pick peaks above a local-median threshold
+    let mx = 1e-9;
+    for (let i = 0; i < frames; i++) if (flux[i] > mx) mx = flux[i];
+    for (let i = 0; i < frames; i++) flux[i] /= mx;
+
+    const W = Math.round(0.6 / secPerFrame);        // ±0.6s median window
+    const MIN_GAP = Math.round(0.28 / secPerFrame); // no two onsets closer than 280ms
+    const onsets = [];
+    const scores = [];
+    let lastIdx = -MIN_GAP;
+    const scratch = [];
+    for (let i = 1; i < frames - 1; i++) {
+      if (flux[i] <= flux[i - 1] || flux[i] < flux[i + 1]) continue;   // local max only
+      scratch.length = 0;
+      for (let j = Math.max(0, i - W); j < Math.min(frames, i + W); j++) scratch.push(flux[j]);
+      scratch.sort((a, b) => a - b);
+      const median = scratch[scratch.length >> 1];
+      const thresh = median * 1.7 + 0.012;
+      if (flux[i] < thresh) continue;
+      if (i - lastIdx < MIN_GAP) {
+        // keep the stronger of two close candidates
+        if (onsets.length && flux[i] > scores[scores.length - 1]) {
+          onsets[onsets.length - 1] = i * secPerFrame;
+          scores[scores.length - 1] = flux[i];
+          lastIdx = i;
+        }
+        continue;
+      }
+      onsets.push(i * secPerFrame);
+      scores.push(flux[i]);
+      lastIdx = i;
+    }
+    return { onsets: onsets, scores: scores, duration: buf.duration };
+  }
+
+  async function autoTimeLyrics() {
+    if (!audioEl) { status("Import a track first.", true); return; }
+    const ta = $("lyrics");
+    const lines = ta.value.split("\n").map((l) => l.replace(/^\s*\[\d+:\d{1,2}(?:\.\d+)?\]\s*/, "").trim());
+    const words = lines.filter((l) => l);
+    if (!words.length) { status("Type your lyrics first, one line each.", true); return; }
+
+    $("lyricNote").textContent = "Listening for phrase starts…";
+    let onsets, scores, duration;
+    try {
+      const r = await detectOnsets();
+      onsets = r.onsets;
+      scores = r.scores;
+      duration = r.duration;
+    } catch (e) {
+      status("Couldn't analyse that file: " + e.message, true);
+      return;
+    }
+
+    // If the detector found more phrase starts than there are lines, keep the
+    // strongest-spaced subset by walking evenly through them; if it found
+    // fewer, space the remainder out across what's left of the track.
+    const times = [];
+    if (onsets.length >= words.length) {
+      /*
+        Strongest onsets, but SPACED. Picking purely by strength put lines one
+        and two a second apart, because a drum hit can out-score a vocal
+        entrance. A sung line lasts seconds, so candidates are taken greedily by
+        strength while refusing anything too close to one already chosen; the
+        floor relaxes if that leaves too few.
+      */
+      const idx = onsets.map((t, i) => i);
+      idx.sort((a, b) => scores[b] - scores[a]);
+      let minGap = Math.max(1.0, duration / (words.length * 2.5));
+      let keep = [];
+      for (let relax = 0; relax < 6 && keep.length < words.length; relax++) {
+        keep = [];
+        for (const i of idx) {
+          if (keep.length >= words.length) break;
+          if (keep.every((j) => Math.abs(onsets[j] - onsets[i]) >= minGap)) keep.push(i);
+        }
+        minGap *= 0.65;
+      }
+      keep.sort((a, b) => a - b);
+      for (const i of keep) times.push(onsets[i]);
+      while (times.length < words.length) {
+        times.push(Math.min(duration - 0.4, (times[times.length - 1] || 0) + 2));
+      }
+    } else {
+      times.push(...onsets);
+      const last = onsets.length ? onsets[onsets.length - 1] : 0;
+      const gap = Math.max(1.2, (duration - last) / (words.length - onsets.length + 1));
+      for (let i = onsets.length; i < words.length; i++) {
+        times.push(Math.min(duration - 0.4, last + gap * (i - onsets.length + 1)));
+      }
+    }
+
+    const out = words.map((line, i) => {
+      const t = Math.max(0, times[i]);
+      const mm = Math.floor(t / 60);
+      const ss = (t % 60).toFixed(1).padStart(4, "0");
+      return "[" + mm + ":" + ss + "] " + line;
+    });
+    ta.value = out.join("\n");
+    $("lyricNote").textContent =
+      "Timed " + words.length + " line(s) against " + onsets.length +
+      " detected phrase start(s). Press Play to check, Tap sync to fix any line.";
+    status("Auto-timed " + words.length + " lyric line(s).");
+  }
+
+  function clearLyricTimes() {
+    const ta = $("lyrics");
+    ta.value = ta.value
+      .split("\n")
+      .map((l) => l.replace(/^\s*\[\d+:\d{1,2}(?:\.\d+)?\]\s*/, ""))
+      .join("\n");
+    $("lyricNote").textContent = "Timestamps cleared.";
+  }
+
+  async function exportLyricVideo() {
+    if (!audioEl) { status("Import a track first.", true); return; }
+    if (!window.MediaRecorder) { status("MediaRecorder unavailable here.", true); return; }
+    const withAudio = [
+      "video/mp4;codecs=avc1.42E01E,mp4a.40.2",
+      "video/mp4;codecs=avc1.640028,mp4a.40.2",
+      "video/webm;codecs=vp9,opus",
+      "video/webm",
+    ];
+    const mime = withAudio.find((t) => MediaRecorder.isTypeSupported(t));
+    if (!mime) {
+      status("No container here can carry video plus audio — use Frames .zip " +
+        "and mux with ffmpeg.", true);
+      return;
+    }
+    const ext = mime.indexOf("video/mp4") === 0 ? "mp4" : "webm";
+    const cues = parseLyrics($("lyrics").value);
+    const dest = ensureAudioGraph();
+    if (actx.state === "suspended") await actx.resume();
+
+    // captureStream at a fixed rate plus a rAF redraw loop: the track pulls
+    // frames on its own schedule while we keep the canvas current from audio
+    const vStream = cv.captureStream(24);
+    const stream = new MediaStream(
+      vStream.getVideoTracks().concat(dest.stream.getAudioTracks())
+    );
+    const rec = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: 12e6 });
+    const chunks = [];
+    rec.ondataavailable = (e) => { if (e.data.size) chunks.push(e.data); };
+    const done = new Promise((res) => { rec.onstop = res; });
+
+    audioEl.currentTime = 0;
+    rec.start();
+    await audioEl.play();
+    const total = isFinite(audioEl.duration) ? audioEl.duration : 0;
+    let raf = 0;
+    await new Promise((finish) => {
+      const tick = () => {
+        const t = audioEl.currentTime;
+        E().renderTo(cv, stateWithLyric(lyricAt(cues, t)), Math.round(t * 12));
+        if (total) status("recording lyric video — " + t.toFixed(1) + "s / " + total.toFixed(1) + "s");
+        if (audioEl.paused || audioEl.ended) { finish(); return; }
+        raf = requestAnimationFrame(tick);
+      };
+      audioEl.onended = () => { cancelAnimationFrame(raf); finish(); };
+      tick();
+    });
+    rec.stop();
+    await done;
+    audioEl.onended = stopLyricPreview;
+
+    const blob = new Blob(chunks, { type: mime });
+    X().download(blob, "lamarcy-lyric-" + state.format + "-" + stamp() + "." + ext);
+    render();
+    status("Lyric video exported — " + ext.toUpperCase() + " with audio, " +
+      total.toFixed(1) + "s, " + (blob.size / 1e6).toFixed(1) + "MB, " +
+      cues.length + " cues.");
+  }
+
   async function boot() {
     loadPhotoLib();
     await primePhotos();
@@ -830,7 +1281,38 @@
 
     $("ePng").onclick = exportPng;
     $("eGif").onclick = exportGif;
-    $("eWebm").onclick = exportWebm;
+    $("eMp4").onclick = () => exportVideo("mp4");
+    $("eLyric").onclick = exportLyricVideo;
+    // The button stays clickable and explains itself; a dead disabled button
+    // just reads as broken, which is exactly how it read to Durrell.
+    $("musicPick").disabled = false;
+    $("ownMusic").onchange = () => {};
+    $("musicPick").onclick = () => {
+      if (!$("ownMusic").checked) {
+        status("Tick the box above first — this tool only takes your own recordings.", true);
+        $("ownMusic").focus();
+        return;
+      }
+      $("musicFile").click();
+    };
+    $("musicFile").onchange = (e) => {
+      const f = e.target.files && e.target.files[0];
+      if (f) loadMusic(f);
+      e.target.value = "";
+    };
+    $("musicClear").onclick = () => {
+      stopLyricPreview();
+      if (audioEl) URL.revokeObjectURL(audioEl.src);
+      audioEl = null; actx = null; audioDest = null; audioName = "";
+      musicStatus();
+      status("Track cleared.");
+    };
+    $("lyricPlay").onclick = playLyricPreview;
+    $("lyricTap").onclick = tapSync;
+    $("lyricStop").onclick = stopLyricPreview;
+    $("lyricAuto").onclick = autoTimeLyrics;
+    $("lyricClear").onclick = clearLyricTimes;
+    $("eWebm").onclick = () => exportVideo("webm");
     $("eZip").onclick = exportZip;
     window.addEventListener("resize", render);
 

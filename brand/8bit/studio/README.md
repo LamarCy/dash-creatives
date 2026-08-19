@@ -71,6 +71,11 @@ horizon.
 Four buttons. What each is for:
 
 - **PNG still** — exact pixel dimensions for the chosen format. Your default.
+- **MP4 video** — H.264 / yuv420p, recorded straight by Chrome. This is the one
+  to upload. Note it is captured in *real time*, so on a heavy composition the
+  measured frame rate can land under 12 and the clip plays a touch slow. When
+  that matters use the CLI, which is frame-exact.
+- **Lyric video (MP4)** — your track plus timed lyrics over the world. See §5.
 - **Animated GIF** — looping, 12fps, good for a quick post. The encoder is
   written into `export.js`; no library. **Expect a big file**: a full parallax
   loop at 1080px is 130+ frames, which lands around 6MB. That's fine for
@@ -232,7 +237,7 @@ carelessly:
    not opacity — you asked for opacity, but alpha blending would manufacture a
    fifth colour and break rule 2. Ben-Day dots worked by dot size anyway.
 
-## 9. Tests
+## 10. Tests
 
 ```bash
 npm test
@@ -245,7 +250,7 @@ Pillow and compares every pixel. Worth keeping — the first version of that
 encoder bumped its LZW code width one dictionary entry too early and produced a
 file that decoded to 8 pixels instead of 2257.
 
-## 10. Files
+## 11. Files
 
 ```
 studio/

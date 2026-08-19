@@ -31,14 +31,18 @@
     --photo=path         halftone a photograph and use it as the backdrop
     --tone=N             photo tone, -0.5..0.5 (default 0)
     --screen=N           photo halftone dot cell, 2..10 (default 6)
-    --out=path.png
+    --out=path.png        a still
+    --out=path.mp4        a video (H.264 / yuv420p, frame-exact, needs ffmpeg)
+    --fps=12              video only
+    --frames=120          video only; defaults to one full parallax loop
     --jobs=file.json     array of job objects using the same keys
     --chrome=path        override Chrome location
 */
 
 import { spawn } from "node:child_process";
-import { mkdir, readFile, stat } from "node:fs/promises";
-import { dirname, resolve } from "node:path";
+import { tmpdir } from "node:os";
+import { mkdir, mkdtemp, readFile, rm, stat } from "node:fs/promises";
+import { dirname, join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -198,18 +202,105 @@ function runChrome(chrome, url, out, w, h) {
   });
 }
 
+function frameUrl(state, frame) {
+  return (
+    pathToFileURL(resolve(HERE, "render.html")).href +
+    `?state=${toB64Url(JSON.stringify(state))}&frame=${frame}`
+  );
+}
+
+async function findFfmpeg() {
+  const candidates = [
+    process.env.FFMPEG,
+    "/opt/homebrew/bin/ffmpeg",
+    "/usr/local/bin/ffmpeg",
+    "ffmpeg",
+  ].filter(Boolean);
+  for (const c of candidates) {
+    try {
+      await new Promise((res, rej) => {
+        const p = spawn(c, ["-version"], { stdio: "ignore" });
+        p.on("error", rej);
+        p.on("close", (code) => (code === 0 ? res() : rej(new Error("bad exit"))));
+      });
+      return c;
+    } catch {}
+  }
+  return null;
+}
+
+/*
+  Video jobs. This is the FRAME-EXACT path: every frame is screenshotted
+  individually and handed to ffmpeg, so unlike the in-app MediaRecorder button
+  (which is paced in real time) nothing can drop or duplicate a frame. Encoded
+  H.264 / yuv420p with faststart, which is what Instagram and every player want.
+*/
+async function renderVideo(chrome, job, state, out, w, h, i, total) {
+  const ffmpeg = await findFfmpeg();
+  if (!ffmpeg) {
+    throw new Error(
+      "MP4 output needs ffmpeg, which wasn't found. Install it (brew install ffmpeg) " +
+        "or set FFMPEG=/path/to/ffmpeg. You can also render --out=…%04d.png frames " +
+        "and encode them yourself."
+    );
+  }
+  const fps = parseInt(job.fps || 12, 10) || 12;
+  const frames = parseInt(job.frames || 0, 10) || loopFrames(state);
+  const tmp = await mkdtemp(join(tmpdir(), "lamarcy-mp4-"));
+  try {
+    for (let f = 0; f < frames; f++) {
+      const pad = String(f).padStart(5, "0");
+      await runChrome(chrome, frameUrl(state, f), join(tmp, `f${pad}.png`), w, h);
+      if (f % 20 === 0 || f === frames - 1) {
+        process.stdout.write(`\r  [${i + 1}/${total}] frame ${f + 1}/${frames}   `);
+      }
+    }
+    process.stdout.write("\r");
+    await new Promise((res, rej) => {
+      const p = spawn(
+        ffmpeg,
+        ["-y", "-loglevel", "error", "-framerate", String(fps),
+         "-i", join(tmp, "f%05d.png"),
+         "-c:v", "libx264", "-preset", "slow", "-crf", "16",
+         "-pix_fmt", "yuv420p", "-movflags", "+faststart", out],
+        { stdio: ["ignore", "ignore", "pipe"] }
+      );
+      let err = "";
+      p.stderr.on("data", (d) => { err += d; });
+      p.on("error", rej);
+      p.on("close", (c) => (c === 0 ? res() : rej(new Error(err || `ffmpeg exited ${c}`))));
+    });
+  } finally {
+    await rm(tmp, { recursive: true, force: true });
+  }
+  const { size } = await stat(out);
+  console.log(
+    `  [${i + 1}/${total}] ${state.format} ${w}x${h}  ${state.scene}  ` +
+      `${frames}f @ ${fps}fps  ${(size / 1e6).toFixed(1)}MB  ->  ${job.out || out}`
+  );
+}
+
+/* Mirrors the app's frameCount(): one full parallax loop, or 48 when still. */
+function loopFrames(state) {
+  const px = state.parallax || {};
+  if (!px.on) return 48;
+  const nw = SIZES[state.format] ? SIZES[state.format][0] / 4 : 270;
+  const speed = px.speed || 1;
+  return Math.max(24, Math.min(240, Math.round(nw / (0.5 * speed))));
+}
+
 async function renderJob(chrome, job, presets, i, total) {
   const state = buildState(job, presets);
   const [w, h] = SIZES[state.format] || SIZES["9x16"];
   const out = resolve(process.cwd(), job.out || `exports/lamarcy-${i + 1}.png`);
   await mkdir(dirname(out), { recursive: true });
 
-  const frame = parseInt(job.frame || 0, 10) || 0;
-  const url =
-    pathToFileURL(resolve(HERE, "render.html")).href +
-    `?state=${toB64Url(JSON.stringify(state))}&frame=${frame}`;
+  if (/\.(mp4|mov|m4v)$/i.test(out)) {
+    return renderVideo(chrome, job, state, out, w, h, i, total);
+  }
 
-  await runChrome(chrome, url, out, w, h);
+  const frame = parseInt(job.frame || 0, 10) || 0;
+  await runChrome(chrome, frameUrl(state, frame), out, w, h);
   const { size } = await stat(out);
   console.log(
     `  [${i + 1}/${total}] ${state.format} ${w}x${h}  ${state.scene}  ` +

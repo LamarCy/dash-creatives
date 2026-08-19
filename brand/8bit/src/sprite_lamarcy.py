@@ -209,24 +209,63 @@ KKKK
 )
 
 
-def build_play() -> list:
+# An eighth note, three beads tall: stem with a flag, filled head. Small enough
+# to read as a note rather than a smudge at this scale.
+NOTE = parse_grid(
+    """
+.KK
+.K.
+KK.
+"""
+)
+
+# Where notes appear and how they drift. Each entry is (x, y, dx per step) —
+# they rise and fan outward from the sound hole, which is at bead (11, 15).
+# x is capped so that start + 2 steps of drift + the note's own 3 beads still
+# fits inside the 24-bead grid — the first pass clipped the top-right note.
+NOTE_TRACKS = ((15, 11, 1), (17, 8, 1), (13, 6, 0), (18, 5, 0))
+
+
+def build_play(phase: int = 0) -> list:
+    """One frame of the playing animation.
+
+    Durrell asked for notes radiating and for him to move while playing, so this
+    is a four-frame cycle, not a still: the body bobs, the strumming hand and
+    the guitar rock with it, and notes climb away from the sound hole on a
+    staggered schedule so they do not pulse in unison.
+    """
+    dy = (0, -1, 0, -1)[phase]          # body bob
+    strum = (0, 1, 2, 1)[phase]         # strumming hand travels across the strings
+    tilt = (0, 0, -1, 0)[phase]         # guitar lifts slightly on the downbeat
+
     g = [["." for _ in range(GRID)] for _ in range(GRID)]
-    _upper(g)
+    _upper(g, dy)
+    # feet stay planted — only the upper body moves, which is what playing
+    # standing still actually looks like
     _leg(g, LEGS_X, LEGS_Y, 0)
     _leg(g, LEGS_X + LEG_SPAN, LEGS_Y, 0)
 
-    stamp(g, 9, 12, GUITAR_BODY)              # body at the waist, not the hips
+    gy = 12 + dy + tilt
+    stamp(g, 9, gy, GUITAR_BODY)              # body at the waist, not the hips
     for i in range(6):                        # neck, up and to his left
-        stamp(g, 8 - i, 12 - i, ["KDK"])
-    stamp(g, 1, 6, HEADSTOCK)
-    stamp(g, 3, 8, ["KDDK"])                  # fretting hand on the neck
-    stamp(g, 13, 12, ["KDDK"])                # strumming hand over the body
+        stamp(g, 8 - i, gy - i, ["KDK"])
+    stamp(g, 1, gy - 6, HEADSTOCK)
+    stamp(g, 3, gy - 4, ["KDDK"])             # fretting hand on the neck
+    stamp(g, 13, gy + strum, ["KDDK"])        # strumming hand crossing the strings
+
+    for i, (nx, ny, ndx) in enumerate(NOTE_TRACKS):
+        step = (phase + i) % 4                # stagger so they do not pulse together
+        if step == 3:
+            continue                          # each note is absent one frame in four
+        stamp(g, nx + ndx * step, ny - step, NOTE)
     return beads_to_cell(["".join(r) for r in g])
 
 
-PLAY = build_play()
+PLAY = build_play(0)
+PLAY_FRAMES = [build_play(p) for p in range(4)]
 
 POSES = ([("idle", IDLE), ("play", PLAY)]
+         + [(f"play{i}", g) for i, g in enumerate(PLAY_FRAMES, start=1)]
          + [(f"walk{i}", g) for i, g in enumerate(WALK, start=1)])
 
 

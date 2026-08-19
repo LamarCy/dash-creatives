@@ -166,16 +166,30 @@
   }
 
   // ---- sprites --------------------------------------------------------
-  const WALK = ["walk1", "walk2", "walk3", "walk4"];
-  const SWIM = ["swim1", "swim2", "swim3", "swim4"];
+  /*
+    Which poses animate, and into what. Keyed by kind then by the pose the user
+    picked, so a kind can have more than one animated pose — the figure's
+    "playing" is now a cycle of its own (he bobs and notes rise off the guitar),
+    not a still.
+  */
+  const CYCLES = {
+    lamarcy: {
+      walk: ["walk1", "walk2", "walk3", "walk4"],
+      play: ["play1", "play2", "play3", "play4"],
+    },
+    keeper: {
+      swim: ["swim1", "swim2", "swim3", "swim4"],
+    },
+  };
 
   function poseFor(sp, frame) {
     if (!sp.animate) return sp.pose;
-    const cycle = sp.kind === "lamarcy" ? WALK : SWIM;
-    const animatable = sp.kind === "lamarcy" ? "walk" : "swim";
-    if (sp.pose !== animatable && !cycle.includes(sp.pose)) {
-      return sp.pose;            // idle, play and breach hold still
-    }
+    const byPose = CYCLES[sp.kind] || {};
+    // the pose itself, or a frame of it if the user saved a mid-cycle pose
+    const cycle =
+      byPose[sp.pose] ||
+      Object.values(byPose).find((c) => c.includes(sp.pose));
+    if (!cycle) return sp.pose;          // idle and breach hold still
     return cycle[Math.floor(frame / 3) % 4];
   }
 

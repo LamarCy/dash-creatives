@@ -218,16 +218,57 @@
   </fieldset>
 
   <fieldset>
+    <div class="grp">Music &amp; lyrics</div>
+
+    <!-- Durrell's rule: his own original recordings only. The import stays
+         disabled until this is ticked, and the attestation is shown on the
+         status line when a track is loaded. -->
+    <label class="chk" style="align-items:flex-start;line-height:1.35">
+      <input type="checkbox" id="ownMusic">
+      <span>This is <strong>my own original recording</strong> and I hold the
+        rights to it.</span>
+    </label>
+    <div class="row" style="margin-top:6px">
+      <button id="musicPick">Import music…</button>
+      <button id="musicClear">Clear</button>
+    </div>
+    <input type="file" id="musicFile" accept="audio/*" hidden>
+    <p class="note" id="musicNote">No track loaded. MP3, WAV, M4A or FLAC.</p>
+
+    <div class="grp" style="margin-top:14px">Lyrics</div>
+    <p class="note">One line per lyric. Add a timestamp with Tap sync, or type
+      <code>[0:12.4]</code> yourself. Untimed lines are ignored.</p>
+    <textarea id="lyrics" rows="7" spellcheck="false"
+      placeholder="[0:00.0] I bet it's dolphins who know&#10;[0:04.2] where the ocean gon' hide&#10;[0:08.6] the treasures of my soul"></textarea>
+    <div class="row" style="margin-top:6px">
+      <button id="lyricPlay">Play ▶</button>
+      <button id="lyricTap">Tap sync</button>
+      <button id="lyricStop">Stop</button>
+    </div>
+    <div class="row" style="margin-top:6px">
+      <button id="lyricAuto">Auto-time</button>
+      <button id="lyricClear">Clear times</button>
+    </div>
+    <p class="note" id="lyricNote">Type your lines, then <strong>Auto-time</strong>
+      to place them on the phrase starts it hears. Play to check; Tap sync fixes
+      any single line. Auto-time listens for where phrases begin — it is not
+      word recognition, so a dense mix may need a nudge.</p>
+  </fieldset>
+
+  <fieldset>
     <div class="grp">Export</div>
     <div class="row">
       <button id="ePng">PNG still</button>
       <button id="eGif">Animated GIF</button>
     </div>
     <div class="row" style="margin-top:6px">
+      <button id="eMp4">MP4 video</button>
+      <button id="eLyric" disabled>Lyric video (MP4)</button>
       <button id="eWebm">WebM video</button>
       <button id="eZip">Frames .zip</button>
     </div>
-    <p class="note">MediaRecorder gives WebM in Chromium; MP4 support varies.
+    <p class="note">Chrome records MP4 (H.264) directly, which is what Instagram
+      wants. WebM is kept as a fallback for browsers without an H.264 encoder.
       Convert with the ffmpeg line in README.md. If a browser export ever
       misbehaves, use Frames .zip &mdash; that path is bulletproof.</p>
   </fieldset>
