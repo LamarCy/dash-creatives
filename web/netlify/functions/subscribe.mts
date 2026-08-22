@@ -1,6 +1,6 @@
 // POST /list/subscribe  { email, source, referrer, form }
 //
-// Adds a subscriber to the Analog Chronicle list in Kit, stamped with the
+// Adds a subscriber to the LamarCy Chronicle list in Kit, stamped with the
 // channel that produced them. The API key never reaches the browser.
 //
 // Route note: NOT under /api/* — netlify.toml proxies that whole prefix to the
