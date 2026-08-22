@@ -34,6 +34,21 @@
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
 
+# The gateway assets had NO cache header, so every repeat visit re-downloaded
+# ~700KB of fonts and art — bandwidth is what burns Netlify credits. Fonts are
+# immutable; art gets a week with background revalidation. To force a refresh
+# after editing an image, append ?v=N at the usage site (same trick the audio
+# player uses).
+[[headers]]
+  for = "/gateway/*.ttf"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/gateway/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800, stale-while-revalidate=86400"
+
 [[headers]]
   for = "/_astro/*"
   [headers.values]

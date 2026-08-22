@@ -172,6 +172,29 @@ footer{padding:44px 6vw;background:var(--ink);border-top:4px solid var(--tiffany
   align-items:center;justify-content:space-between}
 footer .mono{color:rgba(247,243,232,.5);font-size:12px;letter-spacing:4px}
 footer img{height:40px}
+
+/* ---------- footer one-liner: the quiet second ask ----------
+   For visitors who never crack an egg. Deliberately small — the diamond is
+   still the hero. Same wiring as the Chronicle block, plus a src-footer tag. */
+.foot-cap{flex:1 1 320px;min-width:0}
+.foot-cap .fc-label{display:block;font-family:'Oswald',sans-serif;text-transform:uppercase;
+  font-size:11px;letter-spacing:4px;font-weight:700;color:rgba(247,243,232,.7);margin-bottom:9px}
+.foot-cap form{display:flex;gap:0;max-width:400px}
+.foot-cap input[type=email]{flex:1 1 auto;min-width:0;background:transparent;color:var(--cream);
+  border:2px solid rgba(247,243,232,.45);border-right:0;padding:11px 13px;font-size:14px;
+  font-family:Georgia,'Times New Roman',serif;border-radius:0}
+.foot-cap input[type=email]::placeholder{font-family:'Oswald',sans-serif;font-size:12px;
+  letter-spacing:2px;color:rgba(247,243,232,.4)}
+.foot-cap input[type=email]:focus-visible,.foot-cap button:focus-visible{outline:2px solid var(--tiffany);outline-offset:2px}
+.foot-cap button{flex:0 0 auto;background:var(--tiffany);color:var(--ink);border:2px solid var(--tiffany);
+  cursor:pointer;font-size:17px;line-height:1;padding:0 18px;border-radius:0;font-family:'Oswald',sans-serif}
+.foot-cap button:hover{background:var(--cream);border-color:var(--cream)}
+.foot-cap button[disabled]{opacity:.55;cursor:wait}
+.foot-cap .cap-status{font-size:13px;margin-top:9px;color:rgba(247,243,232,.75)}
+.foot-cap .cap-status.err{font-size:11px;padding:5px 9px}
+.foot-cap .cap-done{margin-top:0;border-top:0;padding-top:0;max-width:none}
+.foot-cap .cap-done .h{font-size:20px}
+.foot-cap .cap-done .t{font-size:15px;letter-spacing:1px}
 </style>
 
 <!-- ============ YIN / YANG ============ -->
@@ -201,17 +224,17 @@ footer img{height:40px}
   <p class="lede">The making of the music, documented as it happens.</p>
   <div class="igrid" id="igrid">
     <a class="igbox" href="https://www.instagram.com/_lamar_cy" target="_blank" rel="noopener">
-      <div class="ph"><img src="/gateway/heart.png" alt=""><span>@_lamar_cy</span></div></a>
+      <div class="ph"><img src="/gateway/heart.png" alt="" loading="lazy" decoding="async"><span>@_lamar_cy</span></div></a>
     <a class="igbox" href="https://www.instagram.com/_lamar_cy" target="_blank" rel="noopener">
-      <div class="ph"><img src="/gateway/heart.png" alt=""><span>@_lamar_cy</span></div></a>
+      <div class="ph"><img src="/gateway/heart.png" alt="" loading="lazy" decoding="async"><span>@_lamar_cy</span></div></a>
     <a class="igbox" href="https://www.instagram.com/_lamar_cy" target="_blank" rel="noopener">
-      <div class="ph"><img src="/gateway/heart.png" alt=""><span>@_lamar_cy</span></div></a>
+      <div class="ph"><img src="/gateway/heart.png" alt="" loading="lazy" decoding="async"><span>@_lamar_cy</span></div></a>
     <a class="igbox" href="https://www.instagram.com/_lamar_cy" target="_blank" rel="noopener">
-      <div class="ph"><img src="/gateway/heart.png" alt=""><span>@_lamar_cy</span></div></a>
+      <div class="ph"><img src="/gateway/heart.png" alt="" loading="lazy" decoding="async"><span>@_lamar_cy</span></div></a>
     <a class="igbox" href="https://www.instagram.com/_lamar_cy" target="_blank" rel="noopener">
-      <div class="ph"><img src="/gateway/heart.png" alt=""><span>@_lamar_cy</span></div></a>
+      <div class="ph"><img src="/gateway/heart.png" alt="" loading="lazy" decoding="async"><span>@_lamar_cy</span></div></a>
     <a class="igbox" href="https://www.instagram.com/_lamar_cy" target="_blank" rel="noopener">
-      <div class="ph"><img src="/gateway/heart.png" alt=""><span>@_lamar_cy</span></div></a>
+      <div class="ph"><img src="/gateway/heart.png" alt="" loading="lazy" decoding="async"><span>@_lamar_cy</span></div></a>
   </div>
   <p class="ignote osw">Follow along → <a href="https://www.instagram.com/_lamar_cy" target="_blank" rel="noopener">@_lamar_cy</a></p>
 </section>
@@ -223,7 +246,7 @@ footer img{height:40px}
   <div class="capture">
     <h2 class="cap-head">The LamarCy Chronicle</h2>
     <p class="cap-sub">One object, one song, one story. Every Saturday.</p>
-    <p class="cap-note">The gear, the Lowcountry, and the songs they turn into.</p>
+    <p class="cap-note">The gear, the stories, and the songs they turn into.</p>
 
     <form class="cap-form" data-capture="chronicle" novalidate>
       <label class="cap-label" for="cap-email">Email address</label>
@@ -242,7 +265,7 @@ footer img{height:40px}
       <p class="cap-fine">No spam. Unsubscribe anytime.</p>
       <p class="cap-status" data-status role="status" aria-live="polite"></p>
     </form>
-    <p class="cap-stamp">Est 2026 · Every Saturday · CHS&rarr;ATL</p>
+    <p class="cap-stamp">Est 2026 · Every Saturday</p>
   </div>
 </section>
 
@@ -253,7 +276,7 @@ footer img{height:40px}
   <p class="lede">&ldquo;I bet it&rsquo;s dolphins who know where the ocean gon&rsquo; hide the treasures of my soul.&rdquo;</p>
   <div class="songs">
     <div class="song">
-      <img src="/gateway/single-lowcountry.jpg" alt="Lowcountry Beach single art">
+      <img src="/gateway/single-lowcountry.jpg" alt="Lowcountry Beach single art" loading="lazy" decoding="async">
       <div class="body">
         <h3>Lowcountry Beach</h3>
         <div class="credits">Written, played &amp; sung by Durrell Lamar · LC-001</div>
@@ -271,7 +294,7 @@ footer img{height:40px}
       </div>
     </div>
     <div class="song">
-      <img src="/gateway/single-momma.jpg" alt="Momma Gone single art">
+      <img src="/gateway/single-momma.jpg" alt="Momma Gone single art" loading="lazy" decoding="async">
       <div class="body">
         <h3>Momma Gone</h3>
         <div class="credits">Written by Durrell Lamar · Vocals by Ashley Eady Smith</div>
@@ -310,8 +333,23 @@ footer img{height:40px}
 </section>
 
 <footer>
-  <img src="/gateway/wordmark.png" alt="LamarCy">
-  <div class="mono">LamarCy · The Yin to D.LAMAR&rsquo;s Yang · Atlanta, GA · CHS→ATL</div>
+  <img src="/gateway/wordmark.png" alt="LamarCy" loading="lazy" decoding="async">
+
+  <div class="foot-cap">
+    <label class="fc-label" for="foot-email">Get the Saturday letter</label>
+    <form data-capture="footer" novalidate>
+      <input id="foot-email" name="email" type="email" inputmode="email" autocomplete="email"
+             placeholder="you@email.com" required>
+      <button type="submit" aria-label="Subscribe to the Saturday letter">&rarr;</button>
+      <div class="cap-pot" aria-hidden="true">
+        <label for="foot-company">Company</label>
+        <input id="foot-company" name="company" type="text" tabindex="-1" autocomplete="off">
+      </div>
+    </form>
+    <p class="cap-status" data-status role="status" aria-live="polite"></p>
+  </div>
+
+  <div class="mono">LamarCy · The Yin to D.LAMAR&rsquo;s Yang · Atlanta, GA</div>
 </footer>
 
 <script is:inline>
