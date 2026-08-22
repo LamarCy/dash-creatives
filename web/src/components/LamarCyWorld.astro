@@ -67,53 +67,72 @@ section.block .lede{font-size:18px;font-style:italic;color:#3d3a33;max-width:62c
 .ignote a{color:var(--ink);font-weight:700}
 
 /* ---------- the capture: The Analog Chronicle ----------
-   Printed, not rendered: cream field, thick ink border, hard offset shadow,
-   Ben-Day dots in the field. No gradients, no glow, no pills, no heart mark
-   (the heart only appears in the success state, replacing the form). */
-#subscribe{background:var(--cream)}
-.capture{max-width:760px;background:var(--cream);border:5px solid var(--ink);
-  box-shadow:9px 9px 0 rgba(20,20,18,.85);padding:44px 46px;
-  background-image:radial-gradient(rgba(20,20,18,.11) 1.6px, transparent 1.6px);background-size:20px 20px}
-@media(max-width:560px){.capture{padding:32px 26px;box-shadow:6px 6px 0 rgba(20,20,18,.85)}}
-.cap-kick{font-family:'Oswald',sans-serif;text-transform:uppercase;font-size:13px;letter-spacing:8px;
-  font-weight:700;color:var(--tiffany)}
-.cap-head{font-family:'Anton',sans-serif;text-transform:uppercase;font-size:clamp(30px,3.6vw,52px);
-  line-height:1.02;margin:12px 0 16px;color:var(--ink)}
-.cap-sub{font-family:Georgia,'Times New Roman',serif;font-size:17px;line-height:1.7;color:#3d3a33;max-width:52ch}
-.cap-form{margin-top:26px}
-.cap-label{display:block;font-family:'Oswald',sans-serif;text-transform:uppercase;font-size:11px;
-  letter-spacing:4px;font-weight:700;color:#5a564b;margin-bottom:9px}
-.cap-row{display:flex;flex-wrap:wrap;gap:14px}
-.cap-row input[type=email]{flex:1 1 260px;min-width:0;background:var(--cream);color:var(--ink);
-  border:3px solid var(--ink);padding:14px 16px;font-size:16px;
+   Matches the form Durrell built in Kit: dark Lowcountry water field under
+   Ben-Day dots, cream display caps, Tiffany sub, Tiffany button. Photo is
+   graded monochrome per the brand book (no saturated photography). No heart
+   mark until the success state replaces the form. */
+#subscribe{position:relative;background:var(--ink);border-top:5px solid var(--ink);overflow:hidden}
+/* Durrell's own Kit asset: Lowcountry water, already graded silver-sepia with
+   the Ben-Day halftone baked in (dense up top, opening into water below), so
+   it is used as shot — no second dot layer, no regrade. */
+#subscribe .cap-bg{position:absolute;inset:0;background:url('/gateway/chronicle-field.jpg') center/cover no-repeat}
+/* Ink veil tuned by measurement, not by eye: at .78 the cream clears AAA
+   (8.3:1) and the Tiffany sub clears AA even over the brightest wave crests. */
+#subscribe .cap-veil{position:absolute;inset:0;background:rgba(20,20,18,.78)}
+.capture{position:relative;max-width:760px}
+.cap-head{font-family:'Anton',sans-serif;text-transform:uppercase;font-size:clamp(40px,6vw,86px);
+  line-height:.96;color:var(--cream);letter-spacing:1px}
+/* 24px floor = WCAG "large text", where Tiffany's 3.7:1 over the brightest
+   wave crests clears the 3:1 bar. Below 24px it would need 4.5:1, which this
+   photograph can't give without drowning the water in ink. */
+.cap-sub{font-family:Georgia,'Times New Roman',serif;font-size:clamp(24px,2.4vw,30px);line-height:1.45;
+  color:var(--tiffany);max-width:34ch;margin-top:18px}
+.cap-note{font-family:Georgia,'Times New Roman',serif;font-size:16px;line-height:1.6;
+  color:rgba(247,243,232,.72);max-width:46ch;margin-top:12px;font-style:italic}
+.cap-form{margin-top:34px;max-width:520px}
+/* catalog metadata, mono — the brand date-stamps its objects */
+.cap-stamp{font-family:'DejaVu Sans Mono',Menlo,monospace;text-transform:uppercase;font-size:11px;
+  letter-spacing:4px;color:rgba(247,243,232,.45);margin-top:34px}
+/* Durrell's Kit design shows placeholder only — keep a real label for screen
+   readers without drawing it. */
+.cap-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+/* Square corners and a thick rule: printed, not rendered. */
+.cap-row input[type=email]{display:block;width:100%;background:rgba(20,20,18,.72);color:var(--cream);
+  border:3px solid var(--cream);padding:20px 22px;font-size:17px;
   font-family:Georgia,'Times New Roman',serif;border-radius:0}
-.cap-row input[type=email]::placeholder{font-family:'Oswald',sans-serif;text-transform:uppercase;
-  font-size:13px;letter-spacing:3px;color:rgba(20,20,18,.42)}
-.cap-row input[type=email]:focus-visible,.cap-btn:focus-visible{outline:3px solid var(--tiffany);outline-offset:2px}
-/* Invalid: doubled ink rule, not red — heritage red is deluxe/vinyl only and
-   must never sit at full strength beside the Tiffany kicker above. */
-.cap-row input[type=email][aria-invalid=true]{box-shadow:inset 0 0 0 3px var(--cream),inset 0 0 0 6px var(--ink)}
-.cap-btn{flex:0 0 auto;background:var(--ink);color:var(--cream);border:3px solid var(--ink);cursor:pointer;
-  font-family:'Oswald',sans-serif;text-transform:uppercase;font-size:13px;letter-spacing:5px;
-  font-weight:700;padding:14px 30px;border-radius:0;transition:none}
-.cap-btn:hover{background:var(--tiffany);color:var(--ink);border-color:var(--tiffany)}
+.cap-row input[type=email]::placeholder{font-family:'Oswald',sans-serif;
+  font-size:16px;letter-spacing:1px;color:rgba(247,243,232,.55);text-transform:none}
+.cap-row input[type=email]:focus-visible,.cap-btn:focus-visible{outline:3px solid var(--tiffany);outline-offset:3px}
+/* Invalid: doubled cream rule — heritage red is deluxe/vinyl only and must
+   never sit at full strength beside Tiffany. */
+.cap-row input[type=email][aria-invalid=true]{border-color:var(--cream);
+  box-shadow:inset 0 0 0 2px rgba(247,243,232,.35)}
+/* Ink text on Tiffany, not cream: 7:1 contrast vs 2.9:1, and it is the
+   brand's own Tiffany/ink pairing. */
+/* Square, hard offset shadow, no pill: the brand's printed button. */
+.cap-btn{display:inline-block;margin-top:22px;background:var(--tiffany);color:var(--ink);
+  border:3px solid var(--ink);box-shadow:6px 6px 0 rgba(20,20,18,.85);cursor:pointer;
+  font-family:'Oswald',sans-serif;text-transform:uppercase;font-size:16px;letter-spacing:3px;
+  font-weight:700;padding:16px 34px;border-radius:0;transition:none}
+.cap-btn:hover{background:var(--cream);color:var(--ink)}
+.cap-btn:active{box-shadow:3px 3px 0 rgba(20,20,18,.85);transform:translate(3px,3px)}
 .cap-btn[disabled]{opacity:.55;cursor:wait}
-.cap-fine{font-family:'DejaVu Sans Mono',Menlo,monospace;text-transform:uppercase;font-size:10px;
-  letter-spacing:3px;color:#6b6659;margin-top:16px}
+.cap-fine{font-family:'DejaVu Sans Mono',Menlo,monospace;font-size:12px;
+  letter-spacing:1px;color:rgba(247,243,232,.6);margin-top:18px;text-transform:none}
 .cap-status{font-family:Georgia,'Times New Roman',serif;font-size:15px;font-style:italic;
-  color:#3d3a33;margin-top:12px;min-height:1.2em}
-/* Errors read as a stamped correction: inverted ink chip, no colour needed. */
-.cap-status.err{display:inline-block;background:var(--ink);color:var(--cream);font-style:normal;
+  color:rgba(247,243,232,.8);margin-top:12px;min-height:1.2em}
+/* Errors read as a stamped correction: cream chip on the dark field. */
+.cap-status.err{display:inline-block;background:var(--cream);color:var(--ink);font-style:normal;
   font-family:'Oswald',sans-serif;text-transform:uppercase;font-size:12px;letter-spacing:3px;
   font-weight:700;padding:7px 12px}
 /* honeypot — off-screen, never announced, never tabbable */
 .cap-pot{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
 /* success: the one place a heart is allowed here, since it replaces the form */
-.cap-done{display:flex;align-items:baseline;gap:12px;margin-top:26px;
-  border-top:3px solid var(--ink);padding-top:22px}
-.cap-done .h{color:var(--tiffany);font-size:26px;line-height:1}
-.cap-done .t{font-family:'Anton',sans-serif;text-transform:uppercase;font-size:clamp(20px,2.2vw,30px);
-  line-height:1.1;color:var(--ink)}
+.cap-done{display:flex;align-items:baseline;gap:14px;margin-top:34px;
+  border-top:3px solid rgba(247,243,232,.35);padding-top:26px;max-width:520px}
+.cap-done .h{color:var(--tiffany);font-size:30px;line-height:1}
+.cap-done .t{font-family:'Anton',sans-serif;text-transform:uppercase;font-size:clamp(22px,2.4vw,34px);
+  line-height:1.05;color:var(--cream)}
 
 /* ---------- singles ---------- */
 .songs{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:34px;margin-top:44px}
@@ -199,18 +218,20 @@ footer img{height:40px}
 
 <!-- ============ THE CAPTURE · The Analog Chronicle ============ -->
 <section class="block" id="subscribe">
+  <div class="cap-bg" aria-hidden="true"></div>
+  <div class="cap-veil" aria-hidden="true"></div>
   <div class="capture">
-    <div class="cap-kick">The Analog Chronicle</div>
-    <h2 class="cap-head">One object, one song, one story.</h2>
-    <p class="cap-sub">Every Saturday. The gear, the Lowcountry, and the songs they turn into.</p>
+    <h2 class="cap-head">The Analog Chronicle</h2>
+    <p class="cap-sub">One object, one song, one story. Every Saturday.</p>
+    <p class="cap-note">The gear, the Lowcountry, and the songs they turn into.</p>
 
     <form class="cap-form" data-capture="chronicle" novalidate>
       <label class="cap-label" for="cap-email">Email address</label>
       <div class="cap-row">
         <input id="cap-email" name="email" type="email" inputmode="email" autocomplete="email"
-               placeholder="you@email.com" required>
-        <button class="cap-btn" type="submit">Subscribe</button>
+               placeholder="Email Address" required>
       </div>
+      <button class="cap-btn" type="submit">Subscribe</button>
 
       <!-- honeypot: bots fill it, people never see it -->
       <div class="cap-pot" aria-hidden="true">
@@ -221,6 +242,7 @@ footer img{height:40px}
       <p class="cap-fine">No spam. Unsubscribe anytime.</p>
       <p class="cap-status" data-status role="status" aria-live="polite"></p>
     </form>
+    <p class="cap-stamp">Est 2026 · Every Saturday · CHS&rarr;ATL</p>
   </div>
 </section>
 
