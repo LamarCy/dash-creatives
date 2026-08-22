@@ -18,11 +18,10 @@
   directory = "netlify/functions"
   node_bundler = "esbuild"
 
-# Social-friendly door straight to the Singles rack (skips the heart ritual)
-[[redirects]]
-  from = "/music"
-  to = "/?world=lamarcy#singles"
-  status = 302
+# NOTE: /music is a real page (src/pages/music.astro), not a redirect. It used
+# to 302 to /?world=lamarcy#singles, but Netlify drops incoming query params
+# when the destination already carries its own — which silently killed the ?s=
+# attribution. Do not reintroduce that redirect.
 
 [[redirects]]
   from = "/api/*"

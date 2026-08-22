@@ -1,0 +1,60 @@
+---
+// /music — the LamarCy homepage. Same world the blue egg reveals, but served
+// as a normal page: no scroll lock, no diamond, no three.js, no egg journey.
+// This is a REAL page (not a redirect) so incoming ?s= attribution params
+// survive — a redirect to a URL that already had a query string would have
+// silently dropped them.
+import LamarCyWorld from '../components/LamarCyWorld.astro';
+import OrbNav from '../components/OrbNav.astro';
+
+// Canonical production host — OG/Twitter tags need absolute URLs, and the
+// site's Netlify default domain would generate the wrong ones.
+const SITE = 'https://dashcreatives.art';
+const TITLE = 'LamarCy — Southern blues, soul & rock from Atlanta';
+const DESC =
+  'LamarCy is Durrell Lamar Smith: Southern blues, soul and rock written in Atlanta and haunted by Charleston. Hear the singles, own them direct, and follow the making.';
+const OG_IMAGE = `${SITE}/gateway/single-lowcountry.jpg`;
+---
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{TITLE}</title>
+<meta name="description" content={DESC}>
+<link rel="canonical" href={`${SITE}/music`}>
+
+<meta property="og:type" content="music.musician">
+<meta property="og:site_name" content="LamarCy · DASH Creatives">
+<meta property="og:title" content={TITLE}>
+<meta property="og:description" content={DESC}>
+<meta property="og:url" content={`${SITE}/music`}>
+<meta property="og:image" content={OG_IMAGE}>
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content={TITLE}>
+<meta name="twitter:description" content={DESC}>
+<meta name="twitter:image" content={OG_IMAGE}>
+
+<style is:global>
+/* The page's own masthead — the world component brings everything else. */
+#lcmast{display:flex;align-items:center;justify-content:space-between;gap:18px;
+  padding:18px 6vw;background:var(--ink);border-bottom:4px solid var(--tiffany)}
+#lcmast img{height:34px;display:block}
+#lcmast a.back{color:rgba(247,243,232,.62);text-decoration:none;font-family:'Oswald',sans-serif;
+  text-transform:uppercase;font-size:12px;letter-spacing:4px}
+#lcmast a.back:hover{color:var(--tiffany)}
+@media(max-width:560px){#lcmast{padding:14px 6vw}#lcmast img{height:26px}#lcmast a.back{font-size:10px;letter-spacing:3px}}
+</style>
+</head>
+<body>
+
+<header id="lcmast">
+  <a href="/music" aria-label="LamarCy"><img src="/gateway/wordmark.png" alt="LamarCy"></a>
+  <a class="back" href="/">← The Gateway</a>
+</header>
+
+<LamarCyWorld />
+
+<OrbNav />
+
+</body>
+</html>
