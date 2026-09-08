@@ -56,7 +56,7 @@ export const artworks: Artwork[] = [
     id: 5,
     year: 2025,
     title: 'The Songwriter 2',
-    image: '/images/the-songwriter-2.png',
+    image: '/images/the-songwriter-2.jpg',
     alt: 'The Songwriter 2',
     tag: 'Watercolor · India Ink · Graphite · Turmeric Dye on Watercolor Paper · Original',
     description:
@@ -72,7 +72,7 @@ export const artworks: Artwork[] = [
     id: 1,
     year: 2025,
     title: 'Phia — Commission for Simon Perkins',
-    image: '/images/phia-commission-for-simon-perkins.png',
+    image: '/images/phia-commission-for-simon-perkins.jpg',
     alt: 'Phia — Commission for Simon Perkins',
     tag: 'Watercolor · India Ink · Graphite · Turmeric Dye on Watercolor Paper · Commission',
     description:
@@ -88,7 +88,7 @@ export const artworks: Artwork[] = [
     id: 2,
     year: 2025,
     title: 'Palm Springs',
-    image: '/images/palm-springs.png',
+    image: '/images/palm-springs.jpg',
     alt: 'Palm Springs',
     tag: 'Watercolor · India Ink · Graphite · Turmeric Dye on Watercolor Paper · Original',
     description:
@@ -105,7 +105,7 @@ export const artworks: Artwork[] = [
     id: 3,
     year: 2025,
     title: 'The Songwriter',
-    image: '/images/the-songwriter.png',
+    image: '/images/the-songwriter.jpg',
     alt: 'The Songwriter',
     tag: 'Watercolor · India Ink · Graphite · Turmeric Dye on Watercolor Paper · Original',
     description:
@@ -121,7 +121,7 @@ export const artworks: Artwork[] = [
     id: 4,
     year: 2025,
     title: 'Honeymoon in Vegas',
-    image: '/images/honeymoon-in-vegas.png',
+    image: '/images/honeymoon-in-vegas.jpg',
     alt: 'Honeymoon in Vegas',
     tag: 'Watercolor · India Ink on Watercolor Paper · Original',
     description:
@@ -137,7 +137,7 @@ export const artworks: Artwork[] = [
     id: 6,
     year: 2024,
     title: 'Vegas in the Pines',
-    image: '/images/vegas-in-the-pines.png',
+    image: '/images/vegas-in-the-pines.jpg',
     alt: 'Vegas in the Pines',
     tag: 'Watercolor · India Ink · Graphite · Turmeric Dye on Watercolor Paper · Original',
     description:
@@ -154,7 +154,7 @@ export const artworks: Artwork[] = [
     id: 7,
     year: 2024,
     title: 'Ashley 1',
-    image: '/images/ashley-1.png',
+    image: '/images/ashley-1.jpg',
     alt: 'Ashley 1',
     artist: 'Ashley Smith',
     tag: 'Oil on Canvas · Original',
@@ -171,7 +171,7 @@ export const artworks: Artwork[] = [
     id: 8,
     year: 2023,
     title: 'Untitled (Minotauro)',
-    image: '/images/untitled-minotauro.png',
+    image: '/images/untitled-minotauro.jpg',
     alt: 'Untitled (Minotauro)',
     tag: 'Watercolor on Paper · Original',
     description:
@@ -222,7 +222,7 @@ export const artworks: Artwork[] = [
     id: 9,
     year: 2022,
     title: 'Duende',
-    image: '/images/duende.png',
+    image: '/images/duende.jpg',
     alt: 'Duende',
     tag: 'Watercolor on Paper · Original',
     description:
@@ -254,7 +254,7 @@ export const artworks: Artwork[] = [
     id: 10,
     year: 2019,
     title: 'For My Daughter',
-    image: '/images/for-my-daughter.png',
+    image: '/images/for-my-daughter.jpg',
     alt: 'For My Daughter',
     tag: 'Mixed Media Assemblage on Canvas · Original',
     description:
@@ -270,7 +270,7 @@ export const artworks: Artwork[] = [
     id: 11,
     year: 2018,
     title: 'Monarch 444',
-    image: '/images/monarch-444.png',
+    image: '/images/monarch-444.jpg',
     alt: 'Monarch 444',
     tag: 'Mixed Media Assemblage on Canvas · Original',
     description:
@@ -286,7 +286,7 @@ export const artworks: Artwork[] = [
     id: 16,
     year: 2017,
     title: 'Brace',
-    image: '/images/brace.png',
+    image: '/images/brace.jpg',
     alt: 'Brace',
     tag: 'Watercolor · India Ink on Paper · Original',
     description:
@@ -303,7 +303,7 @@ export const artworks: Artwork[] = [
     id: 17,
     year: 2017,
     title: 'Wuhmun',
-    image: '/images/wuhmun.png',
+    image: '/images/wuhmun.jpg',
     alt: 'Wuhmun',
     tag: 'Mixed Media on Paper · Original',
     description:
@@ -319,7 +319,7 @@ export const artworks: Artwork[] = [
     id: 18,
     year: 2015,
     title: 'Terminus',
-    image: '/images/terminus.png',
+    image: '/images/terminus.jpg',
     alt: 'Terminus',
     tag: 'Mixed Media Assemblage on Canvas · Original',
     description:
@@ -445,7 +445,7 @@ export const artworks: Artwork[] = [
     id: 20,
     year: 2012,
     title: 'Untitled (House of Balloons)',
-    image: '/images/untitled-house-of-balloons.png',
+    image: '/images/untitled-house-of-balloons.jpg',
     alt: 'Untitled (House of Balloons)',
     tag: 'Mixed Media on Canvas · Original',
     description:
@@ -460,7 +460,7 @@ export const artworks: Artwork[] = [
 ];
 
 export const heroPieces = [
-  { image: '/images/the-songwriter-2.png', alt: 'The Songwriter 2', label: 'Watercolor · Turmeric Dye, 2025' },
-  { image: '/images/palm-springs.png', alt: 'Palm Springs', label: 'Watercolor · India Ink, 2025' },
-  { image: '/images/phia-commission-for-simon-perkins.png', alt: 'Phia — Commission for Simon Perkins', label: 'Watercolor · Commission, 2025' },
+  { image: '/images/the-songwriter-2.jpg', alt: 'The Songwriter 2', label: 'Watercolor · Turmeric Dye, 2025' },
+  { image: '/images/palm-springs.jpg', alt: 'Palm Springs', label: 'Watercolor · India Ink, 2025' },
+  { image: '/images/phia-commission-for-simon-perkins.jpg', alt: 'Phia — Commission for Simon Perkins', label: 'Watercolor · Commission, 2025' },
 ];
