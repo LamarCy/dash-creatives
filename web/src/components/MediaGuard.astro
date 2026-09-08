@@ -1,0 +1,63 @@
+---
+/* MediaGuard — casual-copy deterrence for artwork and player media.
+
+   Self-contained on purpose. Three of the six pages (index, music, download)
+   write their own <html> instead of using BaseLayout, and do not import
+   global.css — so anything wired only into the layout silently misses the
+   homepage and the music page, which is where the art actually lives. Both
+   halves ship inline here, and `is:inline` keeps them out of the bundler, so
+   no page can end up with a chunk that happens to omit the guard.
+
+   Drop <MediaGuard /> into any page. It is idempotent — including it twice is
+   harmless.
+
+   WHAT THIS DOES
+   Removes the one-click routes to a local copy: right-click "Save image as",
+   drag-to-desktop, and the iOS long-press save sheet.
+
+   WHAT THIS CANNOT DO — and no web code can
+   Stop a screenshot, or stop someone lifting the file from the network tab or
+   the disk cache. Both happen below the page. If the browser rendered it, the
+   visitor already has the bytes. This is a speed bump, not protection. What
+   actually protects the work is publishing display resolution rather than
+   masters (artwork is capped at 1600px for this reason) and watermarking.
+
+   DELIBERATELY NOT DONE
+   Sitewide text-selection blocking and devtools/keyboard traps. Both are
+   bypassed in seconds, both break accessibility and ordinary browser
+   behaviour, and they make the site hostile to the collectors it exists to
+   invite in. Please don't add them without re-reading this.
+*/
+---
+<style is:global>
+  img,
+  picture,
+  canvas,
+  video,
+  #lb-img,
+  [data-artwork] {
+    -webkit-user-drag: none;
+    user-drag: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+</style>
+
+<script is:inline>
+  (function () {
+    if (window.__dashMediaGuard) return;
+    window.__dashMediaGuard = true;
+    /* Delegated: the lightbox image is created after load. */
+    var SEL = 'img, picture, canvas, video, audio, [data-artwork], #lb-img';
+    var guarded = function (t) {
+      return t && t.closest && t.closest(SEL) !== null;
+    };
+    document.addEventListener('contextmenu', function (e) {
+      if (guarded(e.target)) e.preventDefault();
+    });
+    document.addEventListener('dragstart', function (e) {
+      if (guarded(e.target)) e.preventDefault();
+    });
+  })();
+</script>

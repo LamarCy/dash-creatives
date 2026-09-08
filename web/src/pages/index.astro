@@ -3,6 +3,7 @@
 // Assets live in public/gateway/ (unprocessed static files, per Astro convention)
 import LamarCyWorld from '../components/LamarCyWorld.astro';
 import OrbNav from '../components/OrbNav.astro';
+import MediaGuard from '../components/MediaGuard.astro';
 ---
 <html lang="en">
 <head>
@@ -67,6 +68,7 @@ body.locked{overflow:hidden;height:100vh}
 </div><!-- /rest -->
 
 <OrbNav />
+<MediaGuard />
 
 <!-- ============ 3D DIAMOND HEART · click to crack & shatter ============ -->
 <script is:inline src="/gateway/three.min.js"></script>

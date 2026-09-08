@@ -2,6 +2,7 @@
 // Post-purchase delivery page — reached from Stripe Checkout's success_url
 // as /download?session_id=cs_... ; verifies with /store/download?probe=1.
 import OrbNav from '../components/OrbNav.astro';
+import MediaGuard from '../components/MediaGuard.astro';
 const isDev = import.meta.env.DEV;
 ---
 <html lang="en">
@@ -106,6 +107,7 @@ footer .mono{color:#5a564b;font-size:11px;letter-spacing:4px}
 </footer>
 
 <OrbNav />
+<MediaGuard />
 
 <script is:inline>
 (function(){

@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import OrbNav from '../components/OrbNav.astro';
+import MediaGuard from '../components/MediaGuard.astro';
 
 interface Props {
   title?: string;
@@ -41,11 +42,11 @@ const ogImage = '/images/the-songwriter-2.jpg';
   <body>
     <slot />
     <OrbNav />
+    <MediaGuard />
 
     <script>
       import '../scripts/scroll-reveal.ts';
       import '../scripts/lightbox.ts';
-      import '../scripts/media-guard.ts';
       import '../scripts/contact-form.ts';
     </script>
   </body>

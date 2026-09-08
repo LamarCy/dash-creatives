@@ -6,6 +6,7 @@
 // silently dropped them.
 import LamarCyWorld from '../components/LamarCyWorld.astro';
 import OrbNav from '../components/OrbNav.astro';
+import MediaGuard from '../components/MediaGuard.astro';
 
 // Canonical production host — OG/Twitter tags need absolute URLs, and the
 // site's Netlify default domain would generate the wrong ones.
@@ -55,6 +56,7 @@ const OG_IMAGE = `${SITE}/gateway/single-lowcountry.jpg`;
 <LamarCyWorld />
 
 <OrbNav />
+<MediaGuard />
 
 </body>
 </html>
