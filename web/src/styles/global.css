@@ -433,3 +433,22 @@ img[data-artwork] { cursor: zoom-in; }
   .section { padding: 72px 24px; }
   footer { padding: 52px 24px 36px; }
 }
+
+/* --- media guard -----------------------------------------------------------
+   Pairs with src/scripts/media-guard.ts. Kills drag-to-desktop and the iOS
+   long-press "Save Image" sheet. Scoped to media on purpose — making body
+   text unselectable would break copying an email address and hurt screen
+   readers, for no protection at all (see the note in media-guard.ts).
+-------------------------------------------------------------------------- */
+img,
+picture,
+canvas,
+video,
+#lb-img,
+[data-artwork] {
+  -webkit-user-drag: none;
+  user-drag: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
