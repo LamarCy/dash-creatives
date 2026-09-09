@@ -53,3 +53,23 @@
   for = "/_astro/*"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
+
+# The memorial line shipped briefly at /pet-urns before being renamed; keep the
+# old path working for anything already shared. No query-param concern here —
+# the destination carries none (see the /music note above).
+[[redirects]]
+  from = "/pet-urns"
+  to = "/memorials"
+  status = 301
+
+[[redirects]]
+  from = "/pet-urns/*"
+  to = "/memorials/:splat"
+  status = 301
+
+# Sculpture photography and the turntable sprite are ~2.6MB and immutable in
+# practice; bandwidth is what burns Netlify credits. Same posture as /gateway.
+[[headers]]
+  for = "/memorials/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800, stale-while-revalidate=86400"

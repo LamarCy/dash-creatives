@@ -1,12 +1,12 @@
 ---
-// /pet-urns — DASH Memorial Art. Destination of the rust egg on the gateway.
+// /memorials — DASH Memorial Art. Destination of the rust egg on the gateway.
 //
 // The body of this page is a FAITHFUL PORT of the "Landing page" artboard from
 // the Claude Design file (~/Desktop/design_handoff_pet_urns_website/). The
 // markup and its inline styles are the design's own — do not "tidy" them by
 // hand; re-export from the design file and re-run the port instead, or the two
 // will drift. Only four things were changed on the way in:
-//   1. asset paths rewritten to /pet-urns/*
+//   1. asset paths rewritten to /memorials/*
 //   2. the three invented customer testimonials removed (the studio has not
 //      delivered to an outside client yet; the Share Your Story card stays)
 //   3. matcha #5C6B42 -> #4E5A3A, which the design file also carries now
@@ -18,7 +18,7 @@ import OrbNav from '../components/OrbNav.astro';
 const SITE  = 'https://dashcreatives.art';
 const TITLE = 'Custom Pet Memorial Urns — sculpted from your photographs | DASH Creatives';
 const DESC  = 'A one-of-one sculpture of your own companion, modeled from your photographs and finished by hand in our studio. One piece, one price: $950.';
-const OG    = `${SITE}/pet-urns/gd_03.jpg`;
+const OG    = `${SITE}/memorials/gd_03.jpg`;
 ---
 <html lang="en">
 <head>
@@ -26,7 +26,7 @@ const OG    = `${SITE}/pet-urns/gd_03.jpg`;
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{TITLE}</title>
 <meta name="description" content={DESC}>
-<link rel="canonical" href={`${SITE}/pet-urns`}>
+<link rel="canonical" href={`${SITE}/memorials`}>
 <meta property="og:type" content="product">
 <meta property="og:site_name" content="DASH Creatives">
 <meta property="og:title" content={TITLE}>
@@ -41,7 +41,7 @@ const OG    = `${SITE}/pet-urns/gd_03.jpg`;
   "name":"Custom Pet Memorial Urn — one-of-one sculpted commission",
   "description":DESC,"image":OG,"brand":{"@type":"Brand","name":"DASH Creatives"},
   "offers":{"@type":"Offer","price":"950","priceCurrency":"USD",
-            "availability":"https://schema.org/InStock","url":`${SITE}/pet-urns`}
+            "availability":"https://schema.org/InStock","url":`${SITE}/memorials`}
 })} />
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
@@ -54,7 +54,7 @@ const OG    = `${SITE}/pet-urns/gd_03.jpg`;
      inline-style substring because that is what the ported markup carries. */
   #design{width:100%;max-width:1440px;margin:0 auto;position:relative;
           isolation:isolate;overflow:hidden;
-          background:#F0EAD9 url('/pet-urns/papyrus.svg') center/cover}
+          background:#F0EAD9 url('/memorials/papyrus.svg') center/cover}
   @media (max-width:1180px){
     #design [style*="grid-template-columns:1fr 560px"]{
       grid-template-columns:1fr!important;gap:44px!important}
@@ -86,8 +86,30 @@ const OG    = `${SITE}/pet-urns/gd_03.jpg`;
     #design [style*="height:680px"]{height:clamp(280px,62vw,520px)!important}
   }
 
+  /* The artboard carries its hover states in `style-hover` attributes, which are
+     a design-tool convention the browser ignores — every control on the page was
+     inert. These restore the specced states against the shapes they apply to. */
+  #design a[style*="border-radius:999px"]{will-change:transform}
+  #design a[style*="border-radius:999px"]:hover{
+    transform:translateY(-3px);filter:brightness(1.09);
+    box-shadow:0 18px 44px rgba(43,38,32,.38),inset 0 1px 1px rgba(255,255,255,.65),
+               inset 0 -1px 1px rgba(43,38,32,.12)}
+  #design a[style*="border-bottom:1px solid rgba(138,122,94"]:hover{
+    color:#7B3F2E;border-bottom-color:#B08D57}
+  #design a[style*="transition:color"]:hover{color:#7B3F2E}
+  #design [style*="backdrop-filter"][style*="border-radius:16px"]:hover,
+  #design [style*="backdrop-filter"][style*="border-radius:14px"]:hover{
+    transform:translateY(-4px);box-shadow:0 16px 36px rgba(43,38,32,.2)}
+  #design [style*="backdrop-filter"][style*="border-radius:16px"],
+  #design [style*="backdrop-filter"][style*="border-radius:14px"]{
+    transition:transform .22s ease,box-shadow .22s ease}
+  @media (prefers-reduced-motion:reduce){
+    #design a[style*="border-radius:999px"]:hover,
+    #design [style*="backdrop-filter"]:hover{transform:none}
+  }
+
   /* ---- splash: the setter, turning ---- */
-  #splash{position:fixed;inset:0;z-index:60;background:#F0EAD9 url('/pet-urns/papyrus.svg') center/cover;
+  #splash{position:fixed;inset:0;z-index:60;background:#F0EAD9 url('/memorials/papyrus.svg') center/cover;
     display:flex;flex-direction:column;align-items:center;justify-content:center;
     gap:clamp(14px,2.6vh,30px);transition:opacity .9s ease,visibility .9s ease}
   #splash.done{opacity:0;visibility:hidden}
@@ -100,7 +122,7 @@ const OG    = `${SITE}/pet-urns/gd_03.jpg`;
      12fps is a smooth 5s revolution. Geometry constants live on the element so
      the CSS and the script cannot disagree. */
   #spin{width:clamp(210px,30vw,340px);
-    background-image:url('/pet-urns/setter_turntable.webp');
+    background-image:url('/memorials/setter_turntable.webp');
     background-repeat:no-repeat;
     filter:drop-shadow(0 24px 28px rgba(118,92,58,.28));
     opacity:0;animation:fade-in .9s .3s ease forwards}
@@ -202,12 +224,12 @@ const OG    = `${SITE}/pet-urns/gd_03.jpg`;
       <div style="font-family:'Cormorant Garamond',serif;font-size:21px;letter-spacing:6px;text-indent:6px;color:#8A7A5E;margin-top:6px">MEMORIAL ART STUDIO</div>
     </div>
     <div style="display:flex;gap:54px;font-family:'Cormorant Garamond',serif;font-size:18px;letter-spacing:4px;text-transform:uppercase">
-      <a href="#" style="transition:color 0.2s ease;color:#4E5A3A" style-hover="color:#7B3F2E">Home</a>
-      <a href="#" style="transition:color 0.2s ease;color:#4E5A3A" style-hover="color:#7B3F2E">Gallery</a>
-      <a href="#" style="color:#7B3F2E;border-bottom:2px solid #B08D57;padding-bottom:4px">Pet Urns</a>
-      <a href="#" style="transition:color 0.2s ease;color:#4E5A3A" style-hover="color:#7B3F2E">Commissions</a>
-      <a href="#" style="transition:color 0.2s ease;color:#4E5A3A" style-hover="color:#7B3F2E">Studio Shop</a>
-      <a href="#" style="transition:color 0.2s ease;color:#4E5A3A" style-hover="color:#7B3F2E">Contact</a>
+      <a href="/" style="transition:color 0.2s ease;color:#4E5A3A">Home</a>
+      <a href="#gallery" style="transition:color 0.2s ease;color:#4E5A3A">Gallery</a>
+      <a href="/memorials" aria-current="page" style="color:#7B3F2E;border-bottom:2px solid #B08D57;padding-bottom:4px">Memorials</a>
+      <a href="#commissions" style="transition:color 0.2s ease;color:#4E5A3A">Commissions</a>
+      <a href="#shop" style="transition:color 0.2s ease;color:#4E5A3A">Studio Shop</a>
+      <a href="mailto:durrell.smith03@gmail.com?subject=Pet%20memorial%20commission" style="transition:color 0.2s ease;color:#4E5A3A">Contact</a>
     </div>
   </div>
 
@@ -219,12 +241,12 @@ const OG    = `${SITE}/pet-urns/gd_03.jpg`;
       <div style="width:120px;height:2px;background:#B08D57;margin:28px 0"></div>
       <p style="font-size:19px;line-height:1.75;margin:0;max-width:520px">Each piece is a one-of-one sculpture of your own companion, modeled from your photographs and finished by hand in our studio. Not a shape from a catalog &mdash; them.</p>
       <div style="display:flex;align-items:center;gap:30px;margin-top:44px;flex-wrap:wrap">
-        <a href="#" style="display:inline-block;background:linear-gradient(rgba(255,255,255,0.28),rgba(255,255,255,0.02) 46%),rgba(123,63,46,0.7);backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);border:1px solid rgba(255,255,255,0.45);border-radius:999px;transition:transform 0.25s ease,box-shadow 0.25s ease,filter 0.25s ease;box-shadow:0 12px 34px rgba(43,38,32,0.3),inset 0 1px 1px rgba(255,255,255,0.5),inset 0 -1px 1px rgba(43,38,32,0.15);color:#F0EAD9;font-family:'Cormorant Garamond',serif;font-size:26px;letter-spacing:4px;text-transform:uppercase;padding:20px 46px;white-space:nowrap" style-hover="transform:translateY(-3px);filter:brightness(1.09);box-shadow:0 18px 44px rgba(43,38,32,0.38),inset 0 1px 1px rgba(255,255,255,0.65),inset 0 -1px 1px rgba(43,38,32,0.12)">Begin a Commission</a>
-        <a href="#" style="font-family:'Cormorant Garamond',serif;font-size:20px;letter-spacing:3px;text-transform:uppercase;color:#4E5A3A;border-bottom:1px solid rgba(138,122,94,0.5);padding-bottom:4px" style-hover="color:#7B3F2E;border-bottom:1px solid #B08D57">View the Gallery</a>
+        <a href="mailto:durrell.smith03@gmail.com?subject=Pet%20memorial%20commission" style="display:inline-block;background:linear-gradient(rgba(255,255,255,0.28),rgba(255,255,255,0.02) 46%),rgba(123,63,46,0.7);backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);border:1px solid rgba(255,255,255,0.45);border-radius:999px;transition:transform 0.25s ease,box-shadow 0.25s ease,filter 0.25s ease;box-shadow:0 12px 34px rgba(43,38,32,0.3),inset 0 1px 1px rgba(255,255,255,0.5),inset 0 -1px 1px rgba(43,38,32,0.15);color:#F0EAD9;font-family:'Cormorant Garamond',serif;font-size:26px;letter-spacing:4px;text-transform:uppercase;padding:20px 46px;white-space:nowrap" style-hover="transform:translateY(-3px);filter:brightness(1.09);box-shadow:0 18px 44px rgba(43,38,32,0.38),inset 0 1px 1px rgba(255,255,255,0.65),inset 0 -1px 1px rgba(43,38,32,0.12)">Begin a Commission</a>
+        <a href="#gallery" style="font-family:'Cormorant Garamond',serif;font-size:20px;letter-spacing:3px;text-transform:uppercase;color:#4E5A3A;border-bottom:1px solid rgba(138,122,94,0.5);padding-bottom:4px" style-hover="color:#7B3F2E;border-bottom:1px solid #B08D57">View the Gallery</a>
       </div>
       <div style="font-family:'Cormorant Garamond',serif;font-size:18px;font-style:italic;color:#4E5A3A;margin-top:30px">One price &mdash; $950 &middot; When you&rsquo;re ready.</div>
     </div>
-    <div style="height:680px;overflow:hidden;background:#EAE2CE"><img src="/pet-urns/gd_03.jpg" alt="A finished gold goldendoodle sculpture, left profile" style="width:100%;height:100%;object-fit:cover;display:block"></div>
+    <div style="height:680px;overflow:hidden;background:#EAE2CE"><img src="/memorials/gd_03.jpg" alt="A finished gold goldendoodle sculpture, left profile" style="width:100%;height:100%;object-fit:cover;display:block"></div>
   </div>
 
   <!-- how it works -->
@@ -258,7 +280,7 @@ const OG    = `${SITE}/pet-urns/gd_03.jpg`;
   </div>
 
   <!-- tiers -->
-  <div style="padding:90px 100px;text-align:center">
+  <div id="commissions" style="padding:90px 100px;text-align:center">
     <div style="font-family:'Cormorant Garamond',serif;font-size:16px;letter-spacing:7px;text-transform:uppercase;color:#4E5A3A">Commissions</div>
     <h2 style="font-size:44px;font-weight:600;color:#7B3F2E;margin:18px 0 0">One piece. One price.</h2>
     <div style="width:120px;height:2px;background:#B08D57;margin:26px auto"></div>
@@ -279,7 +301,7 @@ const OG    = `${SITE}/pet-urns/gd_03.jpg`;
     <div style="width:120px;height:2px;background:#B08D57;margin:26px auto"></div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;max-width:920px;margin:54px auto 0;text-align:center">
       <div style="transition:all 0.25s ease;background:linear-gradient(rgba(255,255,255,0.45),rgba(255,255,255,0.15) 55%),rgba(240,234,217,0.3);backdrop-filter:blur(14px) saturate(160%);-webkit-backdrop-filter:blur(14px) saturate(160%);border:1px solid rgba(255,255,255,0.6);border-radius:16px;box-shadow:0 10px 28px rgba(43,38,32,0.12),inset 0 1px 1px rgba(255,255,255,0.65);padding:36px 32px 44px" style-hover="transform:translateY(-4px);box-shadow:0 16px 36px rgba(43,38,32,0.2),inset 0 1px 1px rgba(255,255,255,0.65)">
-        <div style="height:220px;overflow:hidden;background:#EAE2CE"><img src="/pet-urns/gd_07.jpg" alt="The house gold finish on a finished commission" style="width:100%;height:100%;object-fit:cover;display:block"></div>
+        <div style="height:220px;overflow:hidden;background:#EAE2CE"><img src="/memorials/gd_07.jpg" alt="The house gold finish on a finished commission" style="width:100%;height:100%;object-fit:cover;display:block"></div>
         <div style="font-family:'Cormorant Garamond',serif;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#2B2620;margin-top:30px">Gold Finish</div>
         <div style="font-family:'Cormorant Garamond',serif;font-size:17px;letter-spacing:3px;text-transform:uppercase;color:#7E5E27;margin-top:10px">Included</div>
         <p style="font-size:16px;line-height:1.7;margin:18px 0 0">A hand-worked gold finish with the warmth and depth of a gallery casting. Our house finish.</p>
@@ -295,36 +317,36 @@ const OG    = `${SITE}/pet-urns/gd_03.jpg`;
   </div>
 
   <!-- gallery -->
-  <div style="padding:90px 100px;text-align:center">
+  <div id="gallery" style="padding:90px 100px;text-align:center">
     <div style="font-family:'Cormorant Garamond',serif;font-size:16px;letter-spacing:7px;text-transform:uppercase;color:#4E5A3A">Recent Commissions</div>
     <h2 style="font-size:44px;font-weight:600;color:#7B3F2E;margin:18px 0 0">From the studio</h2>
     <div style="width:120px;height:2px;background:#B08D57;margin:26px auto"></div>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:26px;margin-top:50px">
-      <div style="height:340px;overflow:hidden;background:#EAE2CE"><img src="/pet-urns/gd_01.jpg" alt="A finished commission from the studio" style="width:100%;height:100%;object-fit:cover;display:block"></div>
-      <div style="height:340px;overflow:hidden;background:#EAE2CE"><img src="/pet-urns/gd_02.jpg" alt="A finished commission from the studio" style="width:100%;height:100%;object-fit:cover;display:block"></div>
-      <div style="height:340px;overflow:hidden;background:#EAE2CE"><img src="/pet-urns/gd_04.jpg" alt="A finished commission from the studio" style="width:100%;height:100%;object-fit:cover;display:block"></div>
-      <div style="height:340px;overflow:hidden;background:#EAE2CE"><img src="/pet-urns/gd_05.jpg" alt="A finished commission from the studio" style="width:100%;height:100%;object-fit:cover;display:block"></div>
-      <div style="height:340px;overflow:hidden;background:#EAE2CE"><img src="/pet-urns/gd_06.jpg" alt="A finished commission from the studio" style="width:100%;height:100%;object-fit:cover;display:block"></div>
-      <div style="height:340px;overflow:hidden;background:#EAE2CE"><img src="/pet-urns/gd_07.jpg" alt="A finished commission from the studio" style="width:100%;height:100%;object-fit:cover;display:block"></div>
+      <div style="height:340px;overflow:hidden;background:#EAE2CE"><img src="/memorials/gd_01.jpg" alt="A finished commission from the studio" style="width:100%;height:100%;object-fit:cover;display:block"></div>
+      <div style="height:340px;overflow:hidden;background:#EAE2CE"><img src="/memorials/gd_02.jpg" alt="A finished commission from the studio" style="width:100%;height:100%;object-fit:cover;display:block"></div>
+      <div style="height:340px;overflow:hidden;background:#EAE2CE"><img src="/memorials/gd_04.jpg" alt="A finished commission from the studio" style="width:100%;height:100%;object-fit:cover;display:block"></div>
+      <div style="height:340px;overflow:hidden;background:#EAE2CE"><img src="/memorials/gd_05.jpg" alt="A finished commission from the studio" style="width:100%;height:100%;object-fit:cover;display:block"></div>
+      <div style="height:340px;overflow:hidden;background:#EAE2CE"><img src="/memorials/gd_06.jpg" alt="A finished commission from the studio" style="width:100%;height:100%;object-fit:cover;display:block"></div>
+      <div style="height:340px;overflow:hidden;background:#EAE2CE"><img src="/memorials/gd_07.jpg" alt="A finished commission from the studio" style="width:100%;height:100%;object-fit:cover;display:block"></div>
     </div>
   </div>
 
   <!-- studio shop -->
-  <div style="padding:0 100px 90px;text-align:center">
+  <div id="shop" style="padding:0 100px 90px;text-align:center">
     <div style="font-family:'Cormorant Garamond',serif;font-size:16px;letter-spacing:7px;text-transform:uppercase;color:#4E5A3A">The Studio Shop</div>
     <h2 style="font-size:44px;font-weight:600;color:#7B3F2E;margin:18px 0 0">More from the studio</h2>
     <div style="width:120px;height:2px;background:#B08D57;margin:26px auto"></div>
     <p style="font-family:'Cormorant Garamond',serif;font-size:20px;color:#2B2620;margin:0 auto;max-width:620px;line-height:1.7">Smaller pieces from the same hands &mdash; ready to ship, no commission required.</p>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:28px;margin-top:50px">
       <div style="transition:all 0.25s ease;background:linear-gradient(rgba(255,255,255,0.4),rgba(255,255,255,0.12) 55%),rgba(234,226,206,0.35);backdrop-filter:blur(14px) saturate(160%);-webkit-backdrop-filter:blur(14px) saturate(160%);border:1px solid rgba(255,255,255,0.6);border-radius:14px;box-shadow:0 10px 28px rgba(43,38,32,0.12),inset 0 1px 1px rgba(255,255,255,0.6);padding:26px 26px 34px" style-hover="transform:translateY(-4px);box-shadow:0 16px 36px rgba(43,38,32,0.2),inset 0 1px 1px rgba(255,255,255,0.65)">
-        <div style="height:230px;border-radius:10px;overflow:hidden;background:#EAE2CE"><img src="/pet-urns/orn_08.jpg" alt="A gold English Setter ornament hanging on a lit tree" style="width:100%;height:100%;object-fit:cover;display:block"></div>
+        <div style="height:230px;border-radius:10px;overflow:hidden;background:#EAE2CE"><img src="/memorials/orn_08.jpg" alt="A gold English Setter ornament hanging on a lit tree" style="width:100%;height:100%;object-fit:cover;display:block"></div>
         <div style="font-family:'Cormorant Garamond',serif;font-size:22px;letter-spacing:3px;text-transform:uppercase;color:#2B2620;margin-top:26px">English Setter Ornaments</div>
         <p style="font-size:16px;line-height:1.7;margin:12px 0 0;color:#2B2620">Our signature setter, sculpted in miniature &mdash; for the tree, the shelf, or the studio wall.</p>
       </div>
       
       
     </div>
-    <a href="#" style="display:inline-block;margin-top:44px;transition:color 0.2s ease;font-family:'Cormorant Garamond',serif;font-size:20px;letter-spacing:3px;text-transform:uppercase;color:#4E5A3A;border-bottom:1px solid rgba(138,122,94,0.5);padding-bottom:4px" style-hover="color:#7B3F2E;border-bottom:1px solid #B08D57">Visit the Studio Shop</a>
+    <a href="#shop" style="display:inline-block;margin-top:44px;transition:color 0.2s ease;font-family:'Cormorant Garamond',serif;font-size:20px;letter-spacing:3px;text-transform:uppercase;color:#4E5A3A;border-bottom:1px solid rgba(138,122,94,0.5);padding-bottom:4px" style-hover="color:#7B3F2E;border-bottom:1px solid #B08D57">Visit the Studio Shop</a>
   </div>
 
   <!-- testimonials -->
@@ -333,7 +355,7 @@ const OG    = `${SITE}/pet-urns/gd_03.jpg`;
     <h2 style="font-size:44px;font-weight:600;color:#7B3F2E;margin:18px 0 0">From the families</h2>
     <div style="width:120px;height:2px;background:#B08D57;margin:26px auto"></div>
     <p style="font-family:'Cormorant Garamond',serif;font-style:italic;color:#8A7A5E;font-size:19px;max-width:56ch;margin:0 auto 44px;line-height:1.7">Our first commissions are finding their way home now. When yours arrives, we would be honoured to share your words here.</p>
-    <div style="max-width:760px;margin:60px auto 0;transition:all 0.25s ease;background:linear-gradient(rgba(255,255,255,0.4),rgba(255,255,255,0.12) 55%),rgba(234,226,206,0.35);backdrop-filter:blur(14px) saturate(160%);-webkit-backdrop-filter:blur(14px) saturate(160%);border:1px solid rgba(255,255,255,0.6);border-radius:16px;box-shadow:0 10px 28px rgba(43,38,32,0.12),inset 0 1px 1px rgba(255,255,255,0.6);padding:44px 48px;text-align:left">
+    <div id="faq" style="max-width:760px;margin:60px auto 0;transition:all 0.25s ease;background:linear-gradient(rgba(255,255,255,0.4),rgba(255,255,255,0.12) 55%),rgba(234,226,206,0.35);backdrop-filter:blur(14px) saturate(160%);-webkit-backdrop-filter:blur(14px) saturate(160%);border:1px solid rgba(255,255,255,0.6);border-radius:16px;box-shadow:0 10px 28px rgba(43,38,32,0.12),inset 0 1px 1px rgba(255,255,255,0.6);padding:44px 48px;text-align:left">
       <div style="text-align:center">
         <div style="font-family:'Cormorant Garamond',serif;font-size:22px;letter-spacing:4px;text-transform:uppercase;color:#7B3F2E">Share Your Story</div>
         <p style="font-family:'Cormorant Garamond',serif;font-size:19px;color:#2B2620;margin:14px auto 0;max-width:560px;line-height:1.7">If a piece from the studio lives with you, we would be honored to hear how they&rsquo;re doing. We read every word.</p>
@@ -354,7 +376,7 @@ const OG    = `${SITE}/pet-urns/gd_03.jpg`;
       </div>
       <div style="display:flex;align-items:center;justify-content:space-between;gap:24px;margin-top:32px;flex-wrap:wrap">
         <div style="font-family:'Cormorant Garamond',serif;font-size:16px;font-style:italic;color:#8A7A5E">Photos of your piece at home are always welcome.</div>
-        <a href="#" style="display:inline-block;background:linear-gradient(rgba(255,255,255,0.28),rgba(255,255,255,0.02) 46%),rgba(123,63,46,0.7);backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);border:1px solid rgba(255,255,255,0.45);border-radius:999px;transition:transform 0.25s ease,box-shadow 0.25s ease,filter 0.25s ease;box-shadow:0 12px 34px rgba(43,38,32,0.3),inset 0 1px 1px rgba(255,255,255,0.5),inset 0 -1px 1px rgba(43,38,32,0.15);color:#F0EAD9;font-family:'Cormorant Garamond',serif;font-size:22px;letter-spacing:4px;text-transform:uppercase;padding:16px 44px;white-space:nowrap" style-hover="transform:translateY(-3px);filter:brightness(1.09);box-shadow:0 18px 44px rgba(43,38,32,0.38),inset 0 1px 1px rgba(255,255,255,0.65),inset 0 -1px 1px rgba(43,38,32,0.12)">Send Your Review</a>
+        <a href="mailto:durrell.smith03@gmail.com?subject=My%20DASH%20piece" style="display:inline-block;background:linear-gradient(rgba(255,255,255,0.28),rgba(255,255,255,0.02) 46%),rgba(123,63,46,0.7);backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);border:1px solid rgba(255,255,255,0.45);border-radius:999px;transition:transform 0.25s ease,box-shadow 0.25s ease,filter 0.25s ease;box-shadow:0 12px 34px rgba(43,38,32,0.3),inset 0 1px 1px rgba(255,255,255,0.5),inset 0 -1px 1px rgba(43,38,32,0.15);color:#F0EAD9;font-family:'Cormorant Garamond',serif;font-size:22px;letter-spacing:4px;text-transform:uppercase;padding:16px 44px;white-space:nowrap" style-hover="transform:translateY(-3px);filter:brightness(1.09);box-shadow:0 18px 44px rgba(43,38,32,0.38),inset 0 1px 1px rgba(255,255,255,0.65),inset 0 -1px 1px rgba(43,38,32,0.12)">Send Your Review</a>
       </div>
     </div>
   </div>
@@ -396,7 +418,7 @@ const OG    = `${SITE}/pet-urns/gd_03.jpg`;
       </div>
     </div>
     <div style="text-align:center;margin-top:70px">
-      <a href="#" style="display:inline-block;background:linear-gradient(rgba(255,255,255,0.28),rgba(255,255,255,0.02) 46%),rgba(123,63,46,0.7);backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);border:1px solid rgba(255,255,255,0.45);border-radius:999px;transition:transform 0.25s ease,box-shadow 0.25s ease,filter 0.25s ease;box-shadow:0 12px 34px rgba(43,38,32,0.3),inset 0 1px 1px rgba(255,255,255,0.5),inset 0 -1px 1px rgba(43,38,32,0.15);color:#F0EAD9;font-family:'Cormorant Garamond',serif;font-size:26px;letter-spacing:4px;text-transform:uppercase;padding:20px 46px;white-space:nowrap" style-hover="transform:translateY(-3px);filter:brightness(1.09);box-shadow:0 18px 44px rgba(43,38,32,0.38),inset 0 1px 1px rgba(255,255,255,0.65),inset 0 -1px 1px rgba(43,38,32,0.12)">Begin a Commission</a>
+      <a href="mailto:durrell.smith03@gmail.com?subject=Pet%20memorial%20commission" style="display:inline-block;background:linear-gradient(rgba(255,255,255,0.28),rgba(255,255,255,0.02) 46%),rgba(123,63,46,0.7);backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);border:1px solid rgba(255,255,255,0.45);border-radius:999px;transition:transform 0.25s ease,box-shadow 0.25s ease,filter 0.25s ease;box-shadow:0 12px 34px rgba(43,38,32,0.3),inset 0 1px 1px rgba(255,255,255,0.5),inset 0 -1px 1px rgba(43,38,32,0.15);color:#F0EAD9;font-family:'Cormorant Garamond',serif;font-size:26px;letter-spacing:4px;text-transform:uppercase;padding:20px 46px;white-space:nowrap" style-hover="transform:translateY(-3px);filter:brightness(1.09);box-shadow:0 18px 44px rgba(43,38,32,0.38),inset 0 1px 1px rgba(255,255,255,0.65),inset 0 -1px 1px rgba(43,38,32,0.12)">Begin a Commission</a>
       <div style="font-family:'Cormorant Garamond',serif;font-size:18px;font-style:italic;color:#4E5A3A;margin-top:22px">When you&rsquo;re ready &mdash; there is no hurry.</div>
     </div>
   </div>
@@ -438,7 +460,7 @@ const OG    = `${SITE}/pet-urns/gd_03.jpg`;
 
   var sp=document.getElementById('splash'), s0=performance.now();
   function go(){ sp.classList.add('done'); }
-  var im=new Image(); im.src='/pet-urns/setter_turntable.webp';
+  var im=new Image(); im.src='/memorials/setter_turntable.webp';
   function ready(){ setTimeout(go, Math.max(0, 3600-(performance.now()-s0))); }
   if (im.complete) ready(); else { im.onload=ready; im.onerror=ready; }
   setTimeout(go, 7000);
