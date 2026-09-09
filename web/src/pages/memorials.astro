@@ -86,6 +86,34 @@ const OG    = `${SITE}/memorials/gd_03.jpg`;
     #design [style*="height:680px"]{height:clamp(280px,62vw,520px)!important}
   }
 
+  /* ---- the design's own ambient keyframes ----------------------------------
+     These live in a <style> block in the design file's BODY, so extracting the
+     artboard's inner HTML left 34 elements referencing animations that were
+     never defined — every cloud and ember sat frozen at transform:none.
+     Copied verbatim from "Pet Urns Website.dc.html". */
+  @keyframes cloudMove{from{transform:translateX(-1600px)}to{transform:translateX(1600px)}}
+  @keyframes cloudMoveM{from{transform:translateX(-560px)}to{transform:translateX(560px)}}
+  @keyframes orbA{0%{transform:translate(0,60px) scale(.5);opacity:0}8%{opacity:1}30%{transform:translate(34px,-40px) scale(1.15);opacity:.8}50%{transform:translate(-18px,-110px) scale(.95);opacity:.95}70%{transform:translate(26px,-170px) scale(.75);opacity:.6}100%{transform:translate(-12px,-240px) scale(.4);opacity:0}}
+  @keyframes orbB{0%{transform:translate(0,50px) scale(.45);opacity:0}10%{opacity:.95}32%{transform:translate(-30px,-50px) scale(1.2);opacity:.75}55%{transform:translate(22px,-120px) scale(.9);opacity:.85}75%{transform:translate(-26px,-180px) scale(.7);opacity:.5}100%{transform:translate(14px,-250px) scale(.35);opacity:0}}
+
+  /* The artboard is the 1440 desktop one, so its clouds travel +/-1600px. On a
+     phone that is mostly off-screen dead time; the design's mobile artboards
+     use the shorter cloudMoveM sweep, so borrow it below the tablet break. */
+  @media (max-width:720px){
+    #design [style*="cloudMove"]{animation-name:cloudMoveM!important}
+  }
+
+  /* Sigils: the design positions these as STATIC marginalia — no keyframe of
+     their own. This is a slow vertical float added on top, animating the
+     `translate` property so it composes with (rather than overwrites) each
+     one's inline `transform:scaleX(-1) rotate(...)`. Delete this block to go
+     back to the spec exactly. */
+  @keyframes sigilDrift{0%{translate:0 0}50%{translate:0 -13px}100%{translate:0 0}}
+  #design [style*="scaleX(-1)"]{animation:sigilDrift 52s ease-in-out infinite;will-change:translate}
+  #design [style*="scaleX(-1)"]:nth-child(2n){animation-duration:67s;animation-delay:-11s}
+  #design [style*="scaleX(-1)"]:nth-child(3n){animation-duration:78s;animation-delay:-26s}
+  #design [style*="scaleX(-1)"]:nth-child(5n){animation-duration:44s;animation-delay:-7s}
+
   /* The artboard carries its hover states in `style-hover` attributes, which are
      a design-tool convention the browser ignores — every control on the page was
      inert. These restore the specced states against the shapes they apply to. */
@@ -140,6 +168,7 @@ const OG    = `${SITE}/memorials/gd_03.jpg`;
     #splash .tag,#splash .lockup{animation:none;opacity:1}
     #splash{transition:none}
     #design [style*="animation"]{animation:none!important}
+    #design [style*="scaleX(-1)"]{animation:none!important;translate:none}
   }
 </style>
 </head>
