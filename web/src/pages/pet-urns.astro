@@ -1,0 +1,448 @@
+---
+// /pet-urns — DASH Memorial Art. Destination of the rust egg on the gateway.
+//
+// The body of this page is a FAITHFUL PORT of the "Landing page" artboard from
+// the Claude Design file (~/Desktop/design_handoff_pet_urns_website/). The
+// markup and its inline styles are the design's own — do not "tidy" them by
+// hand; re-export from the design file and re-run the port instead, or the two
+// will drift. Only four things were changed on the way in:
+//   1. asset paths rewritten to /pet-urns/*
+//   2. the three invented customer testimonials removed (the studio has not
+//      delivered to an outside client yet; the Share Your Story card stays)
+//   3. matcha #5C6B42 -> #4E5A3A, which the design file also carries now
+//   4. responsive overrides added below, since the artboard is a fixed 1440px
+//
+// Added around it: the turntable splash, the shared OrbNav, and SEO/meta.
+import OrbNav from '../components/OrbNav.astro';
+
+const SITE  = 'https://dashcreatives.art';
+const TITLE = 'Custom Pet Memorial Urns — sculpted from your photographs | DASH Creatives';
+const DESC  = 'A one-of-one sculpture of your own companion, modeled from your photographs and finished by hand in our studio. One piece, one price: $950.';
+const OG    = `${SITE}/pet-urns/gd_03.jpg`;
+---
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{TITLE}</title>
+<meta name="description" content={DESC}>
+<link rel="canonical" href={`${SITE}/pet-urns`}>
+<meta property="og:type" content="product">
+<meta property="og:site_name" content="DASH Creatives">
+<meta property="og:title" content={TITLE}>
+<meta property="og:description" content={DESC}>
+<meta property="og:image" content={OG}>
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<script type="application/ld+json" set:html={JSON.stringify({
+  "@context":"https://schema.org","@type":"Product",
+  "name":"Custom Pet Memorial Urn — one-of-one sculpted commission",
+  "description":DESC,"image":OG,"brand":{"@type":"Brand","name":"DASH Creatives"},
+  "offers":{"@type":"Offer","price":"950","priceCurrency":"USD",
+            "availability":"https://schema.org/InStock","url":`${SITE}/pet-urns`}
+})} />
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#F0EAD9;font-family:'Playfair Display',Georgia,serif;color:#2B2620;
+       -webkit-font-smoothing:antialiased}
+  img{max-width:100%}
+
+  /* The artboard is authored at a fixed 1440px. Centre it, let it shrink, and
+     collapse only the handful of fixed grids it contains. Overrides are by
+     inline-style substring because that is what the ported markup carries. */
+  #design{width:100%;max-width:1440px;margin:0 auto;position:relative;
+          isolation:isolate;overflow:hidden;
+          background:#F0EAD9 url('/pet-urns/papyrus.svg') center/cover}
+  @media (max-width:1180px){
+    #design [style*="grid-template-columns:1fr 560px"]{
+      grid-template-columns:1fr!important;gap:44px!important}
+    #design [style*="grid-template-columns:1fr 1fr 1fr"]{
+      grid-template-columns:1fr 1fr!important}
+    #design [style*="padding:90px 100px"],
+    #design [style*="padding:80px 100px"],
+    #design [style*="padding:70px 100px"],
+    #design [style*="padding:20px 100px 90px"],
+    #design [style*="padding:0 100px 90px"],
+    #design [style*="padding:20px 100px 100px"],
+    #design [style*="padding:56px 100px 64px"],
+    #design [style*="padding:44px 60px 30px"]{
+      padding-left:clamp(20px,5vw,60px)!important;padding-right:clamp(20px,5vw,60px)!important}
+  }
+  /* The artboard's flex rows are authored nowrap at 1440px; their min-content
+     was propping the hero grid track open to 434px inside a 375px screen. */
+  @media (max-width:900px){
+    #design [style*="display:flex"]{flex-wrap:wrap!important}
+    #design [style*="display:grid"] > *{min-width:0}
+    #design [style*="gap:54px"]{gap:clamp(10px,3.4vw,24px)!important}
+    #design [style*="gap:80px"]{gap:clamp(24px,5vw,44px)!important}
+    #design [style*="white-space:nowrap"]{white-space:normal!important}
+  }
+  @media (max-width:720px){
+    #design [style*="grid-template-columns:1fr 1fr"]{grid-template-columns:1fr!important}
+    #design [style*="font-size:62px"]{font-size:clamp(32px,8vw,50px)!important}
+    #design [style*="font-size:44px"]{font-size:clamp(26px,6.4vw,38px)!important}
+    #design [style*="height:680px"]{height:clamp(280px,62vw,520px)!important}
+  }
+
+  /* ---- splash: the setter, turning ---- */
+  #splash{position:fixed;inset:0;z-index:60;background:#F0EAD9 url('/pet-urns/papyrus.svg') center/cover;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:clamp(14px,2.6vh,30px);transition:opacity .9s ease,visibility .9s ease}
+  #splash.done{opacity:0;visibility:hidden}
+  .brandname{font-size:clamp(21px,2.6vw,34px);font-weight:600;
+    letter-spacing:clamp(7px,1.1vw,14px);color:#8A7A5E;text-indent:clamp(7px,1.1vw,14px)}
+  .brandsub{font-family:'Cormorant Garamond',serif;font-size:clamp(13px,1.5vw,21px);
+    letter-spacing:6px;color:#8A7A5E;opacity:.75;margin-top:8px;text-indent:6px}
+  /* Turntable sprite sheet, driven from JS so the frame rate is one number to
+     tune. 24 frames over 9s read as ~2.7fps and stepped visibly; 60 frames at
+     12fps is a smooth 5s revolution. Geometry constants live on the element so
+     the CSS and the script cannot disagree. */
+  #spin{width:clamp(210px,30vw,340px);
+    background-image:url('/pet-urns/setter_turntable.webp');
+    background-repeat:no-repeat;
+    filter:drop-shadow(0 24px 28px rgba(118,92,58,.28));
+    opacity:0;animation:fade-in .9s .3s ease forwards}
+  @keyframes fade-in{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  #splash .rule{width:120px;height:2px;background:#B08D57;transform:scaleX(0);
+    animation:draw 2.6s .8s cubic-bezier(.4,0,.2,1) forwards}
+  @keyframes draw{to{transform:scaleX(1)}}
+  #splash .tag{font-style:italic;color:#8A7A5E;font-size:clamp(16px,2vw,27px);
+    text-align:center;padding:0 22px;opacity:0;animation:fade-in .9s .62s ease forwards}
+  #splash .lockup{text-align:center;opacity:0;animation:fade-in .9s .12s ease forwards}
+
+  @media (prefers-reduced-motion:reduce){
+    #spin{animation:none;opacity:1}
+    #splash .rule{animation:none;transform:scaleX(1)}
+    #splash .tag,#splash .lockup{animation:none;opacity:1}
+    #splash{transition:none}
+    #design [style*="animation"]{animation:none!important}
+  }
+</style>
+</head>
+<body>
+
+<div id="splash">
+  <div class="lockup">
+    <div class="brandname">DASH CREATIVES</div>
+    <div class="brandsub">MEMORIAL ART STUDIO</div>
+  </div>
+  <div id="spin" role="img" aria-label="A sculpted English Setter, turning slowly"></div>
+  <div class="rule"></div>
+  <div class="tag">Sculpting the Memory of your Beloved Pet</div>
+</div>
+
+<div id="design">
+
+
+  <div style="position:absolute;inset:0;pointer-events:none;z-index:-1">
+    <div style="position:absolute;left:30%;top:4%;width:820px;height:295px;background:radial-gradient(ellipse 26% 38% at 30% 32%,rgba(255,255,252,1),transparent 68%),radial-gradient(ellipse 22% 34% at 50% 24%,rgba(255,255,250,1),transparent 66%),radial-gradient(ellipse 18% 28% at 40% 20%,rgba(255,255,253,1),transparent 62%),radial-gradient(ellipse 24% 36% at 68% 34%,rgba(255,254,248,0.98),transparent 68%),radial-gradient(ellipse 16% 26% at 82% 44%,rgba(255,254,249,0.95),transparent 64%),radial-gradient(ellipse 40% 50% at 40% 56%,rgba(255,253,246,0.96),transparent 70%),radial-gradient(ellipse 42% 48% at 66% 60%,rgba(255,252,243,0.92),transparent 72%),radial-gradient(ellipse 46% 28% at 46% 82%,rgba(150,180,196,0.24),transparent 72%),radial-gradient(ellipse 34% 24% at 72% 84%,rgba(150,180,196,0.16),transparent 70%),radial-gradient(ellipse 72% 72% at 50% 56%,rgba(150,180,196,0.1),transparent 76%);filter:drop-shadow(0 22px 26px rgba(118,92,58,0.25)) blur(10px);opacity:0.85;animation:cloudMove 137s linear -53s infinite"></div>
+    <div style="position:absolute;left:74%;top:16%;width:420px;height:151px;background:radial-gradient(ellipse 26% 38% at 30% 32%,rgba(255,255,252,1),transparent 68%),radial-gradient(ellipse 22% 34% at 50% 24%,rgba(255,255,250,1),transparent 66%),radial-gradient(ellipse 18% 28% at 40% 20%,rgba(255,255,253,1),transparent 62%),radial-gradient(ellipse 24% 36% at 68% 34%,rgba(255,254,248,0.98),transparent 68%),radial-gradient(ellipse 16% 26% at 82% 44%,rgba(255,254,249,0.95),transparent 64%),radial-gradient(ellipse 40% 50% at 40% 56%,rgba(255,253,246,0.96),transparent 70%),radial-gradient(ellipse 42% 48% at 66% 60%,rgba(255,252,243,0.92),transparent 72%),radial-gradient(ellipse 46% 28% at 46% 82%,rgba(150,180,196,0.24),transparent 72%),radial-gradient(ellipse 34% 24% at 72% 84%,rgba(150,180,196,0.16),transparent 70%),radial-gradient(ellipse 72% 72% at 50% 56%,rgba(150,180,196,0.1),transparent 76%);filter:drop-shadow(0 22px 26px rgba(118,92,58,0.25)) blur(7px);opacity:0.8;animation:cloudMove 174s linear -106s infinite"></div>
+    <div style="position:absolute;left:2%;top:14%;width:360px;height:130px;background:radial-gradient(ellipse 26% 38% at 30% 32%,rgba(255,255,252,1),transparent 68%),radial-gradient(ellipse 22% 34% at 50% 24%,rgba(255,255,250,1),transparent 66%),radial-gradient(ellipse 18% 28% at 40% 20%,rgba(255,255,253,1),transparent 62%),radial-gradient(ellipse 24% 36% at 68% 34%,rgba(255,254,248,0.98),transparent 68%),radial-gradient(ellipse 16% 26% at 82% 44%,rgba(255,254,249,0.95),transparent 64%),radial-gradient(ellipse 40% 50% at 40% 56%,rgba(255,253,246,0.96),transparent 70%),radial-gradient(ellipse 42% 48% at 66% 60%,rgba(255,252,243,0.92),transparent 72%),radial-gradient(ellipse 46% 28% at 46% 82%,rgba(150,180,196,0.24),transparent 72%),radial-gradient(ellipse 34% 24% at 72% 84%,rgba(150,180,196,0.16),transparent 70%),radial-gradient(ellipse 72% 72% at 50% 56%,rgba(150,180,196,0.1),transparent 76%);filter:drop-shadow(0 22px 26px rgba(118,92,58,0.25)) blur(6px);opacity:0.75;animation:cloudMove 111s linear -48s infinite"></div>
+    <div style="position:absolute;left:38%;top:30%;width:760px;height:274px;background:radial-gradient(ellipse 26% 38% at 30% 32%,rgba(255,255,252,1),transparent 68%),radial-gradient(ellipse 22% 34% at 50% 24%,rgba(255,255,250,1),transparent 66%),radial-gradient(ellipse 18% 28% at 40% 20%,rgba(255,255,253,1),transparent 62%),radial-gradient(ellipse 24% 36% at 68% 34%,rgba(255,254,248,0.98),transparent 68%),radial-gradient(ellipse 16% 26% at 82% 44%,rgba(255,254,249,0.95),transparent 64%),radial-gradient(ellipse 40% 50% at 40% 56%,rgba(255,253,246,0.96),transparent 70%),radial-gradient(ellipse 42% 48% at 66% 60%,rgba(255,252,243,0.92),transparent 72%),radial-gradient(ellipse 46% 28% at 46% 82%,rgba(150,180,196,0.24),transparent 72%),radial-gradient(ellipse 34% 24% at 72% 84%,rgba(150,180,196,0.16),transparent 70%),radial-gradient(ellipse 72% 72% at 50% 56%,rgba(150,180,196,0.1),transparent 76%);filter:drop-shadow(0 22px 26px rgba(118,92,58,0.25)) blur(10px);opacity:0.8;animation:cloudMove 148s linear -64s infinite"></div>
+    <div style="position:absolute;left:70%;top:54%;width:520px;height:187px;background:radial-gradient(ellipse 26% 38% at 30% 32%,rgba(255,255,252,1),transparent 68%),radial-gradient(ellipse 22% 34% at 50% 24%,rgba(255,255,250,1),transparent 66%),radial-gradient(ellipse 18% 28% at 40% 20%,rgba(255,255,253,1),transparent 62%),radial-gradient(ellipse 24% 36% at 68% 34%,rgba(255,254,248,0.98),transparent 68%),radial-gradient(ellipse 16% 26% at 82% 44%,rgba(255,254,249,0.95),transparent 64%),radial-gradient(ellipse 40% 50% at 40% 56%,rgba(255,253,246,0.96),transparent 70%),radial-gradient(ellipse 42% 48% at 66% 60%,rgba(255,252,243,0.92),transparent 72%),radial-gradient(ellipse 46% 28% at 46% 82%,rgba(150,180,196,0.24),transparent 72%),radial-gradient(ellipse 34% 24% at 72% 84%,rgba(150,180,196,0.16),transparent 70%),radial-gradient(ellipse 72% 72% at 50% 56%,rgba(150,180,196,0.1),transparent 76%);filter:drop-shadow(0 22px 26px rgba(118,92,58,0.25)) blur(8px);opacity:0.8;animation:cloudMove 185s linear -80s infinite"></div>
+    <div style="position:absolute;left:2%;top:44%;width:440px;height:158px;background:radial-gradient(ellipse 26% 38% at 30% 32%,rgba(255,255,252,1),transparent 68%),radial-gradient(ellipse 22% 34% at 50% 24%,rgba(255,255,250,1),transparent 66%),radial-gradient(ellipse 18% 28% at 40% 20%,rgba(255,255,253,1),transparent 62%),radial-gradient(ellipse 24% 36% at 68% 34%,rgba(255,254,248,0.98),transparent 68%),radial-gradient(ellipse 16% 26% at 82% 44%,rgba(255,254,249,0.95),transparent 64%),radial-gradient(ellipse 40% 50% at 40% 56%,rgba(255,253,246,0.96),transparent 70%),radial-gradient(ellipse 42% 48% at 66% 60%,rgba(255,252,243,0.92),transparent 72%),radial-gradient(ellipse 46% 28% at 46% 82%,rgba(150,180,196,0.24),transparent 72%),radial-gradient(ellipse 34% 24% at 72% 84%,rgba(150,180,196,0.16),transparent 70%),radial-gradient(ellipse 72% 72% at 50% 56%,rgba(150,180,196,0.1),transparent 76%);filter:drop-shadow(0 22px 26px rgba(118,92,58,0.25)) blur(7px);opacity:0.75;animation:cloudMove 122s linear -74s infinite"></div>
+    <div style="position:absolute;left:34%;top:68%;width:800px;height:288px;background:radial-gradient(ellipse 26% 38% at 30% 32%,rgba(255,255,252,1),transparent 68%),radial-gradient(ellipse 22% 34% at 50% 24%,rgba(255,255,250,1),transparent 66%),radial-gradient(ellipse 18% 28% at 40% 20%,rgba(255,255,253,1),transparent 62%),radial-gradient(ellipse 24% 36% at 68% 34%,rgba(255,254,248,0.98),transparent 68%),radial-gradient(ellipse 16% 26% at 82% 44%,rgba(255,254,249,0.95),transparent 64%),radial-gradient(ellipse 40% 50% at 40% 56%,rgba(255,253,246,0.96),transparent 70%),radial-gradient(ellipse 42% 48% at 66% 60%,rgba(255,252,243,0.92),transparent 72%),radial-gradient(ellipse 46% 28% at 46% 82%,rgba(150,180,196,0.24),transparent 72%),radial-gradient(ellipse 34% 24% at 72% 84%,rgba(150,180,196,0.16),transparent 70%),radial-gradient(ellipse 72% 72% at 50% 56%,rgba(150,180,196,0.1),transparent 76%);filter:drop-shadow(0 22px 26px rgba(118,92,58,0.25)) blur(10px);opacity:0.8;animation:cloudMove 159s linear -53s infinite"></div>
+    <div style="position:absolute;left:68%;top:86%;width:460px;height:166px;background:radial-gradient(ellipse 26% 38% at 30% 32%,rgba(255,255,252,1),transparent 68%),radial-gradient(ellipse 22% 34% at 50% 24%,rgba(255,255,250,1),transparent 66%),radial-gradient(ellipse 18% 28% at 40% 20%,rgba(255,255,253,1),transparent 62%),radial-gradient(ellipse 24% 36% at 68% 34%,rgba(255,254,248,0.98),transparent 68%),radial-gradient(ellipse 16% 26% at 82% 44%,rgba(255,254,249,0.95),transparent 64%),radial-gradient(ellipse 40% 50% at 40% 56%,rgba(255,253,246,0.96),transparent 70%),radial-gradient(ellipse 42% 48% at 66% 60%,rgba(255,252,243,0.92),transparent 72%),radial-gradient(ellipse 46% 28% at 46% 82%,rgba(150,180,196,0.24),transparent 72%),radial-gradient(ellipse 34% 24% at 72% 84%,rgba(150,180,196,0.16),transparent 70%),radial-gradient(ellipse 72% 72% at 50% 56%,rgba(150,180,196,0.1),transparent 76%);filter:drop-shadow(0 22px 26px rgba(118,92,58,0.25)) blur(7px);opacity:0.8;animation:cloudMove 196s linear -32s infinite"></div>
+    <div style="position:absolute;left:4%;top:86%;width:380px;height:137px;background:radial-gradient(ellipse 26% 38% at 30% 32%,rgba(255,255,252,1),transparent 68%),radial-gradient(ellipse 22% 34% at 50% 24%,rgba(255,255,250,1),transparent 66%),radial-gradient(ellipse 18% 28% at 40% 20%,rgba(255,255,253,1),transparent 62%),radial-gradient(ellipse 24% 36% at 68% 34%,rgba(255,254,248,0.98),transparent 68%),radial-gradient(ellipse 16% 26% at 82% 44%,rgba(255,254,249,0.95),transparent 64%),radial-gradient(ellipse 40% 50% at 40% 56%,rgba(255,253,246,0.96),transparent 70%),radial-gradient(ellipse 42% 48% at 66% 60%,rgba(255,252,243,0.92),transparent 72%),radial-gradient(ellipse 46% 28% at 46% 82%,rgba(150,180,196,0.24),transparent 72%),radial-gradient(ellipse 34% 24% at 72% 84%,rgba(150,180,196,0.16),transparent 70%),radial-gradient(ellipse 72% 72% at 50% 56%,rgba(150,180,196,0.1),transparent 76%);filter:drop-shadow(0 22px 26px rgba(118,92,58,0.25)) blur(6px);opacity:0.75;animation:cloudMove 133s linear -78s infinite"></div>
+    <div style="position:absolute;left:0;top:0;right:0;height:10%;background:linear-gradient(rgba(150,180,196,0.07),transparent)"></div>
+    <div style="position:absolute;left:4%;top:2%;width:620px;height:223px;background:radial-gradient(ellipse 26% 38% at 30% 32%,rgba(255,255,252,1),transparent 68%),radial-gradient(ellipse 22% 34% at 50% 24%,rgba(255,255,250,1),transparent 66%),radial-gradient(ellipse 24% 36% at 68% 34%,rgba(255,254,248,0.98),transparent 68%),radial-gradient(ellipse 40% 50% at 40% 56%,rgba(255,253,246,0.96),transparent 70%),radial-gradient(ellipse 42% 48% at 66% 60%,rgba(255,252,243,0.92),transparent 72%),radial-gradient(ellipse 46% 28% at 46% 82%,rgba(150,180,196,0.24),transparent 72%),radial-gradient(ellipse 34% 24% at 72% 84%,rgba(150,180,196,0.07),transparent 70%),radial-gradient(ellipse 72% 72% at 50% 56%,rgba(150,180,196,0.1),transparent 76%);filter:drop-shadow(0 22px 26px rgba(118,92,58,0.25)) blur(9px);opacity:0.8;animation:cloudMove 170s linear -20s infinite"></div>
+    <div style="position:absolute;left:56%;top:7%;width:700px;height:252px;background:radial-gradient(ellipse 26% 38% at 30% 32%,rgba(255,255,252,1),transparent 68%),radial-gradient(ellipse 22% 34% at 50% 24%,rgba(255,255,250,1),transparent 66%),radial-gradient(ellipse 24% 36% at 68% 34%,rgba(255,254,248,0.98),transparent 68%),radial-gradient(ellipse 40% 50% at 40% 56%,rgba(255,253,246,0.96),transparent 70%),radial-gradient(ellipse 42% 48% at 66% 60%,rgba(255,252,243,0.92),transparent 72%),radial-gradient(ellipse 46% 28% at 46% 82%,rgba(150,180,196,0.24),transparent 72%),radial-gradient(ellipse 34% 24% at 72% 84%,rgba(150,180,196,0.07),transparent 70%),radial-gradient(ellipse 72% 72% at 50% 56%,rgba(150,180,196,0.1),transparent 76%);filter:drop-shadow(0 22px 26px rgba(118,92,58,0.25)) blur(9px);opacity:0.7;animation:cloudMove 107s linear -48s infinite"></div>
+    <div style="position:absolute;left:20%;top:24%;width:560px;height:202px;background:radial-gradient(ellipse 26% 38% at 30% 32%,rgba(255,255,252,1),transparent 68%),radial-gradient(ellipse 22% 34% at 50% 24%,rgba(255,255,250,1),transparent 66%),radial-gradient(ellipse 24% 36% at 68% 34%,rgba(255,254,248,0.98),transparent 68%),radial-gradient(ellipse 40% 50% at 40% 56%,rgba(255,253,246,0.96),transparent 70%),radial-gradient(ellipse 42% 48% at 66% 60%,rgba(255,252,243,0.92),transparent 72%),radial-gradient(ellipse 46% 28% at 46% 82%,rgba(150,180,196,0.24),transparent 72%),radial-gradient(ellipse 34% 24% at 72% 84%,rgba(150,180,196,0.07),transparent 70%),radial-gradient(ellipse 72% 72% at 50% 56%,rgba(150,180,196,0.1),transparent 76%);filter:drop-shadow(0 22px 26px rgba(118,92,58,0.25)) blur(9px);opacity:0.75;animation:cloudMove 144s linear -60s infinite"></div>
+    <div style="position:absolute;left:60%;top:36%;width:640px;height:230px;background:radial-gradient(ellipse 26% 38% at 30% 32%,rgba(255,255,252,1),transparent 68%),radial-gradient(ellipse 22% 34% at 50% 24%,rgba(255,255,250,1),transparent 66%),radial-gradient(ellipse 24% 36% at 68% 34%,rgba(255,254,248,0.98),transparent 68%),radial-gradient(ellipse 40% 50% at 40% 56%,rgba(255,253,246,0.96),transparent 70%),radial-gradient(ellipse 42% 48% at 66% 60%,rgba(255,252,243,0.92),transparent 72%),radial-gradient(ellipse 46% 28% at 46% 82%,rgba(150,180,196,0.24),transparent 72%),radial-gradient(ellipse 34% 24% at 72% 84%,rgba(150,180,196,0.07),transparent 70%),radial-gradient(ellipse 72% 72% at 50% 56%,rgba(150,180,196,0.1),transparent 76%);filter:drop-shadow(0 22px 26px rgba(118,92,58,0.25)) blur(9px);opacity:0.7;animation:cloudMove 181s linear -146s infinite"></div>
+    <div style="position:absolute;left:8%;top:62%;width:600px;height:216px;background:radial-gradient(ellipse 26% 38% at 30% 32%,rgba(255,255,252,1),transparent 68%),radial-gradient(ellipse 22% 34% at 50% 24%,rgba(255,255,250,1),transparent 66%),radial-gradient(ellipse 24% 36% at 68% 34%,rgba(255,254,248,0.98),transparent 68%),radial-gradient(ellipse 40% 50% at 40% 56%,rgba(255,253,246,0.96),transparent 70%),radial-gradient(ellipse 42% 48% at 66% 60%,rgba(255,252,243,0.92),transparent 72%),radial-gradient(ellipse 46% 28% at 46% 82%,rgba(150,180,196,0.24),transparent 72%),radial-gradient(ellipse 34% 24% at 72% 84%,rgba(150,180,196,0.07),transparent 70%),radial-gradient(ellipse 72% 72% at 50% 56%,rgba(150,180,196,0.1),transparent 76%);filter:drop-shadow(0 22px 26px rgba(118,92,58,0.25)) blur(9px);opacity:0.75;animation:cloudMove 118s linear -34s infinite"></div>
+    <div style="position:absolute;left:52%;top:76%;width:680px;height:245px;background:radial-gradient(ellipse 26% 38% at 30% 32%,rgba(255,255,252,1),transparent 68%),radial-gradient(ellipse 22% 34% at 50% 24%,rgba(255,255,250,1),transparent 66%),radial-gradient(ellipse 24% 36% at 68% 34%,rgba(255,254,248,0.98),transparent 68%),radial-gradient(ellipse 40% 50% at 40% 56%,rgba(255,253,246,0.96),transparent 70%),radial-gradient(ellipse 42% 48% at 66% 60%,rgba(255,252,243,0.92),transparent 72%),radial-gradient(ellipse 46% 28% at 46% 82%,rgba(150,180,196,0.24),transparent 72%),radial-gradient(ellipse 34% 24% at 72% 84%,rgba(150,180,196,0.07),transparent 70%),radial-gradient(ellipse 72% 72% at 50% 56%,rgba(150,180,196,0.1),transparent 76%);filter:drop-shadow(0 22px 26px rgba(118,92,58,0.25)) blur(9px);opacity:0.7;animation:cloudMove 155s linear -20s infinite"></div>
+    <div style="position:absolute;left:22%;top:92%;width:560px;height:202px;background:radial-gradient(ellipse 26% 38% at 30% 32%,rgba(255,255,252,1),transparent 68%),radial-gradient(ellipse 22% 34% at 50% 24%,rgba(255,255,250,1),transparent 66%),radial-gradient(ellipse 24% 36% at 68% 34%,rgba(255,254,248,0.98),transparent 68%),radial-gradient(ellipse 40% 50% at 40% 56%,rgba(255,253,246,0.96),transparent 70%),radial-gradient(ellipse 42% 48% at 66% 60%,rgba(255,252,243,0.92),transparent 72%),radial-gradient(ellipse 46% 28% at 46% 82%,rgba(150,180,196,0.24),transparent 72%),radial-gradient(ellipse 34% 24% at 72% 84%,rgba(150,180,196,0.07),transparent 70%),radial-gradient(ellipse 72% 72% at 50% 56%,rgba(150,180,196,0.1),transparent 76%);filter:drop-shadow(0 22px 26px rgba(118,92,58,0.25)) blur(9px);opacity:0.75;animation:cloudMove 192s linear -80s infinite"></div>
+    <div style="position:absolute;left:82%;top:2%;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;letter-spacing:1px;color:rgba(114,86,54,0.3);transform:scaleX(-1) rotate(-2deg);white-space:nowrap">quaderno secondo</div>
+    <div style="position:absolute;left:1.5%;top:1.8%;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:16px;letter-spacing:1px;color:rgba(114,86,54,0.3);transform:scaleX(-1) rotate(2deg);white-space:nowrap">del moto e della quiete</div>
+    <div style="position:absolute;left:83%;top:12.9%;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;letter-spacing:1px;line-height:1.9;color:rgba(114,86,54,0.3);transform:scaleX(-1) rotate(-2deg)">la luce cade da sinistra<br>ombra e lume<br>prima il tutto, poi le parti</div>
+    <div style="position:absolute;left:4%;top:26%;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:16px;letter-spacing:1px;color:rgba(114,86,54,0.32);transform:scaleX(-1) rotate(2deg);white-space:nowrap;border-bottom:1px solid rgba(114,86,54,0.22399999999999998);padding-bottom:3px">studio del pelo e della piega</div>
+    <div style="position:absolute;left:83%;top:38%;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;letter-spacing:1px;color:rgba(114,86,54,0.3);transform:scaleX(-1) rotate(-3deg);white-space:nowrap">misura tre volte</div>
+    <div style="position:absolute;left:3%;top:40%;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;letter-spacing:1px;color:rgba(114,86,54,0.3);transform:scaleX(-1) rotate(2deg);white-space:nowrap">sette parti di testa</div>
+    <div style="position:absolute;left:2%;top:54%;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;letter-spacing:1px;line-height:1.9;color:rgba(114,86,54,0.3);transform:scaleX(-1) rotate(2deg)">l&rsquo;occhio, finestra dell&rsquo;anima<br>orecchio attento</div>
+    <div style="position:absolute;left:84%;top:60.5%;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:16px;letter-spacing:1px;color:rgba(114,86,54,0.32);transform:scaleX(-1) rotate(-2deg);white-space:nowrap">il peso posa sulla zampa</div>
+    <div style="position:absolute;left:2%;top:77.5%;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;letter-spacing:1px;color:rgba(114,86,54,0.3);transform:scaleX(-1) rotate(3deg);white-space:nowrap">come l&rsquo;acqua scorre</div>
+    <div style="position:absolute;left:84%;top:78%;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:16px;letter-spacing:1px;color:rgba(114,86,54,0.3);transform:scaleX(-1) rotate(-2deg);white-space:nowrap;border-bottom:1px solid rgba(114,86,54,0.21);padding-bottom:3px">l&rsquo;oro segue la forma</div>
+    <div style="position:absolute;left:3%;top:78%;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;letter-spacing:1px;color:rgba(114,86,54,0.3);transform:scaleX(-1) rotate(2deg);white-space:nowrap">la coda in riposo</div>
+    <div style="position:absolute;left:84%;top:84%;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:16px;letter-spacing:1px;color:rgba(114,86,54,0.3);transform:scaleX(-1) rotate(-2deg);white-space:nowrap">fatto a mano, con pazienza</div>
+    <div style="position:absolute;left:4%;top:96%;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;letter-spacing:1px;color:rgba(114,86,54,0.3);transform:scaleX(-1) rotate(2deg);white-space:nowrap">il bronzo attende</div>
+    <div style="position:absolute;left:60%;top:97%;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;letter-spacing:1px;color:rgba(114,86,54,0.3);transform:scaleX(-1) rotate(-2deg);white-space:nowrap">quaderno dello studio</div>
+    <div style="position:absolute;left:80%;top:12%;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:17px;letter-spacing:1px;color:rgba(114,86,54,0.32);transform:scaleX(-1) rotate(-2deg);white-space:nowrap;border-bottom:1px solid rgba(114,86,54,0.22399999999999998);padding-bottom:3px">osservazione del carattere</div>
+    <div style="position:absolute;left:1%;top:16.3%;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:16px;letter-spacing:1px;color:rgba(114,86,54,0.3);transform:scaleX(-1) rotate(2deg);white-space:nowrap">la mano segue il cuore</div>
+    <div style="position:absolute;left:84%;top:30%;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;letter-spacing:1px;color:rgba(114,86,54,0.3);transform:scaleX(-1) rotate(-3deg);white-space:nowrap">schizzo preparatorio</div>
+    <div style="position:absolute;left:3%;top:46%;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:18px;letter-spacing:1px;color:rgba(114,86,54,0.32);transform:scaleX(-1) rotate(2deg);white-space:nowrap;border-bottom:1px solid rgba(114,86,54,0.22399999999999998);padding-bottom:3px">dal vero, con amore</div>
+    <div style="position:absolute;left:83%;top:58%;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:16px;letter-spacing:1px;color:rgba(114,86,54,0.3);transform:scaleX(-1) rotate(-2deg);white-space:nowrap">ogni creatura porta la sua luce</div>
+    <div style="position:absolute;left:4%;top:90%;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:17px;letter-spacing:1px;color:rgba(114,86,54,0.32);transform:scaleX(-1) rotate(2deg);white-space:nowrap">appunti dello scultore</div>
+    <div style="position:absolute;left:70%;top:4%;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:16px;letter-spacing:1px;color:rgba(114,86,54,0.3);transform:scaleX(-1) rotate(-2deg);white-space:nowrap">studio delle proporzioni</div>
+    <div style="position:absolute;left:2%;top:83%;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:16px;letter-spacing:1px;color:rgba(114,86,54,0.28);transform:scaleX(-1) rotate(2deg);white-space:nowrap">la memoria prende forma</div>
+    <div style="position:absolute;left:30%;top:7%;width:8px;height:8px;border-radius:50%;background:radial-gradient(circle at 40% 38%,rgba(255,247,222,0.98),rgba(255,199,116,0.7) 42%,rgba(226,128,62,0) 74%);box-shadow:0 0 10px 2px rgba(255,186,98,0.35);filter:blur(0.5px);animation:orbA 15s ease-in-out -0s infinite"></div>
+    <div style="position:absolute;left:52%;top:4%;width:11px;height:11px;border-radius:50%;background:radial-gradient(circle at 40% 38%,rgba(255,247,222,0.98),rgba(255,199,116,0.7) 42%,rgba(226,128,62,0) 74%);box-shadow:0 0 10px 2px rgba(255,186,98,0.35);filter:blur(0.5px);animation:orbB 19s ease-in-out -3s infinite"></div>
+    <div style="position:absolute;left:64%;top:18%;width:7px;height:7px;border-radius:50%;background:radial-gradient(circle at 40% 38%,rgba(255,247,222,0.98),rgba(255,199,116,0.7) 42%,rgba(226,128,62,0) 74%);box-shadow:0 0 10px 2px rgba(255,186,98,0.35);filter:blur(0.5px);animation:orbA 23s ease-in-out -6s infinite"></div>
+    <div style="position:absolute;left:8%;top:34%;width:10px;height:10px;border-radius:50%;background:radial-gradient(circle at 40% 38%,rgba(255,247,222,0.98),rgba(255,199,116,0.7) 42%,rgba(226,128,62,0) 74%);box-shadow:0 0 10px 2px rgba(255,186,98,0.35);filter:blur(0.5px);animation:orbB 15s ease-in-out -9s infinite"></div>
+    <div style="position:absolute;left:78%;top:44%;width:8px;height:8px;border-radius:50%;background:radial-gradient(circle at 40% 38%,rgba(255,247,222,0.98),rgba(255,199,116,0.7) 42%,rgba(226,128,62,0) 74%);box-shadow:0 0 10px 2px rgba(255,186,98,0.35);filter:blur(0.5px);animation:orbA 19s ease-in-out -12s infinite"></div>
+    <div style="position:absolute;left:38%;top:58%;width:12px;height:12px;border-radius:50%;background:radial-gradient(circle at 40% 38%,rgba(255,247,222,0.98),rgba(255,199,116,0.7) 42%,rgba(226,128,62,0) 74%);box-shadow:0 0 10px 2px rgba(255,186,98,0.35);filter:blur(0.5px);animation:orbB 23s ease-in-out -1s infinite"></div>
+    <div style="position:absolute;left:60%;top:76%;width:7px;height:7px;border-radius:50%;background:radial-gradient(circle at 40% 38%,rgba(255,247,222,0.98),rgba(255,199,116,0.7) 42%,rgba(226,128,62,0) 74%);box-shadow:0 0 10px 2px rgba(255,186,98,0.35);filter:blur(0.5px);animation:orbA 15s ease-in-out -4s infinite"></div>
+    <div style="position:absolute;left:10%;top:70%;width:9px;height:9px;border-radius:50%;background:radial-gradient(circle at 40% 38%,rgba(255,247,222,0.98),rgba(255,199,116,0.7) 42%,rgba(226,128,62,0) 74%);box-shadow:0 0 10px 2px rgba(255,186,98,0.35);filter:blur(0.5px);animation:orbB 19s ease-in-out -7s infinite"></div>
+    <div style="position:absolute;left:46%;top:92%;width:8px;height:8px;border-radius:50%;background:radial-gradient(circle at 40% 38%,rgba(255,247,222,0.98),rgba(255,199,116,0.7) 42%,rgba(226,128,62,0) 74%);box-shadow:0 0 10px 2px rgba(255,186,98,0.35);filter:blur(0.5px);animation:orbA 23s ease-in-out -10s infinite"></div>
+    <div style="position:absolute;left:90%;top:90%;width:11px;height:11px;border-radius:50%;background:radial-gradient(circle at 40% 38%,rgba(255,247,222,0.98),rgba(255,199,116,0.7) 42%,rgba(226,128,62,0) 74%);box-shadow:0 0 10px 2px rgba(255,186,98,0.35);filter:blur(0.5px);animation:orbB 15s ease-in-out -13s infinite"></div>
+    <div style="position:absolute;left:6%;top:4%;width:13px;height:13px;border-radius:50%;background:radial-gradient(circle at 40% 38%,rgba(255,247,222,0.98),rgba(255,199,116,0.7) 42%,rgba(226,128,62,0) 74%);box-shadow:0 0 10px 2px rgba(255,186,98,0.35);filter:blur(0.5px);animation:orbA 17s ease-in-out -2s infinite"></div>
+    <div style="position:absolute;left:88%;top:3%;width:7px;height:7px;border-radius:50%;background:radial-gradient(circle at 40% 38%,rgba(255,247,222,0.98),rgba(255,199,116,0.7) 42%,rgba(226,128,62,0) 74%);box-shadow:0 0 10px 2px rgba(255,186,98,0.35);filter:blur(0.5px);animation:orbB 20s ease-in-out -5s infinite"></div>
+    <div style="position:absolute;left:72%;top:10%;width:10px;height:10px;border-radius:50%;background:radial-gradient(circle at 40% 38%,rgba(255,247,222,0.98),rgba(255,199,116,0.7) 42%,rgba(226,128,62,0) 74%);box-shadow:0 0 10px 2px rgba(255,186,98,0.35);filter:blur(0.5px);animation:orbA 24s ease-in-out -7s infinite"></div>
+    <div style="position:absolute;left:12%;top:22%;width:6px;height:6px;border-radius:50%;background:radial-gradient(circle at 40% 38%,rgba(255,247,222,0.98),rgba(255,199,116,0.7) 42%,rgba(226,128,62,0) 74%);box-shadow:0 0 10px 2px rgba(255,186,98,0.35);filter:blur(0.5px);animation:orbB 15s ease-in-out -1s infinite"></div>
+    <div style="position:absolute;left:92%;top:34%;width:12px;height:12px;border-radius:50%;background:radial-gradient(circle at 40% 38%,rgba(255,247,222,0.98),rgba(255,199,116,0.7) 42%,rgba(226,128,62,0) 74%);box-shadow:0 0 10px 2px rgba(255,186,98,0.35);filter:blur(0.5px);animation:orbA 22s ease-in-out -4s infinite"></div>
+    <div style="position:absolute;left:5%;top:52%;width:9px;height:9px;border-radius:50%;background:radial-gradient(circle at 40% 38%,rgba(255,247,222,0.98),rgba(255,199,116,0.7) 42%,rgba(226,128,62,0) 74%);box-shadow:0 0 10px 2px rgba(255,186,98,0.35);filter:blur(0.5px);animation:orbB 19s ease-in-out -6s infinite"></div>
+    <div style="position:absolute;left:84%;top:68%;width:14px;height:14px;border-radius:50%;background:radial-gradient(circle at 40% 38%,rgba(255,247,222,0.98),rgba(255,199,116,0.7) 42%,rgba(226,128,62,0) 74%);box-shadow:0 0 10px 2px rgba(255,186,98,0.35);filter:blur(0.5px);animation:orbA 26s ease-in-out -8s infinite"></div>
+    <div style="position:absolute;left:18%;top:86%;width:8px;height:8px;border-radius:50%;background:radial-gradient(circle at 40% 38%,rgba(255,247,222,0.98),rgba(255,199,116,0.7) 42%,rgba(226,128,62,0) 74%);box-shadow:0 0 10px 2px rgba(255,186,98,0.35);filter:blur(0.5px);animation:orbB 17s ease-in-out -3s infinite"></div>
+  </div>
+  <!-- nav -->
+  <div style="display:flex;flex-direction:column;align-items:center;gap:18px;padding:44px 60px 30px;border-bottom:1px solid rgba(138,122,94,0.35)">
+    <div style="text-align:center">
+      <div style="font-size:34px;font-weight:600;color:#8A7A5E;letter-spacing:14px;text-indent:14px">DASH CREATIVES</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:21px;letter-spacing:6px;text-indent:6px;color:#8A7A5E;margin-top:6px">MEMORIAL ART STUDIO</div>
+    </div>
+    <div style="display:flex;gap:54px;font-family:'Cormorant Garamond',serif;font-size:18px;letter-spacing:4px;text-transform:uppercase">
+      <a href="#" style="transition:color 0.2s ease;color:#4E5A3A" style-hover="color:#7B3F2E">Home</a>
+      <a href="#" style="transition:color 0.2s ease;color:#4E5A3A" style-hover="color:#7B3F2E">Gallery</a>
+      <a href="#" style="color:#7B3F2E;border-bottom:2px solid #B08D57;padding-bottom:4px">Pet Urns</a>
+      <a href="#" style="transition:color 0.2s ease;color:#4E5A3A" style-hover="color:#7B3F2E">Commissions</a>
+      <a href="#" style="transition:color 0.2s ease;color:#4E5A3A" style-hover="color:#7B3F2E">Studio Shop</a>
+      <a href="#" style="transition:color 0.2s ease;color:#4E5A3A" style-hover="color:#7B3F2E">Contact</a>
+    </div>
+  </div>
+
+  <!-- hero -->
+  <div style="display:grid;grid-template-columns:1fr 560px;gap:80px;align-items:center;padding:90px 100px">
+    <div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:17px;letter-spacing:7px;text-transform:uppercase;color:#4E5A3A">One-of-One Sculpted Memorials</div>
+      <h1 style="font-size:62px;line-height:1.15;font-weight:600;color:#7B3F2E;margin:26px 0 0;text-wrap:pretty">Sculpting the Memory of your Beloved Pet</h1>
+      <div style="width:120px;height:2px;background:#B08D57;margin:28px 0"></div>
+      <p style="font-size:19px;line-height:1.75;margin:0;max-width:520px">Each piece is a one-of-one sculpture of your own companion, modeled from your photographs and finished by hand in our studio. Not a shape from a catalog &mdash; them.</p>
+      <div style="display:flex;align-items:center;gap:30px;margin-top:44px;flex-wrap:wrap">
+        <a href="#" style="display:inline-block;background:linear-gradient(rgba(255,255,255,0.28),rgba(255,255,255,0.02) 46%),rgba(123,63,46,0.7);backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);border:1px solid rgba(255,255,255,0.45);border-radius:999px;transition:transform 0.25s ease,box-shadow 0.25s ease,filter 0.25s ease;box-shadow:0 12px 34px rgba(43,38,32,0.3),inset 0 1px 1px rgba(255,255,255,0.5),inset 0 -1px 1px rgba(43,38,32,0.15);color:#F0EAD9;font-family:'Cormorant Garamond',serif;font-size:26px;letter-spacing:4px;text-transform:uppercase;padding:20px 46px;white-space:nowrap" style-hover="transform:translateY(-3px);filter:brightness(1.09);box-shadow:0 18px 44px rgba(43,38,32,0.38),inset 0 1px 1px rgba(255,255,255,0.65),inset 0 -1px 1px rgba(43,38,32,0.12)">Begin a Commission</a>
+        <a href="#" style="font-family:'Cormorant Garamond',serif;font-size:20px;letter-spacing:3px;text-transform:uppercase;color:#4E5A3A;border-bottom:1px solid rgba(138,122,94,0.5);padding-bottom:4px" style-hover="color:#7B3F2E;border-bottom:1px solid #B08D57">View the Gallery</a>
+      </div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:18px;font-style:italic;color:#4E5A3A;margin-top:30px">One price &mdash; $950 &middot; When you&rsquo;re ready.</div>
+    </div>
+    <div style="height:680px;overflow:hidden;background:#EAE2CE"><img src="/pet-urns/gd_03.jpg" alt="A finished gold goldendoodle sculpture, left profile" style="width:100%;height:100%;object-fit:cover;display:block"></div>
+  </div>
+
+  <!-- how it works -->
+  <div style="padding:80px 100px;text-align:center">
+    <div style="font-family:'Cormorant Garamond',serif;font-size:16px;letter-spacing:7px;text-transform:uppercase;color:#4E5A3A">How It Works</div>
+    <h2 style="font-size:44px;font-weight:600;color:#7B3F2E;margin:18px 0 0">Three steps</h2>
+    <div style="width:120px;height:2px;background:#B08D57;margin:26px auto"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:70px;margin-top:56px;text-align:center">
+      <div>
+        <div style="font-size:56px;color:#7B3F2E;font-weight:500">I</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#2B2620;margin-top:16px">Share Photos</div>
+        <p style="font-size:17px;line-height:1.7;color:#2B2620;margin:16px auto 0;max-width:320px">Send us the pictures you already have &mdash; old, imperfect, phone-quality. We work from what you love.</p>
+      </div>
+      <div>
+        <div style="font-size:56px;color:#7B3F2E;font-weight:500">II</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#2B2620;margin-top:16px">Approve Your Sculpture</div>
+        <p style="font-size:17px;line-height:1.7;color:#2B2620;margin:16px auto 0;max-width:320px">We sculpt in the studio and send you proof images from every angle. Nothing moves forward without your yes.</p>
+      </div>
+      <div>
+        <div style="font-size:56px;color:#7B3F2E;font-weight:500">III</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#2B2620;margin-top:16px">Welcome Them Home</div>
+        <p style="font-size:17px;line-height:1.7;color:#2B2620;margin:16px auto 0;max-width:320px">Your finished piece arrives with everything prepared, ready to take its place in your home.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- trust band -->
+  <div style="background:#EAE2CE;border-top:1px solid rgba(138,122,94,0.35);border-bottom:1px solid rgba(138,122,94,0.35);padding:70px 100px;text-align:center">
+    <div style="font-size:32px;font-style:italic;color:#7B3F2E;max-width:760px;margin:0 auto;line-height:1.5">&ldquo;Your companion never leaves your care.&rdquo;</div>
+    <p style="font-family:'Cormorant Garamond',serif;font-size:20px;line-height:1.7;color:#2B2620;max-width:680px;margin:22px auto 0">We never handle remains. Every urn arrives with a matched filling funnel and a step-by-step care card, so your family fills it privately, at home, in your own time.</p>
+  </div>
+
+  <!-- tiers -->
+  <div style="padding:90px 100px;text-align:center">
+    <div style="font-family:'Cormorant Garamond',serif;font-size:16px;letter-spacing:7px;text-transform:uppercase;color:#4E5A3A">Commissions</div>
+    <h2 style="font-size:44px;font-weight:600;color:#7B3F2E;margin:18px 0 0">One piece. One price.</h2>
+    <div style="width:120px;height:2px;background:#B08D57;margin:26px auto"></div>
+    <p style="font-family:'Cormorant Garamond',serif;font-size:20px;color:#2B2620;margin:0 auto;max-width:600px">Every commission is the same piece &mdash; a one-of-one, ten-inch studio sculpture of your companion, at one honest price.</p>
+    <div style="max-width:540px;margin:54px auto 0;background:linear-gradient(rgba(255,255,255,0.4),rgba(255,255,255,0.12) 55%),rgba(234,226,206,0.35);backdrop-filter:blur(14px) saturate(160%);-webkit-backdrop-filter:blur(14px) saturate(160%);border:1px solid rgba(255,255,255,0.6);border-radius:14px;box-shadow:0 10px 28px rgba(43,38,32,0.12),inset 0 1px 1px rgba(255,255,255,0.6);padding:56px 50px">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:22px;letter-spacing:5px;text-transform:uppercase;color:#4E5A3A">The Commission</div>
+      <div style="font-size:58px;font-weight:600;color:#7B3F2E;margin-top:16px">$950</div>
+      <div style="width:60px;height:1px;background:#B08D57;margin:22px auto"></div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:19px;color:#2B2620;line-height:1.9">A one-of-one sculpture of your companion<br>About ten inches long &middot; holds companions to about 30 lb<br>Larger companions &mdash; write to us first</div>
+    </div>
+    <p style="font-family:'Cormorant Garamond',serif;font-size:19px;color:#4E5A3A;margin:36px auto 0;max-width:760px;line-height:1.8">Every commission includes the sculpted replica, secure base closure, the matched filling funnel, a felt base, a care card, and a signed certificate of authenticity from the artist.<br>Standard turnaround 3&ndash;4 weeks &middot; 50% deposit to begin &middot; installments available.</p>
+  </div>
+
+  <!-- finishes -->
+  <div style="background:#EAE2CE;border-top:1px solid rgba(138,122,94,0.35);border-bottom:1px solid rgba(138,122,94,0.35);padding:90px 100px;text-align:center">
+    <div style="font-family:'Cormorant Garamond',serif;font-size:16px;letter-spacing:7px;text-transform:uppercase;color:#4E5A3A">The Signature Choice</div>
+    <h2 style="font-size:44px;font-weight:600;color:#7B3F2E;margin:18px 0 0">Two finishes, one decision</h2>
+    <div style="width:120px;height:2px;background:#B08D57;margin:26px auto"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;max-width:920px;margin:54px auto 0;text-align:center">
+      <div style="transition:all 0.25s ease;background:linear-gradient(rgba(255,255,255,0.45),rgba(255,255,255,0.15) 55%),rgba(240,234,217,0.3);backdrop-filter:blur(14px) saturate(160%);-webkit-backdrop-filter:blur(14px) saturate(160%);border:1px solid rgba(255,255,255,0.6);border-radius:16px;box-shadow:0 10px 28px rgba(43,38,32,0.12),inset 0 1px 1px rgba(255,255,255,0.65);padding:36px 32px 44px" style-hover="transform:translateY(-4px);box-shadow:0 16px 36px rgba(43,38,32,0.2),inset 0 1px 1px rgba(255,255,255,0.65)">
+        <div style="height:220px;overflow:hidden;background:#EAE2CE"><img src="/pet-urns/gd_07.jpg" alt="The house gold finish on a finished commission" style="width:100%;height:100%;object-fit:cover;display:block"></div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#2B2620;margin-top:30px">Gold Finish</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:17px;letter-spacing:3px;text-transform:uppercase;color:#7E5E27;margin-top:10px">Included</div>
+        <p style="font-size:16px;line-height:1.7;margin:18px 0 0">A hand-worked gold finish with the warmth and depth of a gallery casting. Our house finish.</p>
+      </div>
+      <div style="transition:all 0.25s ease;background:linear-gradient(rgba(255,255,255,0.45),rgba(255,255,255,0.15) 55%),rgba(240,234,217,0.3);backdrop-filter:blur(14px) saturate(160%);-webkit-backdrop-filter:blur(14px) saturate(160%);border:1px solid rgba(255,255,255,0.6);border-radius:16px;box-shadow:0 10px 28px rgba(43,38,32,0.12),inset 0 1px 1px rgba(255,255,255,0.65);padding:36px 32px 44px" style-hover="transform:translateY(-4px);box-shadow:0 16px 36px rgba(43,38,32,0.2),inset 0 1px 1px rgba(255,255,255,0.65)">
+        <div style="height:220px;background:#EAE2CE;border:2px dashed rgba(138,122,94,0.6);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:22px;letter-spacing:2px;color:#4E5A3A">Gold leaf photo</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#2B2620;margin-top:30px">Lifelike Handworked Gold Leaf</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:17px;letter-spacing:3px;text-transform:uppercase;color:#7B3F2E;margin-top:10px">+ $350</div>
+        <p style="font-size:16px;line-height:1.7;margin:18px 0 0">Genuine gold leaf, laid by hand across every contour of the sculpture. You approve the finished piece before it ships.</p>
+      </div>
+    </div>
+    <p style="font-family:'Cormorant Garamond',serif;font-size:19px;color:#4E5A3A;margin:36px 0 0">Every piece includes a signed certificate of authenticity from the artist, Durrell Smith.<br>Add-ons &mdash; companion mini +$195 &middot; second pet +$300 &middot; rush two-week +$150</p>
+  </div>
+
+  <!-- gallery -->
+  <div style="padding:90px 100px;text-align:center">
+    <div style="font-family:'Cormorant Garamond',serif;font-size:16px;letter-spacing:7px;text-transform:uppercase;color:#4E5A3A">Recent Commissions</div>
+    <h2 style="font-size:44px;font-weight:600;color:#7B3F2E;margin:18px 0 0">From the studio</h2>
+    <div style="width:120px;height:2px;background:#B08D57;margin:26px auto"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:26px;margin-top:50px">
+      <div style="height:340px;overflow:hidden;background:#EAE2CE"><img src="/pet-urns/gd_01.jpg" alt="A finished commission from the studio" style="width:100%;height:100%;object-fit:cover;display:block"></div>
+      <div style="height:340px;overflow:hidden;background:#EAE2CE"><img src="/pet-urns/gd_02.jpg" alt="A finished commission from the studio" style="width:100%;height:100%;object-fit:cover;display:block"></div>
+      <div style="height:340px;overflow:hidden;background:#EAE2CE"><img src="/pet-urns/gd_04.jpg" alt="A finished commission from the studio" style="width:100%;height:100%;object-fit:cover;display:block"></div>
+      <div style="height:340px;overflow:hidden;background:#EAE2CE"><img src="/pet-urns/gd_05.jpg" alt="A finished commission from the studio" style="width:100%;height:100%;object-fit:cover;display:block"></div>
+      <div style="height:340px;overflow:hidden;background:#EAE2CE"><img src="/pet-urns/gd_06.jpg" alt="A finished commission from the studio" style="width:100%;height:100%;object-fit:cover;display:block"></div>
+      <div style="height:340px;overflow:hidden;background:#EAE2CE"><img src="/pet-urns/gd_07.jpg" alt="A finished commission from the studio" style="width:100%;height:100%;object-fit:cover;display:block"></div>
+    </div>
+  </div>
+
+  <!-- studio shop -->
+  <div style="padding:0 100px 90px;text-align:center">
+    <div style="font-family:'Cormorant Garamond',serif;font-size:16px;letter-spacing:7px;text-transform:uppercase;color:#4E5A3A">The Studio Shop</div>
+    <h2 style="font-size:44px;font-weight:600;color:#7B3F2E;margin:18px 0 0">More from the studio</h2>
+    <div style="width:120px;height:2px;background:#B08D57;margin:26px auto"></div>
+    <p style="font-family:'Cormorant Garamond',serif;font-size:20px;color:#2B2620;margin:0 auto;max-width:620px;line-height:1.7">Smaller pieces from the same hands &mdash; ready to ship, no commission required.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:28px;margin-top:50px">
+      <div style="transition:all 0.25s ease;background:linear-gradient(rgba(255,255,255,0.4),rgba(255,255,255,0.12) 55%),rgba(234,226,206,0.35);backdrop-filter:blur(14px) saturate(160%);-webkit-backdrop-filter:blur(14px) saturate(160%);border:1px solid rgba(255,255,255,0.6);border-radius:14px;box-shadow:0 10px 28px rgba(43,38,32,0.12),inset 0 1px 1px rgba(255,255,255,0.6);padding:26px 26px 34px" style-hover="transform:translateY(-4px);box-shadow:0 16px 36px rgba(43,38,32,0.2),inset 0 1px 1px rgba(255,255,255,0.65)">
+        <div style="height:230px;border-radius:10px;overflow:hidden;background:#EAE2CE"><img src="/pet-urns/orn_08.jpg" alt="A gold English Setter ornament hanging on a lit tree" style="width:100%;height:100%;object-fit:cover;display:block"></div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:22px;letter-spacing:3px;text-transform:uppercase;color:#2B2620;margin-top:26px">English Setter Ornaments</div>
+        <p style="font-size:16px;line-height:1.7;margin:12px 0 0;color:#2B2620">Our signature setter, sculpted in miniature &mdash; for the tree, the shelf, or the studio wall.</p>
+      </div>
+      
+      
+    </div>
+    <a href="#" style="display:inline-block;margin-top:44px;transition:color 0.2s ease;font-family:'Cormorant Garamond',serif;font-size:20px;letter-spacing:3px;text-transform:uppercase;color:#4E5A3A;border-bottom:1px solid rgba(138,122,94,0.5);padding-bottom:4px" style-hover="color:#7B3F2E;border-bottom:1px solid #B08D57">Visit the Studio Shop</a>
+  </div>
+
+  <!-- testimonials -->
+  <div style="padding:20px 100px 90px;text-align:center">
+    <div style="font-family:'Cormorant Garamond',serif;font-size:16px;letter-spacing:7px;text-transform:uppercase;color:#4E5A3A">Kind Words</div>
+    <h2 style="font-size:44px;font-weight:600;color:#7B3F2E;margin:18px 0 0">From the families</h2>
+    <div style="width:120px;height:2px;background:#B08D57;margin:26px auto"></div>
+    <p style="font-family:'Cormorant Garamond',serif;font-style:italic;color:#8A7A5E;font-size:19px;max-width:56ch;margin:0 auto 44px;line-height:1.7">Our first commissions are finding their way home now. When yours arrives, we would be honoured to share your words here.</p>
+    <div style="max-width:760px;margin:60px auto 0;transition:all 0.25s ease;background:linear-gradient(rgba(255,255,255,0.4),rgba(255,255,255,0.12) 55%),rgba(234,226,206,0.35);backdrop-filter:blur(14px) saturate(160%);-webkit-backdrop-filter:blur(14px) saturate(160%);border:1px solid rgba(255,255,255,0.6);border-radius:16px;box-shadow:0 10px 28px rgba(43,38,32,0.12),inset 0 1px 1px rgba(255,255,255,0.6);padding:44px 48px;text-align:left">
+      <div style="text-align:center">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:22px;letter-spacing:4px;text-transform:uppercase;color:#7B3F2E">Share Your Story</div>
+        <p style="font-family:'Cormorant Garamond',serif;font-size:19px;color:#2B2620;margin:14px auto 0;max-width:560px;line-height:1.7">If a piece from the studio lives with you, we would be honored to hear how they&rsquo;re doing. We read every word.</p>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:32px">
+        <div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:15px;letter-spacing:3px;text-transform:uppercase;color:#4E5A3A;margin-bottom:10px">Your name</div>
+          <div style="background:rgba(255,255,255,0.4);border:1px solid rgba(255,255,255,0.7);border-radius:10px;padding:14px 16px;font-family:'Cormorant Garamond',serif;font-size:19px;font-style:italic;color:#8A7A5E">as you&rsquo;d like it to appear</div>
+        </div>
+        <div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:15px;letter-spacing:3px;text-transform:uppercase;color:#4E5A3A;margin-bottom:10px">Their name</div>
+          <div style="background:rgba(255,255,255,0.4);border:1px solid rgba(255,255,255,0.7);border-radius:10px;padding:14px 16px;font-family:'Cormorant Garamond',serif;font-size:19px;font-style:italic;color:#8A7A5E">the companion we sculpted</div>
+        </div>
+      </div>
+      <div style="margin-top:24px">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:15px;letter-spacing:3px;text-transform:uppercase;color:#4E5A3A;margin-bottom:10px">Your words</div>
+        <div style="background:rgba(255,255,255,0.4);border:1px solid rgba(255,255,255,0.7);border-radius:10px;padding:16px;min-height:110px;font-family:'Cormorant Garamond',serif;font-size:19px;font-style:italic;color:#8A7A5E">take all the time and space you need</div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:24px;margin-top:32px;flex-wrap:wrap">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:16px;font-style:italic;color:#8A7A5E">Photos of your piece at home are always welcome.</div>
+        <a href="#" style="display:inline-block;background:linear-gradient(rgba(255,255,255,0.28),rgba(255,255,255,0.02) 46%),rgba(123,63,46,0.7);backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);border:1px solid rgba(255,255,255,0.45);border-radius:999px;transition:transform 0.25s ease,box-shadow 0.25s ease,filter 0.25s ease;box-shadow:0 12px 34px rgba(43,38,32,0.3),inset 0 1px 1px rgba(255,255,255,0.5),inset 0 -1px 1px rgba(43,38,32,0.15);color:#F0EAD9;font-family:'Cormorant Garamond',serif;font-size:22px;letter-spacing:4px;text-transform:uppercase;padding:16px 44px;white-space:nowrap" style-hover="transform:translateY(-3px);filter:brightness(1.09);box-shadow:0 18px 44px rgba(43,38,32,0.38),inset 0 1px 1px rgba(255,255,255,0.65),inset 0 -1px 1px rgba(43,38,32,0.12)">Send Your Review</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <div style="padding:20px 100px 100px">
+    <div style="text-align:center">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:16px;letter-spacing:7px;text-transform:uppercase;color:#4E5A3A">Questions</div>
+      <h2 style="font-size:44px;font-weight:600;color:#7B3F2E;margin:18px 0 0">Everything families ask us</h2>
+      <div style="width:120px;height:2px;background:#B08D57;margin:26px auto 0"></div>
+    </div>
+    <div style="max-width:860px;margin:50px auto 0;border-top:1px solid rgba(138,122,94,0.4)">
+      <div style="border-bottom:1px solid rgba(138,122,94,0.4);padding:28px 8px">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:20px">
+          <div style="font-size:22px;font-weight:500;color:#7B3F2E">What size is the piece?</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:30px;color:#4E5A3A;line-height:1">&minus;</div>
+        </div>
+        <p style="font-family:'Cormorant Garamond',serif;font-size:19px;line-height:1.75;color:#2B2620;margin:16px 0 0;max-width:720px">Every piece is sculpted at our ten-inch studio scale &mdash; roughly ten inches nose to tail. By the traditional rule of one cubic inch per pound, that holds companions up to about 30 lb: cats, and the smaller and mid-sized dogs. Pose changes the interior volume a little, so we confirm the fit for your companion before we begin, always with a comfortable margin. For larger dogs or multi-pet families, write to us first &mdash; we&rsquo;ll find the right way.</p>
+      </div>
+      <div style="transition:all 0.2s ease;border-bottom:1px solid rgba(138,122,94,0.4);padding:28px 8px;display:flex;justify-content:space-between;align-items:center;gap:20px" style-hover="background:rgba(255,255,255,0.5);border-radius:10px;padding-left:16px;padding-right:16px">
+        <div style="font-size:22px;font-weight:500;color:#2B2620">How does the filling process work?</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:30px;color:#4E5A3A;line-height:1">+</div>
+      </div>
+      <div style="transition:all 0.2s ease;border-bottom:1px solid rgba(138,122,94,0.4);padding:28px 8px;display:flex;justify-content:space-between;align-items:center;gap:20px" style-hover="background:rgba(255,255,255,0.5);border-radius:10px;padding-left:16px;padding-right:16px">
+        <div style="font-size:22px;font-weight:500;color:#2B2620">How long does a commission take?</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:30px;color:#4E5A3A;line-height:1">+</div>
+      </div>
+      <div style="transition:all 0.2s ease;border-bottom:1px solid rgba(138,122,94,0.4);padding:28px 8px;display:flex;justify-content:space-between;align-items:center;gap:20px" style-hover="background:rgba(255,255,255,0.5);border-radius:10px;padding-left:16px;padding-right:16px">
+        <div style="font-size:22px;font-weight:500;color:#2B2620">What photos do you need?</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:30px;color:#4E5A3A;line-height:1">+</div>
+      </div>
+      <div style="transition:all 0.2s ease;border-bottom:1px solid rgba(138,122,94,0.4);padding:28px 8px;display:flex;justify-content:space-between;align-items:center;gap:20px" style-hover="background:rgba(255,255,255,0.5);border-radius:10px;padding-left:16px;padding-right:16px">
+        <div style="font-size:22px;font-weight:500;color:#2B2620">Can I request changes to the sculpture?</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:30px;color:#4E5A3A;line-height:1">+</div>
+      </div>
+      <div style="transition:all 0.2s ease;border-bottom:1px solid rgba(138,122,94,0.4);padding:28px 8px;display:flex;justify-content:space-between;align-items:center;gap:20px" style-hover="background:rgba(255,255,255,0.5);border-radius:10px;padding-left:16px;padding-right:16px">
+        <div style="font-size:22px;font-weight:500;color:#2B2620">Materials &amp; caring for your piece</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:30px;color:#4E5A3A;line-height:1">+</div>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:70px">
+      <a href="#" style="display:inline-block;background:linear-gradient(rgba(255,255,255,0.28),rgba(255,255,255,0.02) 46%),rgba(123,63,46,0.7);backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);border:1px solid rgba(255,255,255,0.45);border-radius:999px;transition:transform 0.25s ease,box-shadow 0.25s ease,filter 0.25s ease;box-shadow:0 12px 34px rgba(43,38,32,0.3),inset 0 1px 1px rgba(255,255,255,0.5),inset 0 -1px 1px rgba(43,38,32,0.15);color:#F0EAD9;font-family:'Cormorant Garamond',serif;font-size:26px;letter-spacing:4px;text-transform:uppercase;padding:20px 46px;white-space:nowrap" style-hover="transform:translateY(-3px);filter:brightness(1.09);box-shadow:0 18px 44px rgba(43,38,32,0.38),inset 0 1px 1px rgba(255,255,255,0.65),inset 0 -1px 1px rgba(43,38,32,0.12)">Begin a Commission</a>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:18px;font-style:italic;color:#4E5A3A;margin-top:22px">When you&rsquo;re ready &mdash; there is no hurry.</div>
+    </div>
+  </div>
+
+  <!-- footer -->
+  <div style="border-top:1px solid rgba(138,122,94,0.35);padding:56px 100px 64px;text-align:center">
+    <div style="font-size:27px;font-style:italic;color:#4E5A3A">Sculpting the Memory of your Beloved Pet</div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:17px;letter-spacing:4px;text-transform:uppercase;color:#4E5A3A;margin-top:20px">DASH Creatives &middot; dashcreatives.art &middot; Memorial Art Studio</div>
+  </div>
+</div>
+
+<OrbNav />
+
+<script is:inline>
+(function(){
+  var COLS=10, ROWS=6, N=60, CW=312, CH=324, FPS=12;
+
+  var spin=document.getElementById('spin');
+  spin.style.aspectRatio   = CW+'/'+CH;
+  spin.style.backgroundSize= (COLS*100)+'% '+(ROWS*100)+'%';
+
+  function place(i){
+    var c=i%COLS, r=(i/COLS)|0;
+    spin.style.backgroundPosition =
+      (COLS>1 ? c*100/(COLS-1) : 0)+'% ' + (ROWS>1 ? r*100/(ROWS-1) : 0)+'%';
+  }
+  place(0);
+
+  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!reduce){
+    // time-based, so a slow frame drops a step instead of slowing the rotation
+    var t0=performance.now(), last=-1;
+    (function tick(now){
+      var i = Math.floor(((now-t0)/1000)*FPS) % N;
+      if (i!==last){ place(i); last=i; }
+      requestAnimationFrame(tick);
+    })(t0);
+  }
+
+  var sp=document.getElementById('splash'), s0=performance.now();
+  function go(){ sp.classList.add('done'); }
+  var im=new Image(); im.src='/pet-urns/setter_turntable.webp';
+  function ready(){ setTimeout(go, Math.max(0, 3600-(performance.now()-s0))); }
+  if (im.complete) ready(); else { im.onload=ready; im.onerror=ready; }
+  setTimeout(go, 7000);
+})();
+</script>
+</body>
+</html>

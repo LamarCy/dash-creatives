@@ -32,12 +32,13 @@ import MediaGuard from '../components/MediaGuard.astro';
 #hero .enter{position:absolute;left:50%;transform:translateX(-50%);bottom:3vh;z-index:6;color:var(--tiffany);
   font-size:13px;letter-spacing:6px;text-decoration:none;font-family:'Oswald',sans-serif;text-transform:uppercase}
 #hero .egglabels{position:absolute;inset:0;z-index:5;pointer-events:none;display:none}
-#hero .egglabels .el{position:absolute;top:68%;width:25%;text-align:center;font-family:'Oswald',sans-serif;
+#hero .egglabels .el{position:absolute;top:68%;width:20%;padding:0 10px;box-sizing:border-box;text-align:center;font-family:'Oswald',sans-serif;
   text-transform:uppercase;letter-spacing:3px;font-size:13px;font-weight:700;opacity:0;transition:opacity .8s}
 #hero .egglabels .pink{left:0;color:#D2547E}
-#hero .egglabels .blue{left:25%;color:var(--tiffany)}
-#hero .egglabels .yellow{left:50%;color:#B8860B}
-#hero .egglabels .green{left:75%;color:#3E8F4C}
+#hero .egglabels .blue{left:20%;color:var(--tiffany)}
+#hero .egglabels .yellow{left:40%;color:#B8860B}
+#hero .egglabels .green{left:60%;color:#3E8F4C}
+#hero .egglabels .rust{left:80%;color:#7B3F2E}
 #hero .egglabels .el span{display:block;font-size:11px;letter-spacing:4px;color:rgba(20,20,18,.6);margin-top:6px}
 #hero .cat{position:absolute;left:40px;top:96px;z-index:6;color:rgba(20,20,18,.55);font-size:13px;letter-spacing:4px}
 
@@ -59,6 +60,7 @@ body.locked{overflow:hidden;height:100vh}
     <div class="el blue" id="lblBlue">LamarCy · The Songwriter<span>the music · enter the chronicle</span></div>
     <div class="el yellow" id="lblYellow">Ashley Smith · The Voice<span>her songs &amp; stories</span></div>
     <div class="el green" id="lblGreen">Durrell Smith · UX Design<span>the design work</span></div>
+    <div class="el rust" id="lblRust">Pet Urns · The Sculptor<span>one-of-one memorials</span></div>
   </div>
   <div class="enter" id="hint" style="opacity:.65">❤ click the heart</div>
 </div>
@@ -79,7 +81,8 @@ body.locked{overflow:hidden;height:100vh}
     pink:   '/art/#gallery',    // D.LAMAR · the current dashcreatives.art site, relocated to /art/
     blue:   'WORLD',            // LamarCy · the music world below
     yellow: '/art/#music',      // Ashley Smith · TODO: her own page/channel
-    green:  'https://ux.dashcreatives.art'  // Durrell Smith · UX portfolio (Render, custom domain)
+    green:  'https://ux.dashcreatives.art', // Durrell Smith · UX portfolio (Render, custom domain)
+    rust:   '/pet-urns'          // DASH Memorial Art · custom sculpted pet urns
   };
 
   function openWorld(){
@@ -182,11 +185,17 @@ body.locked{overflow:hidden;height:100vh}
 
   // ------- four eggs -------
   const EGGS = [
-    {key:'pink',   x:-17, shell:'#F2A9C4', dot:'rgba(216,33,90,0.55)',  yolk:0xE0447E},
-    {key:'blue',   x:-5.7,shell:'#09B1AB', dot:'rgba(6,122,118,0.95)',  yolk:0x067A76},
-    {key:'yellow', x:5.7, shell:'#F4C531', dot:'rgba(199,147,18,0.75)', yolk:0xE8A317},
-    {key:'green',  x:17,  shell:'#58B368', dot:'rgba(46,125,66,0.75)',  yolk:0x2E7D42}
+    {key:'pink',   x:-22.6, shell:'#F2A9C4', dot:'rgba(216,33,90,0.55)',  yolk:0xE0447E},
+    {key:'blue',   x:-11.3, shell:'#09B1AB', dot:'rgba(6,122,118,0.95)',  yolk:0x067A76},
+    {key:'yellow', x:0,     shell:'#F4C531', dot:'rgba(199,147,18,0.75)', yolk:0xE8A317},
+    {key:'green',  x:11.3,  shell:'#58B368', dot:'rgba(46,125,66,0.75)',  yolk:0x2E7D42},
+    {key:'rust',   x:22.6,  shell:'#C08462', dot:'rgba(123,63,46,0.70)',  yolk:0x7B3F2E}
   ];
+  // Eggs (and later their shattered halves) live in one group so the row can be
+  // scaled to fit narrow viewports. Five eggs reach x=+/-26.9 including radius,
+  // which overflowed the frame even at four — see fitEggs() in size().
+  const eggGroup = new THREE.Group(); scene.add(eggGroup);
+  const EGG_HALF_SPAN = 22.6 + 4.3;
   const eggMeshes = [];
   const eggGeo = new THREE.SphereGeometry(4.3, 28, 22); eggGeo.scale(1,1.35,1);
   for (const e of EGGS){
@@ -198,7 +207,7 @@ body.locked{overflow:hidden;height:100vh}
     m.position.set(e.x, 0.4, 0);
     m.scale.setScalar(0.001); m.visible = false;
     m.userData = {cfg:e, canvas:cv, tex:t, baseX:e.x};
-    scene.add(m); eggMeshes.push(m);
+    eggGroup.add(m); eggMeshes.push(m);
   }
 
   // ------- state -------
@@ -219,7 +228,7 @@ body.locked{overflow:hidden;height:100vh}
     }
     for (const m of eggMeshes) m.visible = true;
     document.getElementById('egglabels').style.display = 'block';
-    setTimeout(()=>{ for (const id of ['lblPink','lblBlue','lblYellow','lblGreen'])
+    setTimeout(()=>{ for (const id of ['lblPink','lblBlue','lblYellow','lblGreen','lblRust'])
       document.getElementById(id).style.opacity = 1; }, 700);
     const hint = document.getElementById('hint');
     hint.textContent = '❤ pick a world';
@@ -231,7 +240,7 @@ body.locked{overflow:hidden;height:100vh}
     if (!chosen) return;
     state = 'eggcrack'; eggCrackT = 0;
     drawCracksOn(chosen.userData.canvas, chosen.userData.tex, 3);
-    for (const id of ['lblPink','lblBlue','lblYellow','lblGreen'])
+    for (const id of ['lblPink','lblBlue','lblYellow','lblGreen','lblRust'])
       document.getElementById(id).style.opacity = .25;
     document.getElementById('hint').style.opacity = 0;
   }
@@ -253,9 +262,9 @@ body.locked{overflow:hidden;height:100vh}
       const d = new THREE.Mesh(new THREE.SphereGeometry(.3+Math.random()*.5, 10, 8), yolkMat);
       d.position.set(px+(Math.random()-.5)*3, py-1-Math.random()*1.5, 4.2+(Math.random()-.5));
       d.userData.v = new THREE.Vector3((Math.random()-.5)*.12, -.1-Math.random()*.15, 0);
-      drops.push(d); scene.add(d);
+      drops.push(d); eggGroup.add(d);
     }
-    scene.add(top, bot, yolk);
+    eggGroup.add(top, bot, yolk);
     spillParts = {top, bot, yolk, drops, px, py};
     setTimeout(()=>document.getElementById('veil').classList.add('on'), 1250);
     setTimeout(()=>{
@@ -287,10 +296,20 @@ body.locked{overflow:hidden;height:100vh}
       if (m) choose(m.userData.cfg.key);
     }
   });
-  for (const [id,key] of [['lblPink','pink'],['lblBlue','blue'],['lblYellow','yellow'],['lblGreen','green']]){
+  for (const [id,key] of [['lblPink','pink'],['lblBlue','blue'],['lblYellow','yellow'],['lblGreen','green'],['lblRust','rust']]){
     const el = document.getElementById(id);
     el.style.pointerEvents='auto'; el.style.cursor='pointer';
     el.onclick = ()=>choose(key);
+  }
+
+  // Scale the egg row so all five stay inside the frame at any aspect ratio.
+  // (At 1:1 the visible half-width is ~16 units; the row reaches 26.9, which is
+  //  why the outer eggs clipped even with four of them.)
+  function fitEggs(){
+    const halfH = Math.tan(38/2 * Math.PI/180) * camera.position.z;
+    const halfW = halfH * camera.aspect;
+    const k = Math.min(1, (halfW * 0.94) / EGG_HALF_SPAN);
+    eggGroup.scale.setScalar(k);
   }
 
   function size(){
@@ -298,6 +317,7 @@ body.locked{overflow:hidden;height:100vh}
     camera.aspect = innerWidth/innerHeight;
     camera.position.z = camera.aspect < 1 ? Math.min(55/camera.aspect*0.85, 95) : 55;
     camera.updateProjectionMatrix();
+    fitEggs();
   }
   addEventListener('resize', size); size();
 
