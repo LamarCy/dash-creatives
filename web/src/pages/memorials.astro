@@ -16,7 +16,7 @@
 import OrbNav from '../components/OrbNav.astro';
 
 const SITE  = 'https://dashcreatives.art';
-const TITLE = 'Custom Pet Memorial Urns — sculpted from your photographs | DASH Creatives';
+const TITLE = 'Custom Pet Memorial Urns — sculpted from your photographs | Original Dogman';
 const DESC  = 'A one-of-one sculpture of your own companion, modeled from your photographs and finished by hand in our studio. One piece, one price: $950.';
 const OG    = `${SITE}/memorials/gd_03.jpg`;
 ---
@@ -28,7 +28,7 @@ const OG    = `${SITE}/memorials/gd_03.jpg`;
 <meta name="description" content={DESC}>
 <link rel="canonical" href={`${SITE}/memorials`}>
 <meta property="og:type" content="product">
-<meta property="og:site_name" content="DASH Creatives">
+<meta property="og:site_name" content="Original Dogman">
 <meta property="og:title" content={TITLE}>
 <meta property="og:description" content={DESC}>
 <meta property="og:image" content={OG}>
@@ -39,7 +39,7 @@ const OG    = `${SITE}/memorials/gd_03.jpg`;
 <script type="application/ld+json" set:html={JSON.stringify({
   "@context":"https://schema.org","@type":"Product",
   "name":"Custom Pet Memorial Urn — one-of-one sculpted commission",
-  "description":DESC,"image":OG,"brand":{"@type":"Brand","name":"DASH Creatives"},
+  "description":DESC,"image":OG,"brand":{"@type":"Brand","name":"Original Dogman"},
   "offers":{"@type":"Offer","price":"950","priceCurrency":"USD",
             "availability":"https://schema.org/InStock","url":`${SITE}/memorials`}
 })} />
@@ -161,6 +161,7 @@ const OG    = `${SITE}/memorials/gd_03.jpg`;
   #splash .tag{font-style:italic;color:#8A7A5E;font-size:clamp(16px,2vw,27px);
     text-align:center;padding:0 22px;opacity:0;animation:fade-in .9s .62s ease forwards}
   #splash .lockup{text-align:center;opacity:0;animation:fade-in .9s .12s ease forwards}
+  .brandmark{display:block;width:clamp(230px,32vw,430px);height:auto;margin:0 auto 14px}
 
   @media (prefers-reduced-motion:reduce){
     #spin{animation:none;opacity:1}
@@ -176,7 +177,8 @@ const OG    = `${SITE}/memorials/gd_03.jpg`;
 
 <div id="splash">
   <div class="lockup">
-    <div class="brandname">DASH CREATIVES</div>
+    <img class="brandmark" src="/gateway/logo-dogman.webp"
+         alt="Original Dogman" width="520" height="200" decoding="async" />
     <div class="brandsub">MEMORIAL ART STUDIO</div>
   </div>
   <div id="spin" role="img" aria-label="A sculpted English Setter, turning slowly"></div>
@@ -249,7 +251,8 @@ const OG    = `${SITE}/memorials/gd_03.jpg`;
   <!-- nav -->
   <div style="display:flex;flex-direction:column;align-items:center;gap:18px;padding:44px 60px 30px;border-bottom:1px solid rgba(138,122,94,0.35)">
     <div style="text-align:center">
-      <div style="font-size:34px;font-weight:600;color:#8A7A5E;letter-spacing:14px;text-indent:14px">DASH CREATIVES</div>
+      <img class="brandmark" src="/gateway/logo-dogman.webp" alt="Original Dogman"
+           width="520" height="200" decoding="async" />
       <div style="font-family:'Cormorant Garamond',serif;font-size:21px;letter-spacing:6px;text-indent:6px;color:#8A7A5E;margin-top:6px">MEMORIAL ART STUDIO</div>
     </div>
     <div style="display:flex;gap:54px;font-family:'Cormorant Garamond',serif;font-size:18px;letter-spacing:4px;text-transform:uppercase">
@@ -455,7 +458,7 @@ const OG    = `${SITE}/memorials/gd_03.jpg`;
   <!-- footer -->
   <div style="border-top:1px solid rgba(138,122,94,0.35);padding:56px 100px 64px;text-align:center">
     <div style="font-size:27px;font-style:italic;color:#4E5A3A">Sculpting the Memory of your Beloved Pet</div>
-    <div style="font-family:'Cormorant Garamond',serif;font-size:17px;letter-spacing:4px;text-transform:uppercase;color:#4E5A3A;margin-top:20px">DASH Creatives &middot; dashcreatives.art &middot; Memorial Art Studio</div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:17px;letter-spacing:4px;text-transform:uppercase;color:#4E5A3A;margin-top:20px">Original Dogman &middot; Memorial Art Studio</div>
   </div>
 </div>
 

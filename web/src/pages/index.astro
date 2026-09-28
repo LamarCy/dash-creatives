@@ -21,7 +21,7 @@ const WORLDS = [
   { cls: 'blue',   href: '/?world=lamarcy',              who: 'LamarCy',        role: 'The Songwriter', line: 'The Music',                     inPage: true, photo: '/gateway/note-lamarcy.webp' },
   { cls: 'yellow', href: '/art/#music',                  who: 'Ashley Smith',   role: 'The Voice',      line: 'her songs & stories' },
   { cls: 'green',  href: 'https://ux.dashcreatives.art', who: 'Durrell Smith',  role: 'UX Design',      line: 'the design work' },
-  { cls: 'rust',   href: '/memorials',                   who: 'Memorials',      role: 'The Sculptor',   line: 'one-of-one pet sculptures' },
+  { cls: 'rust',   href: '/memorials',                   who: 'Original Dogman', role: 'The Sculptor',  line: 'one-of-one sculptures and wearable art', logo: '/gateway/logo-dogman.webp' },
 ];
 ---
 <html lang="en">
@@ -154,6 +154,14 @@ const WORLDS = [
 #hero li:nth-child(4) .eggwrap{transform:rotate(2.2deg)}
 #hero li:nth-child(5) .eggwrap{transform:rotate(-1.8deg)}
 
+/* A brand mark in place of handwriting — same optical slot, same tilt, so it
+   still reads as something set down on the paper rather than a logo pasted on
+   top. Width is capped off --nw so it scales with the note. */
+#hero .mark{
+  position:relative;z-index:2;display:block;width:82%;transform:rotate(-2deg);
+}
+#hero .mark img{display:block;width:100%;height:auto}
+
 /* The header, written on the note. */
 #hero .hand{
   position:relative;z-index:2;text-align:center;
@@ -284,7 +292,11 @@ body.locked{overflow:hidden;height:100vh}
               </span>
             ) : (
               <span class="note">
-                <span class="hand"><span class="who">{w.who}</span><span class="role">{w.role}</span></span>
+                {w.logo ? (
+                  <span class="mark"><img src={w.logo} alt="" width="520" height="200" decoding="async" /></span>
+                ) : (
+                  <span class="hand"><span class="who">{w.who}</span><span class="role">{w.role}</span></span>
+                )}
               </span>
             )}
             <span class="wisp" aria-hidden="true"></span>
