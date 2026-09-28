@@ -1,9 +1,28 @@
 ---
-// DASH Creatives gateway — diamond heart → four eggs → worlds
-// Assets live in public/gateway/ (unprocessed static files, per Astro convention)
+// DASH Creatives gateway — five eggs nested in fog.
+//
+// Replaced the three.js diamond-heart ritual (heart → shatter → 3D eggs) with a
+// pure-CSS environment: no canvas, no /gateway/three.min.js (603 KB off the
+// landing page). Assets still live in public/gateway/ for the worlds below.
+//
+// Two behaviours from the old gateway are load-bearing and survive intact:
+//   1. LamarCy does NOT navigate — it reveals #rest (LamarCyWorld) in place.
+//      Its href is the real /?world=lamarcy URL so it still works without JS
+//      and on middle-click; JS intercepts a plain click to skip the reload.
+//   2. /?world=lamarcy[#hash] bypasses the gateway outright. Checkout return
+//      trips and the IG bio depend on it, and it carries ?s= attribution.
 import LamarCyWorld from '../components/LamarCyWorld.astro';
 import OrbNav from '../components/OrbNav.astro';
 import MediaGuard from '../components/MediaGuard.astro';
+
+// Copy is verbatim from the previous .egglabels overlay.
+const WORLDS = [
+  { cls: 'pink',   href: '/art/#gallery',                who: 'D.LAMAR',        role: 'The Painter',    line: 'the works · enter the gallery' },
+  { cls: 'blue',   href: '/?world=lamarcy',              who: 'LamarCy',        role: 'The Songwriter', line: 'the music · enter the chronicle', inPage: true },
+  { cls: 'yellow', href: '/art/#music',                  who: 'Ashley Smith',   role: 'The Voice',      line: 'her songs & stories' },
+  { cls: 'green',  href: 'https://ux.dashcreatives.art', who: 'Durrell Smith',  role: 'UX Design',      line: 'the design work' },
+  { cls: 'rust',   href: '/memorials',                   who: 'Memorials',      role: 'The Sculptor',   line: 'one-of-one pet urns' },
+];
 ---
 <html lang="en">
 <head>
@@ -15,32 +34,211 @@ import MediaGuard from '../components/MediaGuard.astro';
 /* Gateway-only chrome. Base tokens, type roles and every world style live in
    LamarCyWorld.astro, which this page renders inside #rest. */
 
-/* ---------- hero: the rotating diamond heart ---------- */
-#hero{position:relative;height:100vh;min-height:640px;background:var(--cream);overflow:hidden}
-#hero .dots{position:absolute;inset:0;pointer-events:none;z-index:2;
-  background-image:radial-gradient(rgba(20,20,18,.12) 1.6px, transparent 1.6px);background-size:22px 22px}
-#heartCanvas{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:3}
-#hero .mast{position:absolute;left:0;right:0;top:0;z-index:6;display:flex;align-items:center;
-  justify-content:space-between;padding:22px 40px;border-bottom:4px solid var(--tiffany);background:rgba(20,20,18,.85)}
-#hero .mast a{color:var(--cream);text-decoration:none;font-size:14px;letter-spacing:5px;font-weight:600}
-#hero .mast a:hover{color:var(--tiffany)}
-#hero .mast .co{color:var(--tiffany);font-size:15px;letter-spacing:6px;font-weight:700}
-#hero .titleblock{position:absolute;left:0;right:0;bottom:9vh;z-index:6;text-align:center;pointer-events:none}
-#hero .titleblock h1{font-size:clamp(52px,8vw,120px);line-height:.95;color:var(--ink);letter-spacing:2px}
-#hero .titleblock h1 span{color:var(--tiffany)}
-#hero .titleblock p{color:#5a564b;font-size:15px;letter-spacing:7px;margin-top:14px;text-transform:uppercase;font-family:'Oswald',sans-serif}
-#hero .enter{position:absolute;left:50%;transform:translateX(-50%);bottom:3vh;z-index:6;color:var(--tiffany);
-  font-size:13px;letter-spacing:6px;text-decoration:none;font-family:'Oswald',sans-serif;text-transform:uppercase}
-#hero .egglabels{position:absolute;inset:0;z-index:5;pointer-events:none;display:none}
-#hero .egglabels .el{position:absolute;top:68%;width:20%;padding:0 10px;box-sizing:border-box;text-align:center;font-family:'Oswald',sans-serif;
-  text-transform:uppercase;letter-spacing:3px;font-size:13px;font-weight:700;opacity:0;transition:opacity .8s}
-#hero .egglabels .pink{left:0;color:#D2547E}
-#hero .egglabels .blue{left:20%;color:var(--tiffany)}
-#hero .egglabels .yellow{left:40%;color:#B8860B}
-#hero .egglabels .green{left:60%;color:#3E8F4C}
-#hero .egglabels .rust{left:80%;color:#7B3F2E}
-#hero .egglabels .el span{display:block;font-size:11px;letter-spacing:4px;color:rgba(20,20,18,.6);margin-top:6px}
-#hero .cat{position:absolute;left:40px;top:96px;z-index:6;color:rgba(20,20,18,.55);font-size:13px;letter-spacing:4px}
+/* Self-hosted like Oswald/Anton — the landing page should not wait on a
+   third-party font request, and a failed load would drop the handwriting to
+   a system cursive that looks nothing like a marker.
+   Rock Salt is a stand-in for Durrell's own hand: disconnected print, bouncing
+   letter heights, blunt marker stroke. Replace with the real Calligraphr build
+   when that TTF exists — only the src and the two font-size rules change. */
+@font-face{font-family:'DashHand';src:url('/gateway/RockSalt.ttf');font-display:swap}
+
+/* ---------- the fog environment ---------- */
+/* No floor, no ceiling, no horizon — the gradient is radial so it reads as
+   depth in every direction rather than a room. */
+#hero{
+  position:relative;height:100vh;min-height:640px;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+  /* Falloff is steeper than a flat wash: white fog only reads as fog if the
+     ground behind it is meaningfully darker at the edges. */
+  background:radial-gradient(ellipse 110% 95% at 50% 42%,
+    #fafaf9 0%, #f3f3f1 26%, #ebebe8 48%, #e0e0dc 74%, #d4d4cf 100%);
+}
+
+/* Fog layers never intercept a click — every egg link stays reachable. */
+#hero .fog,#hero .fog span,#hero .band{pointer-events:none}
+
+#hero .fog{position:absolute;inset:-12%;z-index:1}
+#hero .fog span{
+  position:absolute;border-radius:50%;
+  background:radial-gradient(ellipse at 50% 50%, rgba(255,255,255,.9) 0%,
+    rgba(255,255,255,.62) 42%, rgba(255,255,255,0) 72%);
+  filter:blur(44px);opacity:.9;will-change:transform;
+}
+#hero .fog .f1{width:58vw;height:38vh;left:-6%;top:12%;animation:drift-a 29s ease-in-out infinite}
+#hero .fog .f2{width:46vw;height:30vh;right:-8%;top:26%;animation:drift-b 36s ease-in-out infinite}
+#hero .fog .f3{width:64vw;height:34vh;left:14%;bottom:6%;animation:drift-a 24s ease-in-out infinite reverse}
+#hero .fog .f4{width:38vw;height:26vh;left:30%;top:2%;animation:drift-b 31s ease-in-out infinite reverse}
+/* .front sits above the eggs so the row feels submerged, not pasted on. */
+#hero .fog.front{z-index:4}
+#hero .fog.front span{filter:blur(50px);opacity:.75}
+#hero .fog.front .g1{width:52vw;height:26vh;left:-10%;bottom:16%;animation:drift-b 27s ease-in-out infinite}
+#hero .fog.front .g2{width:44vw;height:22vh;right:-12%;bottom:22%;animation:drift-a 33s ease-in-out infinite reverse}
+
+/* A wide, soft band behind the row so the five eggs read as one bank of fog. */
+#hero .band{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:min(1500px,96vw);height:300px;z-index:2;
+  background:radial-gradient(ellipse at 50% 52%, rgba(255,255,255,.62) 0%,
+    rgba(255,255,255,.34) 48%, rgba(255,255,255,0) 76%);
+  filter:blur(44px);
+}
+
+@keyframes drift-a{0%,100%{transform:translate3d(0,0,0)}50%{transform:translate3d(6%,-2%,0)}}
+@keyframes drift-b{0%,100%{transform:translate3d(0,0,0)}50%{transform:translate3d(-7%,2%,0)}}
+
+/* ---------- the row ---------- */
+#hero .worlds{
+  position:relative;z-index:3;
+  display:flex;align-items:flex-start;justify-content:center;
+  gap:clamp(14px,2.4vw,40px);
+  list-style:none;margin:0;padding:0 24px;
+  max-width:100%;
+}
+#hero .worlds li{flex:0 0 auto}
+
+#hero .world{
+  display:flex;flex-direction:column;align-items:center;
+  width:150px;text-decoration:none;
+  border-radius:14px;padding:6px 4px 10px;
+}
+#hero .world:focus-visible{
+  outline:3px solid #067874;outline-offset:6px;
+  background:rgba(255,255,255,.55);
+}
+
+/* ---------- the sticky note ---------- */
+/* Paper and fog are both light, so the note separates by hue and by its
+   shadow, not by brightness — hence the fairly present drop shadow. */
+#hero .eggwrap{position:relative;width:152px;height:152px;display:block}
+
+#hero .note{
+  position:absolute;inset:0;z-index:2;
+  display:flex;align-items:center;justify-content:center;
+  padding:12px 8px 16px;box-sizing:border-box;
+  background:
+    linear-gradient(196deg, rgba(255,255,255,.55) 0%, rgba(255,255,255,0) 34%),
+    linear-gradient(170deg, #F6E9A0 0%, #F0E28A 56%, #E7D678 100%);
+  box-shadow:0 16px 28px -10px rgba(104,96,48,.34),
+             0 3px 8px rgba(104,96,48,.16),
+             inset 0 1px 0 rgba(255,255,255,.5);
+  animation:bob 9s ease-in-out infinite;
+  will-change:transform;
+}
+/* The lifted bottom-right corner from the reference photo. */
+#hero .note::after{
+  content:'';position:absolute;right:0;bottom:0;width:26px;height:22px;
+  background:linear-gradient(135deg, rgba(0,0,0,0) 46%, rgba(160,150,90,.30) 52%, #F7EFAE 56%);
+  border-bottom-right-radius:2px;
+  box-shadow:-3px -3px 6px rgba(104,96,48,.16);
+}
+/* Pinned by hand, so none of them sit perfectly square. */
+#hero li:nth-child(1) .eggwrap{transform:rotate(-2.4deg)}
+#hero li:nth-child(2) .eggwrap{transform:rotate(1.6deg)}
+#hero li:nth-child(3) .eggwrap{transform:rotate(-1deg)}
+#hero li:nth-child(4) .eggwrap{transform:rotate(2.2deg)}
+#hero li:nth-child(5) .eggwrap{transform:rotate(-1.8deg)}
+
+/* The header, written on the note. */
+#hero .hand{
+  position:relative;z-index:2;text-align:center;
+  font-family:'DashHand',cursive;line-height:1.28;
+  transform:rotate(-2deg);
+}
+/* nowrap keeps the longest name ('Durrell Smith') on one line like the
+   others — at 27px it was 132px inside 132px of usable width and broke. */
+#hero .hand .who{display:block;font-size:15px;letter-spacing:0;white-space:nowrap}
+#hero .hand .role{display:block;font-size:10.5px;margin-top:9px;opacity:.85;white-space:nowrap}
+
+/* Staggered so the five never rise together. */
+#hero li:nth-child(1) .note{animation-duration:9.5s;animation-delay:-.2s}
+#hero li:nth-child(2) .note{animation-duration:11s;animation-delay:-2.4s}
+#hero li:nth-child(3) .note{animation-duration:8.4s;animation-delay:-4.1s}
+#hero li:nth-child(4) .note{animation-duration:10.3s;animation-delay:-1.3s}
+#hero li:nth-child(5) .note{animation-duration:9s;animation-delay:-3.5s}
+@keyframes bob{0%,100%{transform:translate3d(0,8px,0)}50%{transform:translate3d(0,-8px,0)}}
+
+/* Cloud BEHIND the egg — wider than the egg, so it sits in a bank. */
+#hero .c-back{
+  position:absolute;z-index:1;left:-38%;right:-38%;top:20%;height:78%;
+  background:radial-gradient(ellipse at 50% 58%, rgba(255,255,255,1) 0%,
+    rgba(255,255,255,.82) 38%, rgba(255,255,255,.3) 62%, rgba(255,255,255,0) 80%);
+  filter:blur(22px);pointer-events:none;
+}
+/* Cloud IN FRONT — covers roughly the lower third, fading out upward, so the
+   top two-thirds of every egg stays clearly visible. */
+#hero .c-front{
+  /* Shallower than the egg version: the header is written ON the note now, so
+     the veil only touches the bottom edge and never reaches the ink. */
+  position:absolute;z-index:3;left:-30%;right:-30%;bottom:-12%;height:30%;
+  background:linear-gradient(to top, rgba(255,255,255,.98) 0%,
+    rgba(255,255,255,.78) 34%, rgba(255,255,255,.34) 68%, rgba(255,255,255,0) 100%);
+  filter:blur(14px);pointer-events:none;
+}
+/* One small wisp crossing each egg. */
+#hero .wisp{
+  position:absolute;z-index:3;left:-40%;width:78%;height:14%;top:74%;
+  background:radial-gradient(ellipse at 50% 50%, rgba(255,255,255,.8) 0%,
+    rgba(255,255,255,.42) 46%, rgba(255,255,255,0) 78%);
+  filter:blur(12px);pointer-events:none;
+  animation:wisp 26s linear infinite;will-change:transform;
+}
+#hero li:nth-child(2) .wisp{top:70%;animation-duration:31s;animation-delay:-8s}
+#hero li:nth-child(3) .wisp{top:78%;animation-duration:22s;animation-delay:-14s}
+#hero li:nth-child(4) .wisp{top:72%;animation-duration:35s;animation-delay:-4s}
+#hero li:nth-child(5) .wisp{top:76%;animation-duration:28s;animation-delay:-19s}
+@keyframes wisp{0%{transform:translate3d(0,0,0)}100%{transform:translate3d(220%,0,0)}}
+
+/* ---------- labels ---------- */
+/* Above every fog layer so the copy is never veiled. Hues are the original
+   world colours, darkened only as far as WCAG AA (4.5:1) required against the
+   fog — see the note in the commit. */
+#hero .lbl{
+  position:relative;z-index:6;margin-top:18px;text-align:center;
+}
+#hero .lbl .ln{
+  display:block;font-family:'Oswald',sans-serif;text-transform:uppercase;
+  font-size:11px;letter-spacing:4px;font-weight:400;
+  color:#3d3b36;line-height:1.5;
+}
+/* Marker ink keeps each world's colour, darkened only as far as WCAG AA
+   needed against the paper (the reference note used one dark pen; colour is
+   what preserves the world coding). */
+#hero .pink   .hand{color:#B22F5B}
+#hero .blue   .hand{color:#066E6B}
+#hero .yellow .hand{color:#7E5D07}
+#hero .green  .hand{color:#306F3B}
+#hero .rust   .hand{color:#7B3F2E}
+
+/* ---------- mobile: swipe the row ---------- */
+@media (max-width:760px){
+  #hero .worlds{
+    justify-content:flex-start;
+    overflow-x:auto;overflow-y:hidden;
+    scroll-snap-type:x proximity;
+    -webkit-overflow-scrolling:touch;
+    overscroll-behavior-x:contain;      /* never turns into page-level sideways scroll */
+    /* Gap is wider here than on desktop on purpose: it cuts the third egg to
+       roughly half, so the row visibly continues past the fold. */
+    gap:34px;
+    padding:0 20px;
+    scrollbar-width:none;
+  }
+  #hero .worlds::-webkit-scrollbar{display:none}
+  #hero .worlds li{scroll-snap-align:center}
+  #hero .world{width:118px}
+  #hero .eggwrap{width:118px;height:118px}
+  /* 12px spilled 'Durrell Smith' past the paper edge at 118px notes. */
+  #hero .hand .who{font-size:11px}
+  #hero .hand .role{font-size:8px;margin-top:6px}
+  #hero .band{height:230px}
+  /* ~2.5 eggs in view, so it reads as scrollable */
+  #hero .lbl .ln{font-size:10px;letter-spacing:2px}
+}
+html,body{max-width:100%;overflow-x:hidden}
+
+@media (prefers-reduced-motion:reduce){
+  #hero .fog span,#hero .note,#hero .wisp{animation:none!important}
+}
 
 body.locked{overflow:hidden;height:100vh}
 #veil{position:fixed;inset:0;background:var(--ink);opacity:0;pointer-events:none;transition:opacity .55s ease;z-index:50}
@@ -50,19 +248,32 @@ body.locked{overflow:hidden;height:100vh}
 </head>
 <body class="locked">
 
-<!-- ============ HERO: the diamond heart ============ -->
+<!-- ============ GATEWAY: five eggs in fog ============ -->
 <div id="veil"></div>
 <div id="hero">
-  <div class="dots"></div>
-  <canvas id="heartCanvas"></canvas>
-  <div class="egglabels" id="egglabels">
-    <div class="el pink" id="lblPink">D.LAMAR · The Painter<span>the works · enter the gallery</span></div>
-    <div class="el blue" id="lblBlue">LamarCy · The Songwriter<span>the music · enter the chronicle</span></div>
-    <div class="el yellow" id="lblYellow">Ashley Smith · The Voice<span>her songs &amp; stories</span></div>
-    <div class="el green" id="lblGreen">Durrell Smith · UX Design<span>the design work</span></div>
-    <div class="el rust" id="lblRust">Memorials · The Sculptor<span>one-of-one pet urns</span></div>
-  </div>
-  <div class="enter" id="hint" style="opacity:.65">❤ click the heart</div>
+  <div class="fog" aria-hidden="true"><span class="f1"></span><span class="f2"></span><span class="f3"></span><span class="f4"></span></div>
+  <div class="band" aria-hidden="true"></div>
+
+  <ul class="worlds" id="worlds">
+    {WORLDS.map((w) => (
+      <li>
+        <a class={`world ${w.cls}`} href={w.href} data-inpage={w.inPage ? 'true' : undefined}
+           aria-label={`${w.who} · ${w.role} — ${w.line}`}>
+          <span class="eggwrap">
+            <span class="c-back" aria-hidden="true"></span>
+            <span class="note">
+              <span class="hand"><span class="who">{w.who}</span><span class="role">{w.role}</span></span>
+            </span>
+            <span class="wisp" aria-hidden="true"></span>
+            <span class="c-front" aria-hidden="true"></span>
+          </span>
+          <span class="lbl"><span class="ln" set:html={w.line}></span></span>
+        </a>
+      </li>
+    ))}
+  </ul>
+
+  <div class="fog front" aria-hidden="true"><span class="g1"></span><span class="g2"></span></div>
 </div>
 
 <div id="rest">
@@ -72,19 +283,8 @@ body.locked{overflow:hidden;height:100vh}
 <OrbNav />
 <MediaGuard />
 
-<!-- ============ 3D DIAMOND HEART · click to crack & shatter ============ -->
-<script is:inline src="/gateway/three.min.js"></script>
 <script is:inline>
 (function(){
-  // ------- destinations (EDIT THESE) -------
-  const DEST = {
-    pink:   '/art/#gallery',    // D.LAMAR · the current dashcreatives.art site, relocated to /art/
-    blue:   'WORLD',            // LamarCy · the music world below
-    yellow: '/art/#music',      // Ashley Smith · TODO: her own page/channel
-    green:  'https://ux.dashcreatives.art', // Durrell Smith · UX portfolio (Render, custom domain)
-    rust:   '/memorials'         // DASH Memorial Art · custom sculpted pet urns
-  };
-
   function openWorld(){
     document.getElementById('hero').style.display = 'none';
     document.getElementById('rest').style.display = 'block';
@@ -92,303 +292,37 @@ body.locked{overflow:hidden;height:100vh}
     window.scrollTo(0,0);
     setTimeout(()=>document.getElementById('veil').classList.remove('on'), 120);
   }
-  // Deep link: /?world=lamarcy[#singles] skips the ritual (checkout return trips, IG bio)
+
+  // Deep link: /?world=lamarcy[#singles] skips the gateway (checkout return
+  // trips, IG bio). Must run before anything else binds.
   if (new URLSearchParams(location.search).get('world') === 'lamarcy') {
     openWorld();
-    const target = location.hash && document.querySelector(location.hash);
-    if (target) setTimeout(() => target.scrollIntoView(), 200);
+    var target = location.hash && document.querySelector(location.hash);
+    if (target) setTimeout(function(){ target.scrollIntoView(); }, 200);
     return;
   }
-  if (!window.THREE) { document.getElementById('heartCanvas').outerHTML =
-    '<img src="/gateway/heart.png" style="position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);width:min(46vw,420px);z-index:3;cursor:pointer" alt="LamarCy heart" id="fbheart">';
-    document.getElementById('fbheart').onclick = openWorld; return; }
 
-  const canvas = document.getElementById('heartCanvas');
-  const renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true});
-  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-  renderer.outputEncoding = THREE.sRGBEncoding;
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(38, 1, .1, 400);
-  camera.position.set(0, 0, 55);
+  var veil = document.getElementById('veil');
 
-  function heartShape(s){
-    const sh = new THREE.Shape();
-    sh.moveTo(0, -6.5*s);
-    sh.bezierCurveTo( 8.6*s, -0.5*s,  7.4*s, 7.6*s,  0, 3.4*s);
-    sh.bezierCurveTo(-7.4*s, 7.6*s, -8.6*s, -0.5*s,  0, -6.5*s);
-    return sh;
-  }
-  function dotCanvas(bg, dot){
-    const c = document.createElement('canvas'); c.width = c.height = 512;
-    const g = c.getContext('2d');
-    g.fillStyle = bg; g.fillRect(0,0,512,512);
-    g.fillStyle = dot;
-    const step = 40;
-    for (let y=0; y<512+step; y+=step)
-      for (let x=0; x<512+step; x+=step){
-        const ox = (Math.floor(y/step)%2) ? step/2 : 0;
-        g.beginPath(); g.arc(x+ox, y, 10.5, 0, Math.PI*2); g.fill();
+  document.querySelectorAll('#worlds .world').forEach(function(a){
+    a.addEventListener('click', function(e){
+      // Leave modified clicks alone — cmd/ctrl/shift/middle-click must still
+      // open a new tab or window the way the browser intends.
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+
+      if (a.dataset.inpage === 'true'){        // LamarCy lives below the gate
+        e.preventDefault();
+        openWorld();
+        return;
       }
-    return c;
-  }
-  function drawCracksOn(cv, tex, n){
-    const g = cv.getContext('2d');
-    g.strokeStyle = '#141412'; g.lineWidth = 5; g.lineCap='round';
-    for (let i=0;i<n;i++){
-      let x = 100+Math.random()*312, y = 60+Math.random()*392;
-      g.beginPath(); g.moveTo(x,y);
-      for (let k=0;k<5;k++){ x += (Math.random()-.5)*110; y += (Math.random()-.5)*110; g.lineTo(x,y); }
-      g.stroke();
-    }
-    tex.needsUpdate = true;
-  }
-
-  // ------- the diamond heart -------
-  const heartDots = dotCanvas('#09B1AB','rgba(6,122,118,0.95)');
-  const heartTex = new THREE.CanvasTexture(heartDots);
-  heartTex.encoding = THREE.sRGBEncoding;
-  heartTex.wrapS = heartTex.wrapT = THREE.RepeatWrapping; heartTex.repeat.set(.052,.052);
-  const geo = new THREE.ExtrudeGeometry(heartShape(1), {depth:3.4, bevelEnabled:true,
-    bevelThickness:2.6, bevelSize:2.2, bevelSegments:2, curveSegments:7});
-  geo.center();
-  const heartMat = new THREE.MeshPhysicalMaterial({map:heartTex, flatShading:true, metalness:.35,
-    roughness:.22, clearcoat:1, clearcoatRoughness:.12, emissive:0x063f3c, emissiveIntensity:.1});
-  const heart = new THREE.Mesh(geo, heartMat);
-  const group = new THREE.Group(); group.add(heart); scene.add(group);
-
-  new THREE.TextureLoader().load('/gateway/mannish-boy.jpg', function(tex){
-    tex.encoding = THREE.sRGBEncoding;
-    const pGeo = new THREE.ShapeGeometry(heartShape(0.72), 24);
-    pGeo.computeBoundingBox();
-    const bb = pGeo.boundingBox, sz = new THREE.Vector3(); bb.getSize(sz);
-    const pos = pGeo.attributes.position, uvs = [];
-    const ar = tex.image.width/tex.image.height, br = sz.x/sz.y;
-    for (let i=0;i<pos.count;i++){
-      let u=(pos.getX(i)-bb.min.x)/sz.x, v=(pos.getY(i)-bb.min.y)/sz.y;
-      if (ar>br){ u=.5+(u-.5)*(br/ar);} else { v=.5+(v-.5)*(ar/br);}
-      uvs.push(u,v);
-    }
-    pGeo.setAttribute('uv', new THREE.Float32BufferAttribute(uvs,2));
-    pGeo.center();
-    const pMesh = new THREE.Mesh(pGeo, new THREE.MeshBasicMaterial({map:tex}));
-    pMesh.position.set(0,0,4.40);
-    const ring = new THREE.Mesh(new THREE.ShapeGeometry(heartShape(0.78),24),
-      new THREE.MeshBasicMaterial({color:0x141412}));
-    ring.geometry.center(); ring.position.set(0,0,4.34);
-    group.add(ring); group.add(pMesh);
+      e.preventDefault();                       // brief veil, then travel
+      veil.classList.add('on');
+      var href = a.getAttribute('href');
+      setTimeout(function(){ window.location.href = href; }, 380);
+    });
   });
-
-  scene.add(new THREE.AmbientLight(0xf7f3e8,.5));
-  const key = new THREE.DirectionalLight(0xffffff,2.2); key.position.set(6,8,10); scene.add(key);
-  const rim = new THREE.DirectionalLight(0x5CB9AE,1.4); rim.position.set(-8,-4,6); scene.add(rim);
-  const back = new THREE.DirectionalLight(0x09B1AB,.9); back.position.set(0,4,-8); scene.add(back);
-
-  // ------- four eggs -------
-  const EGGS = [
-    {key:'pink',   x:-22.6, shell:'#F2A9C4', dot:'rgba(216,33,90,0.55)',  yolk:0xE0447E},
-    {key:'blue',   x:-11.3, shell:'#09B1AB', dot:'rgba(6,122,118,0.95)',  yolk:0x067A76},
-    {key:'yellow', x:0,     shell:'#F4C531', dot:'rgba(199,147,18,0.75)', yolk:0xE8A317},
-    {key:'green',  x:11.3,  shell:'#58B368', dot:'rgba(46,125,66,0.75)',  yolk:0x2E7D42},
-    {key:'rust',   x:22.6,  shell:'#C08462', dot:'rgba(123,63,46,0.70)',  yolk:0x7B3F2E}
-  ];
-  // Eggs (and later their shattered halves) live in one group so the row can be
-  // scaled to fit narrow viewports. Five eggs reach x=+/-26.9 including radius,
-  // which overflowed the frame even at four — see fitEggs() in size().
-  const eggGroup = new THREE.Group(); scene.add(eggGroup);
-  const EGG_HALF_SPAN = 22.6 + 4.3;
-  const eggMeshes = [];
-  const eggGeo = new THREE.SphereGeometry(4.3, 28, 22); eggGeo.scale(1,1.35,1);
-  for (const e of EGGS){
-    const cv = dotCanvas(e.shell, e.dot);
-    const t = new THREE.CanvasTexture(cv); t.encoding = THREE.sRGBEncoding;
-    t.wrapS=t.wrapT=THREE.RepeatWrapping; t.repeat.set(2,2);
-    const m = new THREE.Mesh(eggGeo, new THREE.MeshPhysicalMaterial({map:t, metalness:.15,
-      roughness:.3, clearcoat:1, clearcoatRoughness:.15}));
-    m.position.set(e.x, 0.4, 0);
-    m.scale.setScalar(0.001); m.visible = false;
-    m.userData = {cfg:e, canvas:cv, tex:t, baseX:e.x};
-    eggGroup.add(m); eggMeshes.push(m);
-  }
-
-  // ------- state -------
-  let state = 'idle', t = 0, crackT = 0, shatterT = 0, eggCrackT = 0, spillT = 0;
-  const clock = new THREE.Clock();
-  const shards = [];
-  let chosen = null, spillParts = null;
-
-  function shatter(){
-    group.visible = false;
-    const shardMat = heartMat.clone();
-    for (let i=0;i<56;i++){
-      const sh = new THREE.Mesh(new THREE.TetrahedronGeometry(.35+Math.random()*1.1), shardMat);
-      sh.position.set((Math.random()-.5)*10, (Math.random()-.5)*10, (Math.random()-.5)*4);
-      sh.userData.v = new THREE.Vector3((Math.random()-.5)*.45, (Math.random()-.2)*.4, (Math.random()-.5)*.3);
-      sh.userData.r = new THREE.Vector3(Math.random()*.2, Math.random()*.2, Math.random()*.2);
-      scene.add(sh); shards.push(sh);
-    }
-    for (const m of eggMeshes) m.visible = true;
-    document.getElementById('egglabels').style.display = 'block';
-    setTimeout(()=>{ for (const id of ['lblPink','lblBlue','lblYellow','lblGreen','lblRust'])
-      document.getElementById(id).style.opacity = 1; }, 700);
-    const hint = document.getElementById('hint');
-    hint.textContent = '❤ pick a world';
-  }
-
-  function choose(key){
-    if (state !== 'eggs') return;
-    chosen = eggMeshes.find(m => m.userData.cfg.key === key);
-    if (!chosen) return;
-    state = 'eggcrack'; eggCrackT = 0;
-    drawCracksOn(chosen.userData.canvas, chosen.userData.tex, 3);
-    for (const id of ['lblPink','lblBlue','lblYellow','lblGreen','lblRust'])
-      document.getElementById(id).style.opacity = .25;
-    document.getElementById('hint').style.opacity = 0;
-  }
-
-  function spill(){
-    state = 'spill'; spillT = 0;
-    const cfg = chosen.userData.cfg, px = chosen.position.x, py = chosen.position.y;
-    chosen.visible = false;
-    const shellMat = chosen.material;
-    const topG = new THREE.SphereGeometry(4.3, 28, 12, 0, Math.PI*2, 0, Math.PI/2); topG.scale(1,1.35,1);
-    const botG = new THREE.SphereGeometry(4.3, 28, 12, 0, Math.PI*2, Math.PI/2, Math.PI/2); botG.scale(1,1.35,1);
-    const top = new THREE.Mesh(topG, shellMat), bot = new THREE.Mesh(botG, shellMat);
-    top.position.set(px, py, 0); bot.position.set(px, py, 0);
-    const yolkMat = new THREE.MeshPhysicalMaterial({color:cfg.yolk, roughness:.15, clearcoat:1, clearcoatRoughness:.08});
-    const yolk = new THREE.Mesh(new THREE.SphereGeometry(2.6, 20, 16), yolkMat);
-    yolk.position.set(px, py, 4.5);
-    const drops = [];
-    for (let i=0;i<9;i++){
-      const d = new THREE.Mesh(new THREE.SphereGeometry(.3+Math.random()*.5, 10, 8), yolkMat);
-      d.position.set(px+(Math.random()-.5)*3, py-1-Math.random()*1.5, 4.2+(Math.random()-.5));
-      d.userData.v = new THREE.Vector3((Math.random()-.5)*.12, -.1-Math.random()*.15, 0);
-      drops.push(d); eggGroup.add(d);
-    }
-    eggGroup.add(top, bot, yolk);
-    spillParts = {top, bot, yolk, drops, px, py};
-    setTimeout(()=>document.getElementById('veil').classList.add('on'), 1250);
-    setTimeout(()=>{
-      const dest = DEST[cfg.key];
-      if (dest === 'WORLD') openWorld();
-      else window.location.href = dest;
-    }, 2000);
-  }
-
-  // ------- input -------
-  const ray = new THREE.Raycaster(), mouse = new THREE.Vector2();
-  function hit(e, targets){
-    const r = canvas.getBoundingClientRect();
-    mouse.x = ((e.clientX-r.left)/r.width)*2-1;
-    mouse.y = -((e.clientY-r.top)/r.height)*2+1;
-    ray.setFromCamera(mouse, camera);
-    const res = ray.intersectObjects(targets, true);
-    return res.length ? res[0].object : null;
-  }
-  canvas.style.pointerEvents = 'auto';
-  canvas.addEventListener('pointermove', e => {
-    const over = (state==='idle' && hit(e,[heart])) || (state==='eggs' && hit(e, eggMeshes));
-    canvas.style.cursor = over ? 'pointer' : 'default';
-  });
-  canvas.addEventListener('click', e => {
-    if (state==='idle' && hit(e,[heart])){ state='cracking'; crackT=0; drawCracksOn(heartDots, heartTex, 3); }
-    else if (state==='eggs'){
-      const m = hit(e, eggMeshes);
-      if (m) choose(m.userData.cfg.key);
-    }
-  });
-  for (const [id,key] of [['lblPink','pink'],['lblBlue','blue'],['lblYellow','yellow'],['lblGreen','green'],['lblRust','rust']]){
-    const el = document.getElementById(id);
-    el.style.pointerEvents='auto'; el.style.cursor='pointer';
-    el.onclick = ()=>choose(key);
-  }
-
-  // Scale the egg row so all five stay inside the frame at any aspect ratio.
-  // (At 1:1 the visible half-width is ~16 units; the row reaches 26.9, which is
-  //  why the outer eggs clipped even with four of them.)
-  function fitEggs(){
-    const halfH = Math.tan(38/2 * Math.PI/180) * camera.position.z;
-    const halfW = halfH * camera.aspect;
-    const k = Math.min(1, (halfW * 0.94) / EGG_HALF_SPAN);
-    eggGroup.scale.setScalar(k);
-  }
-
-  function size(){
-    renderer.setSize(innerWidth, innerHeight, false);
-    camera.aspect = innerWidth/innerHeight;
-    camera.position.z = camera.aspect < 1 ? Math.min(55/camera.aspect*0.85, 95) : 55;
-    camera.updateProjectionMatrix();
-    fitEggs();
-  }
-  addEventListener('resize', size); size();
-
-  (function loop(){
-    requestAnimationFrame(loop);
-    const dt = Math.min(clock.getDelta(), .1);
-    t += dt * .5;
-
-    if (state==='idle' || state==='cracking'){
-      group.rotation.y = t;
-      group.rotation.x = Math.sin(t*.6)*.08;
-      group.position.y = -0.5 + Math.sin(t*1.3)*.35;
-    }
-    if (state==='cracking'){
-      crackT += dt;
-      group.position.x = (Math.random()-.5) * crackT * 1.6;
-      group.position.y += (Math.random()-.5) * crackT * 1.2;
-      if (crackT > .5 && crackT < .55) drawCracksOn(heartDots, heartTex, 3);
-      if (crackT > 1.05 && crackT < 1.1) drawCracksOn(heartDots, heartTex, 4);
-      if (crackT > 1.7){ state='shattering'; shatterT=0; shatter(); }
-    }
-    if (state!=='idle' && state!=='cracking'){
-      for (const sh of shards){
-        sh.position.addScaledVector(sh.userData.v, dt*60);
-        sh.userData.v.y -= .012*dt*60;
-        sh.rotation.x += sh.userData.r.x; sh.rotation.y += sh.userData.r.y;
-        sh.scale.multiplyScalar(Math.pow(.975, dt*60));
-      }
-    }
-    if (state==='shattering'){
-      shatterT += dt;
-      const k = Math.min(shatterT/1.1, 1), ease = 1-Math.pow(1-k,3);
-      for (const m of eggMeshes) m.scale.setScalar(ease);
-      if (k>=1) state='eggs';
-    }
-    if (state==='eggs' || state==='shattering'){
-      for (let i=0;i<eggMeshes.length;i++){
-        const m = eggMeshes[i];
-        m.rotation.y += (i%2 ? -.012 : .012);
-        m.position.y = 0.4 + Math.sin(t*1.5 + i*1.7)*.3;
-      }
-    }
-    if (state==='eggcrack' && chosen){
-      eggCrackT += dt;
-      chosen.position.x = chosen.userData.baseX + (Math.random()-.5)*eggCrackT*2.2;
-      chosen.position.y = 0.4 + (Math.random()-.5)*eggCrackT*1.8;
-      if (eggCrackT > .35 && eggCrackT < .4) drawCracksOn(chosen.userData.canvas, chosen.userData.tex, 3);
-      if (eggCrackT > .7 && eggCrackT < .75) drawCracksOn(chosen.userData.canvas, chosen.userData.tex, 4);
-      for (const m of eggMeshes) if (m!==chosen) m.scale.multiplyScalar(Math.pow(.985, dt*60));
-      if (eggCrackT > 1.0) spill();
-    }
-    if (state==='spill' && spillParts){
-      spillT += dt;
-      const P = spillParts;
-      P.top.position.y += 9*dt; P.top.rotation.z += 1.6*dt; P.top.position.x += 3.5*dt;
-      P.bot.position.y -= 3.5*dt; P.bot.rotation.z -= .8*dt; P.bot.position.x -= 2*dt;
-      // yolk falls then squashes into a puddle
-      if (P.yolk.position.y > P.py - 6.5){ P.yolk.position.y -= 10*dt; }
-      else { P.yolk.scale.y = Math.max(P.yolk.scale.y - 2.2*dt, .35);
-             P.yolk.scale.x = Math.min(P.yolk.scale.x + 2.6*dt, 2.1);
-             P.yolk.scale.z = Math.min(P.yolk.scale.z + 2.6*dt, 2.1); }
-      for (const d of P.drops){
-        d.position.addScaledVector(d.userData.v, dt*60);
-        d.userData.v.y -= .01*dt*60;
-      }
-    }
-    renderer.render(scene, camera);
-  })();
 })();
 </script>
-
 
 </body>
 </html>
