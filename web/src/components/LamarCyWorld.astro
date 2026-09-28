@@ -1,483 +1,297 @@
 ---
-// The LamarCy world — yin/yang, the Chronicle grid, the Singles, the doors.
+// LamarCy — the songwriter's world, stripped to three sticky notes on fog.
 //
-// Rendered in exactly two places, never duplicated:
-//   1. inside the gateway's hidden #rest div (revealed by the blue egg)
-//   2. as the standalone /music page
+// Everything that used to live here (yin/yang hero, live Instagram grid, two
+// newsletter capture forms, The Chronicle) is gone by request; git history has
+// it if any of it is wanted back.
 //
-// It carries its own base tokens (fonts, palette, reset, type roles) because
-// both host pages need them and both render this component exactly once. The
-// gateway keeps only its own hero/veil/lock CSS. Styles are is:global on
-// purpose: the Instagram tiles are injected via innerHTML at runtime, and
-// Astro's scoped-style attributes would never reach them.
+// What survives, deliberately: the direct-sales path. The store script at the
+// bottom of this file is byte-for-byte the one that was already running in
+// production, and the markup below keeps every hook it reaches for —
+// button.cta.buy[data-sku], .closest('.song'), .playrow with .pbtn/.pbar/
+// .pfill/.ptime, and .closest('.body') holding .buynote/.buyerr. The initial
+// display:none on those is also preserved: the script reveals players only
+// once a master is uploaded and buy buttons only once Stripe is configured,
+// so the store ships dark and lights up in stages.
+const SINGLES = [
+  { sku: 'lowcountry', title: 'Lowcountry Beach', art: '/gateway/single-lowcountry.jpg',
+    credits: 'Written, played & sung by Durrell Lamar · LC-001' },
+  { sku: 'momma', title: 'Momma Gone', art: '/gateway/single-momma.jpg',
+    credits: 'Written by Durrell Lamar · Vocals by Ashley Eady Smith' },
+];
 ---
-<style is:global>
-@font-face{font-family:'Anton';src:url('/gateway/Anton.ttf')}
-@font-face{font-family:'Oswald';src:url('/gateway/Oswald.ttf')}
-:root{--tiffany:#09B1AB;--seafoam:#5CB9AE;--cream:#F7F3E8;--ink:#141412;--red:#D82128;--sepia:#E3DECB}
-*{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{background:var(--cream);color:var(--ink);font-family:Georgia,'Times New Roman',serif}
-.anton{font-family:'Anton',sans-serif;text-transform:uppercase}
-.osw{font-family:'Oswald',sans-serif;text-transform:uppercase}
-.mono{font-family:'DejaVu Sans Mono',Menlo,monospace;text-transform:uppercase}
 
-/* ---------- yin/yang ---------- */
-#yinyang{display:grid;grid-template-columns:1fr 1fr;min-height:78vh}
-@media(max-width:820px){#yinyang{grid-template-columns:1fr}}
-#yinyang .half{padding:9vh 6vw;display:flex;flex-direction:column;justify-content:center;gap:22px;position:relative}
-#yinyang .dlamar{background:var(--ink);color:var(--cream)}
-#yinyang .lamarcy{background:var(--cream);color:var(--ink);
-  background-image:radial-gradient(rgba(9,177,171,.12) 1.6px, transparent 1.6px);background-size:20px 20px}
-#yinyang .k{font-size:13px;letter-spacing:8px;font-weight:700}
-#yinyang .dlamar .k{color:var(--red)}
-#yinyang .lamarcy .k{color:var(--tiffany)}
-#yinyang h2{font-size:clamp(40px,4.5vw,68px);line-height:1}
-#yinyang p{font-size:17px;line-height:1.7;max-width:46ch}
-#yinyang .dlamar a{color:var(--sepia)}
-#yinyang .lamarcy a{color:var(--ink)}
-#yinyang .tag{font-size:13px;letter-spacing:4px;font-weight:600}
-#yinyang .dlamar .tag{color:var(--sepia)}
-#yinyang .lamarcy .tag{color:var(--tiffany)}
-.yy-mark{position:absolute;top:40px;right:40px;width:64px;opacity:.9}
+<div id="lcworld">
+  <div class="lcfog" aria-hidden="true"><span class="a"></span><span class="b"></span><span class="c"></span></div>
 
-/* ---------- shared section chrome ---------- */
-section.block{padding:11vh 6vw;border-top:5px solid var(--ink)}
-.kick{font-size:13px;letter-spacing:8px;color:var(--tiffany);font-weight:700;font-family:'Oswald',sans-serif;text-transform:uppercase}
-section.block h2{font-family:'Anton',sans-serif;text-transform:uppercase;font-size:clamp(40px,5vw,72px);margin:10px 0 18px}
-section.block .lede{font-size:18px;font-style:italic;color:#3d3a33;max-width:62ch;line-height:1.7}
-.coverrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:26px;margin-top:44px}
-.coverrow figure{background:#fff;border:4px solid var(--ink);padding:10px;box-shadow:9px 9px 0 rgba(20,20,18,.85)}
-.coverrow img{width:100%;display:block}
-.coverrow figcaption{font-family:'Oswald',sans-serif;text-transform:uppercase;font-size:12px;letter-spacing:3px;padding-top:9px;color:#3d3a33}
-#instagram{background:var(--seafoam)}
-#instagram .lede{color:#12312e}
-.igrid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;margin-top:44px}
-@media(max-width:900px){.igrid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:560px){.igrid{grid-template-columns:1fr}}
-.igbox{display:block;background:#fff;border:4px solid var(--ink);padding:10px;box-shadow:9px 9px 0 rgba(20,20,18,.85);
-  text-decoration:none;transition:transform .12s}
-.igbox:hover{transform:translate(-2px,-2px)}
-.igbox .ph{aspect-ratio:1/1;background:var(--cream);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;
-  background-image:radial-gradient(rgba(20,20,18,.10) 1.6px, transparent 1.6px);background-size:18px 18px;overflow:hidden}
-.igbox .ph img{width:88px}
-.igbox .ph span{font-family:'Oswald',sans-serif;text-transform:uppercase;font-size:12px;letter-spacing:3px;color:#3d3a33}
-.igbox .ph .igimg{width:100%;height:100%;object-fit:cover}
-.ignote{margin-top:34px;font-size:13px;letter-spacing:4px;color:var(--ink);text-transform:uppercase}
-.ignote a{color:var(--ink);font-weight:700}
+  <!-- The blue heart is the way back to the gateway. -->
+  <a class="lcheart" href="/" aria-label="Back to DASH Creatives — pick a world">
+    <img src="/gateway/heart.png" alt="" width="92" height="84" />
+    <span class="lcheart-lbl">pick a world</span>
+  </a>
 
-/* ---------- the capture: The LamarCy Chronicle ----------
-   Matches the form Durrell built in Kit: dark Lowcountry water field under
-   Ben-Day dots, cream display caps, Tiffany sub, Tiffany button. Photo is
-   graded monochrome per the brand book (no saturated photography). No heart
-   mark until the success state replaces the form. */
-#subscribe{position:relative;background:var(--ink);border-top:5px solid var(--ink);overflow:hidden}
-/* Durrell's own Kit asset: Lowcountry water, already graded silver-sepia with
-   the Ben-Day halftone baked in (dense up top, opening into water below), so
-   it is used as shot — no second dot layer, no regrade. */
-#subscribe .cap-bg{position:absolute;inset:0;background:url('/gateway/chronicle-field.jpg') center/cover no-repeat}
-/* Ink veil tuned by measurement, not by eye: at .78 the cream clears AAA
-   (8.3:1) and the Tiffany sub clears AA even over the brightest wave crests. */
-#subscribe .cap-veil{position:absolute;inset:0;background:rgba(20,20,18,.78)}
-.capture{position:relative;max-width:760px}
-.cap-head{font-family:'Anton',sans-serif;text-transform:uppercase;font-size:clamp(40px,6vw,86px);
-  line-height:.96;color:var(--cream);letter-spacing:1px}
-/* 24px floor = WCAG "large text", where Tiffany's 3.7:1 over the brightest
-   wave crests clears the 3:1 bar. Below 24px it would need 4.5:1, which this
-   photograph can't give without drowning the water in ink. */
-.cap-sub{font-family:Georgia,'Times New Roman',serif;font-size:clamp(24px,2.4vw,30px);line-height:1.45;
-  color:var(--tiffany);max-width:34ch;margin-top:18px}
-.cap-note{font-family:Georgia,'Times New Roman',serif;font-size:16px;line-height:1.6;
-  color:rgba(247,243,232,.72);max-width:46ch;margin-top:12px;font-style:italic}
-.cap-form{margin-top:34px;max-width:520px}
-/* catalog metadata, mono — the brand date-stamps its objects */
-.cap-stamp{font-family:'DejaVu Sans Mono',Menlo,monospace;text-transform:uppercase;font-size:11px;
-  letter-spacing:4px;color:rgba(247,243,232,.45);margin-top:34px}
-/* Durrell's Kit design shows placeholder only — keep a real label for screen
-   readers without drawing it. */
-.cap-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
-/* Square corners and a thick rule: printed, not rendered. */
-.cap-row input[type=email]{display:block;width:100%;background:rgba(20,20,18,.72);color:var(--cream);
-  border:3px solid var(--cream);padding:20px 22px;font-size:17px;
-  font-family:Georgia,'Times New Roman',serif;border-radius:0}
-.cap-row input[type=email]::placeholder{font-family:'Oswald',sans-serif;
-  font-size:16px;letter-spacing:1px;color:rgba(247,243,232,.55);text-transform:none}
-.cap-row input[type=email]:focus-visible,.cap-btn:focus-visible{outline:3px solid var(--tiffany);outline-offset:3px}
-/* Invalid: doubled cream rule — heritage red is deluxe/vinyl only and must
-   never sit at full strength beside Tiffany. */
-.cap-row input[type=email][aria-invalid=true]{border-color:var(--cream);
-  box-shadow:inset 0 0 0 2px rgba(247,243,232,.35)}
-/* Ink text on Tiffany, not cream: 7:1 contrast vs 2.9:1, and it is the
-   brand's own Tiffany/ink pairing. */
-/* Square, hard offset shadow, no pill: the brand's printed button. */
-.cap-btn{display:inline-block;margin-top:22px;background:var(--tiffany);color:var(--ink);
-  border:3px solid var(--ink);box-shadow:6px 6px 0 rgba(20,20,18,.85);cursor:pointer;
-  font-family:'Oswald',sans-serif;text-transform:uppercase;font-size:16px;letter-spacing:3px;
-  font-weight:700;padding:16px 34px;border-radius:0;transition:none}
-.cap-btn:hover{background:var(--cream);color:var(--ink)}
-.cap-btn:active{box-shadow:3px 3px 0 rgba(20,20,18,.85);transform:translate(3px,3px)}
-.cap-btn[disabled]{opacity:.55;cursor:wait}
-.cap-fine{font-family:'DejaVu Sans Mono',Menlo,monospace;font-size:12px;
-  letter-spacing:1px;color:rgba(247,243,232,.6);margin-top:18px;text-transform:none}
-.cap-status{font-family:Georgia,'Times New Roman',serif;font-size:15px;font-style:italic;
-  color:rgba(247,243,232,.8);margin-top:12px;min-height:1.2em}
-/* Errors read as a stamped correction: cream chip on the dark field. */
-.cap-status.err{display:inline-block;background:var(--cream);color:var(--ink);font-style:normal;
-  font-family:'Oswald',sans-serif;text-transform:uppercase;font-size:12px;letter-spacing:3px;
-  font-weight:700;padding:7px 12px}
-/* honeypot — off-screen, never announced, never tabbable */
-.cap-pot{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
-/* success: the one place a heart is allowed here, since it replaces the form */
-.cap-done{display:flex;align-items:baseline;gap:14px;margin-top:34px;
-  border-top:3px solid rgba(247,243,232,.35);padding-top:26px;max-width:520px}
-.cap-done .h{color:var(--tiffany);font-size:30px;line-height:1}
-.cap-done .t{font-family:'Anton',sans-serif;text-transform:uppercase;font-size:clamp(22px,2.4vw,34px);
-  line-height:1.05;color:var(--cream)}
+  <div class="lcrow">
+    <!-- 1 · the identity note: Durrell's own photograph, same as the gateway -->
+    <div class="lcnote" data-spin>
+      <div class="lcfaces">
+        <div class="lcface lcfront is-photo">
+          <img src="/gateway/note-lamarcy.webp" alt="LamarCy — The Songwriter" width="372" height="380" />
+        </div>
+        <div class="lcface lcback" aria-hidden="true"></div>
+      </div>
+    </div>
 
-/* ---------- singles ---------- */
-.songs{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:34px;margin-top:44px}
-.song{border:4px solid var(--ink);background:#fff;box-shadow:10px 10px 0 rgba(20,20,18,.85)}
-.song img{width:100%;display:block;border-bottom:4px solid var(--ink)}
-.song .body{padding:24px 26px}
-.song h3{font-family:'Anton',sans-serif;text-transform:uppercase;font-size:30px}
-.song .credits{font-size:14px;color:#5a564b;margin:8px 0 16px;font-style:italic}
-.song .cta{display:inline-block;background:var(--ink);color:var(--cream);text-decoration:none;
-  font-family:'Oswald',sans-serif;text-transform:uppercase;font-size:13px;letter-spacing:4px;font-weight:700;padding:12px 22px}
-.song .cta:hover{background:var(--tiffany);color:var(--ink)}
-.song .buyrow{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
-.song button.cta.buy{display:none;border:0;cursor:pointer;background:var(--tiffany);color:var(--ink)}
-.song button.cta.buy:hover{background:var(--ink);color:var(--cream)}
-.song button.cta.buy[disabled]{opacity:.6;cursor:wait}
-.song .buynote{display:none;font-family:'Oswald',sans-serif;text-transform:uppercase;
-  font-size:11px;letter-spacing:3px;color:#5a564b;margin-top:12px}
-.song .buyerr{display:none;font-size:14px;color:#5a564b;margin-top:8px;font-style:italic}
-.song .playrow{display:none;align-items:center;gap:14px;margin-bottom:18px}
-.song .pbtn{width:46px;height:46px;flex:0 0 46px;border:3px solid var(--ink);background:#fff;cursor:pointer;
-  font-size:15px;line-height:1;box-shadow:4px 4px 0 rgba(20,20,18,.85);font-family:'Oswald',sans-serif}
-.song .pbtn:hover{background:var(--tiffany)}
-.song .pbar{flex:1;height:12px;border:3px solid var(--ink);background:#fff;position:relative;cursor:pointer}
-.song .pfill{position:absolute;top:0;left:0;bottom:0;width:0%;background:var(--tiffany)}
-.song .ptime{font-family:'DejaVu Sans Mono',Menlo,monospace;font-size:11px;color:#5a564b;min-width:84px;text-align:right}
+    {SINGLES.map((s) => (
+      <div class="lcnote song" data-spin>
+        <div class="lcfaces">
+          <div class="lcface lcfront paper">
+            <div class="body">
+              <img class="art" src={s.art} alt={`${s.title} single art`} loading="lazy" decoding="async" />
+              <h3 class="hand">{s.title}</h3>
+              <div class="credits">{s.credits}</div>
 
-/* ---------- chronicle / links ---------- */
-#chronicle{background:var(--ink);color:var(--cream)}
-#chronicle .lede{color:var(--sepia)}
-.doors{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:22px;margin-top:44px}
-.door{border:4px solid var(--cream);padding:28px;text-decoration:none;color:var(--cream);transition:all .15s}
-.door:hover{background:var(--tiffany);color:var(--ink);border-color:var(--tiffany)}
-.door .d1{font-family:'Anton',sans-serif;text-transform:uppercase;font-size:26px}
-.door .d2{font-size:14px;letter-spacing:3px;margin-top:8px;font-family:'Oswald',sans-serif;text-transform:uppercase}
+              <div class="playrow no-spin">
+                <button class="pbtn" type="button" aria-label={`Play ${s.title}`}>▶</button>
+                <div class="pbar"><div class="pfill"></div></div>
+                <div class="ptime">0:00 / 0:00</div>
+              </div>
 
-footer{padding:44px 6vw;background:var(--ink);border-top:4px solid var(--tiffany);display:flex;flex-wrap:wrap;gap:18px;
-  align-items:center;justify-content:space-between}
-footer .mono{color:rgba(247,243,232,.5);font-size:12px;letter-spacing:4px}
-footer img{height:40px}
-
-/* ---------- footer one-liner: the quiet second ask ----------
-   For visitors who never crack an egg. Deliberately small — the diamond is
-   still the hero. Same wiring as the Chronicle block, plus a src-footer tag. */
-.foot-cap{flex:1 1 320px;min-width:0}
-.foot-cap .fc-label{display:block;font-family:'Oswald',sans-serif;text-transform:uppercase;
-  font-size:11px;letter-spacing:4px;font-weight:700;color:rgba(247,243,232,.7);margin-bottom:9px}
-.foot-cap form{display:flex;gap:0;max-width:400px}
-.foot-cap input[type=email]{flex:1 1 auto;min-width:0;background:transparent;color:var(--cream);
-  border:2px solid rgba(247,243,232,.45);border-right:0;padding:11px 13px;font-size:14px;
-  font-family:Georgia,'Times New Roman',serif;border-radius:0}
-.foot-cap input[type=email]::placeholder{font-family:'Oswald',sans-serif;font-size:12px;
-  letter-spacing:2px;color:rgba(247,243,232,.4)}
-.foot-cap input[type=email]:focus-visible,.foot-cap button:focus-visible{outline:2px solid var(--tiffany);outline-offset:2px}
-.foot-cap button{flex:0 0 auto;background:var(--tiffany);color:var(--ink);border:2px solid var(--tiffany);
-  cursor:pointer;font-size:17px;line-height:1;padding:0 18px;border-radius:0;font-family:'Oswald',sans-serif}
-.foot-cap button:hover{background:var(--cream);border-color:var(--cream)}
-.foot-cap button[disabled]{opacity:.55;cursor:wait}
-.foot-cap .cap-status{font-size:13px;margin-top:9px;color:rgba(247,243,232,.75)}
-.foot-cap .cap-status.err{font-size:11px;padding:5px 9px}
-.foot-cap .cap-done{margin-top:0;border-top:0;padding-top:0;max-width:none}
-.foot-cap .cap-done .h{font-size:20px}
-.foot-cap .cap-done .t{font-size:15px;letter-spacing:1px}
-</style>
-
-<!-- ============ YIN / YANG ============ -->
-<div id="world"></div>
-<div id="yinyang">
-  <div class="half dlamar">
-    <div class="k osw">The Yang · The Painter</div>
-    <h2 class="anton">D.LAMAR</h2>
-    <p>Watercolor, India ink, turmeric and duende — the visible work. Paintings that hang on walls,
-       assemblages that hold their ground. This is the hand you can see.</p>
-    <p class="tag osw"><a href="/art/#gallery">Enter the gallery →</a></p>
-  </div>
-  <div class="half lamarcy">
-    <img class="yy-mark" src="/gateway/heart.png" alt="">
-    <div class="k osw">The Yin · The Songwriter</div>
-    <h2 class="anton">LamarCy</h2>
-    <p>Southern blues, soul and rock written in Atlanta and haunted by Charleston — songs for other
-       voices, chronicled in sepia and Tiffany blue. This is the hand you can hear.</p>
-    <p class="tag osw">You're in the right room. Keep scrolling ↓</p>
+              <button class="cta buy no-spin" type="button" data-sku={s.sku}>Own it · $0.99+</button>
+              <div class="buynote">MP3 · pay what you want · Stripe</div>
+              <div class="buyerr"></div>
+            </div>
+          </div>
+          <div class="lcface lcback" aria-hidden="true"></div>
+        </div>
+      </div>
+    ))}
   </div>
 </div>
 
-<!-- ============ INSTAGRAM ============ -->
-<section class="block" id="instagram">
-  <div class="kick">The Daily Chronicle</div>
-  <h2>On Instagram</h2>
-  <p class="lede">The making of the music, documented as it happens.</p>
-  <div class="igrid" id="igrid">
-    <a class="igbox" href="https://www.instagram.com/_lamar_cy" target="_blank" rel="noopener">
-      <div class="ph"><img src="/gateway/heart.png" alt="" loading="lazy" decoding="async"><span>@_lamar_cy</span></div></a>
-    <a class="igbox" href="https://www.instagram.com/_lamar_cy" target="_blank" rel="noopener">
-      <div class="ph"><img src="/gateway/heart.png" alt="" loading="lazy" decoding="async"><span>@_lamar_cy</span></div></a>
-    <a class="igbox" href="https://www.instagram.com/_lamar_cy" target="_blank" rel="noopener">
-      <div class="ph"><img src="/gateway/heart.png" alt="" loading="lazy" decoding="async"><span>@_lamar_cy</span></div></a>
-    <a class="igbox" href="https://www.instagram.com/_lamar_cy" target="_blank" rel="noopener">
-      <div class="ph"><img src="/gateway/heart.png" alt="" loading="lazy" decoding="async"><span>@_lamar_cy</span></div></a>
-    <a class="igbox" href="https://www.instagram.com/_lamar_cy" target="_blank" rel="noopener">
-      <div class="ph"><img src="/gateway/heart.png" alt="" loading="lazy" decoding="async"><span>@_lamar_cy</span></div></a>
-    <a class="igbox" href="https://www.instagram.com/_lamar_cy" target="_blank" rel="noopener">
-      <div class="ph"><img src="/gateway/heart.png" alt="" loading="lazy" decoding="async"><span>@_lamar_cy</span></div></a>
-  </div>
-  <p class="ignote osw">Follow along → <a href="https://www.instagram.com/_lamar_cy" target="_blank" rel="noopener">@_lamar_cy</a></p>
-</section>
+<style is:global>
+@font-face{font-family:'DashHand';src:url('/gateway/RockSalt.ttf');font-display:swap}
 
-<!-- ============ THE CAPTURE · The LamarCy Chronicle ============ -->
-<section class="block" id="subscribe">
-  <div class="cap-bg" aria-hidden="true"></div>
-  <div class="cap-veil" aria-hidden="true"></div>
-  <div class="capture">
-    <h2 class="cap-head">The LamarCy Chronicle</h2>
-    <p class="cap-sub">One object, one song, one story. Every Saturday.</p>
-    <p class="cap-note">The gear, the stories, and the songs they turn into.</p>
+#lcworld{
+  position:relative;min-height:100vh;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(ellipse 110% 95% at 50% 42%,
+    #fafaf9 0%, #f3f3f1 26%, #ebebe8 48%, #e0e0dc 74%, #d4d4cf 100%);
+  perspective:1400px;
+}
+#lcworld .lcfog{position:absolute;inset:-12%;pointer-events:none;z-index:1}
+#lcworld .lcfog span{
+  position:absolute;border-radius:50%;
+  background:radial-gradient(ellipse at 50% 50%, rgba(255,255,255,.9) 0%,
+    rgba(255,255,255,.6) 44%, rgba(255,255,255,0) 74%);
+  filter:blur(46px);will-change:transform;
+}
+#lcworld .lcfog .a{width:60vw;height:38vh;left:-8%;top:14%;animation:lcdrift 31s ease-in-out infinite}
+#lcworld .lcfog .b{width:48vw;height:32vh;right:-10%;top:30%;animation:lcdrift 37s ease-in-out infinite reverse}
+#lcworld .lcfog .c{width:66vw;height:34vh;left:16%;bottom:6%;animation:lcdrift 26s ease-in-out infinite}
+@keyframes lcdrift{0%,100%{transform:translate3d(0,0,0)}50%{transform:translate3d(6%,-2%,0)}}
 
-    <form class="cap-form" data-capture="chronicle" novalidate>
-      <label class="cap-label" for="cap-email">Email address</label>
-      <div class="cap-row">
-        <input id="cap-email" name="email" type="email" inputmode="email" autocomplete="email"
-               placeholder="Email Address" required>
-      </div>
-      <button class="cap-btn" type="submit">Subscribe</button>
+/* ---- the row ---- */
+#lcworld .lcrow{
+  --nw:clamp(200px, 22vw, 290px);
+  position:relative;z-index:3;
+  display:flex;align-items:center;justify-content:center;
+  gap:clamp(18px,3.4vw,54px);padding:0 24px;max-width:100%;
+}
 
-      <!-- honeypot: bots fill it, people never see it -->
-      <div class="cap-pot" aria-hidden="true">
-        <label for="cap-company">Company</label>
-        <input id="cap-company" name="company" type="text" tabindex="-1" autocomplete="off">
-      </div>
+/* ---- a spinnable note ---- */
+#lcworld .lcnote{
+  width:var(--nw);height:var(--nw);flex:0 0 auto;
+  touch-action:none;                    /* we drive the drag ourselves */
+  animation:lcbob 10s ease-in-out infinite;
+  will-change:transform;
+}
+#lcworld .lcnote:nth-child(2){animation-duration:12s;animation-delay:-3s}
+#lcworld .lcnote:nth-child(3){animation-duration:9s;animation-delay:-6s}
+@keyframes lcbob{0%,100%{transform:translate3d(0,7px,0)}50%{transform:translate3d(0,-7px,0)}}
 
-      <p class="cap-fine">No spam. Unsubscribe anytime.</p>
-      <p class="cap-status" data-status role="status" aria-live="polite"></p>
-    </form>
-    <p class="cap-stamp">Est 2026 · Every Saturday</p>
-  </div>
-</section>
+/* The inner element carries the rotation, so bobbing and spinning never
+   fight over the same transform. */
+#lcworld .lcfaces{
+  position:relative;width:100%;height:100%;
+  transform-style:preserve-3d;
+  transform:rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));
+  cursor:grab;
+}
+#lcworld .lcnote.dragging .lcfaces{cursor:grabbing}
+#lcworld .lcface{position:absolute;inset:0;backface-visibility:hidden;border-radius:2px}
+#lcworld .lcback{
+  transform:rotateY(180deg);
+  background:linear-gradient(170deg,#EDE49A 0%,#E6DB86 60%,#DCCF74 100%);
+  box-shadow:0 12px 22px -10px rgba(104,96,48,.20), inset 0 1px 0 rgba(255,255,255,.4);
+}
+/* While a note is showing its back, its controls must not be clickable
+   through the paper. */
+#lcworld .lcnote.flipped .lcfront{pointer-events:none}
 
-<!-- ============ THE SINGLES ============ -->
-<section class="block" id="singles">
-  <div class="kick">Now Playing</div>
-  <h2>The Singles</h2>
-  <p class="lede">&ldquo;I bet it&rsquo;s dolphins who know where the ocean gon&rsquo; hide the treasures of my soul.&rdquo;</p>
-  <div class="songs">
-    <div class="song">
-      <img src="/gateway/single-lowcountry.jpg" alt="Lowcountry Beach single art" loading="lazy" decoding="async">
-      <div class="body">
-        <h3>Lowcountry Beach</h3>
-        <div class="credits">Written, played &amp; sung by Durrell Lamar · LC-001</div>
-        <div class="playrow">
-          <button class="pbtn" type="button" data-sku="lowcountry" aria-label="Play Lowcountry Beach">▶</button>
-          <div class="pbar"><div class="pfill"></div></div>
-          <div class="ptime">0:00 / 0:00</div>
-        </div>
-        <div class="buyrow">
-          <button class="cta buy" type="button" data-sku="lowcountry">Own it · $0.99+</button>
-          <a class="cta" href="https://lamarcy.bandcamp.com" target="_blank" rel="noopener">Hear it on Bandcamp</a>
-        </div>
-        <div class="buynote">MP3 · Pay what you want from $0.99 · Checkout by Stripe</div>
-        <div class="buyerr"></div>
-      </div>
-    </div>
-    <div class="song">
-      <img src="/gateway/single-momma.jpg" alt="Momma Gone single art" loading="lazy" decoding="async">
-      <div class="body">
-        <h3>Momma Gone</h3>
-        <div class="credits">Written by Durrell Lamar · Vocals by Ashley Eady Smith</div>
-        <div class="playrow">
-          <button class="pbtn" type="button" data-sku="momma" aria-label="Play Momma Gone">▶</button>
-          <div class="pbar"><div class="pfill"></div></div>
-          <div class="ptime">0:00 / 0:00</div>
-        </div>
-        <div class="buyrow">
-          <button class="cta buy" type="button" data-sku="momma">Own it · $0.99+</button>
-          <a class="cta" href="https://lamarcy.bandcamp.com" target="_blank" rel="noopener">Hear it on Bandcamp</a>
-        </div>
-        <div class="buynote">MP3 · Pay what you want from $0.99 · Checkout by Stripe</div>
-        <div class="buyerr"></div>
-      </div>
-    </div>
-  </div>
-</section>
+#lcworld .lcfront.is-photo img{display:block;width:100%;height:100%;object-fit:contain;
+  filter:drop-shadow(0 10px 18px rgba(104,96,48,.17))}
 
-<!-- ============ THE CHRONICLE ============ -->
-<section class="block" id="chronicle">
-  <div class="kick">Follow the Making</div>
-  <h2 style="color:var(--cream)">The Chronicle</h2>
-  <p class="lede">The music is documented as it&rsquo;s made — essays, gear breakdowns, and the
-     story of every song. Pick a door.</p>
-  <div class="doors">
-    <a class="door" href="https://substack.com/@lamarcy3" target="_blank" rel="noopener">
-      <div class="d1">Substack</div><div class="d2">The essays · one song, one story</div></a>
-    <a class="door" href="https://lamarcy.bandcamp.com" target="_blank" rel="noopener">
-      <div class="d1">Bandcamp</div><div class="d2">Own the music</div></a>
-    <a class="door" href="https://www.instagram.com/_lamar_cy" target="_blank" rel="noopener">
-      <div class="d1">Instagram</div><div class="d2">The daily chronicle</div></a>
-    <a class="door" href="https://www.youtube.com/@durrelllamar" target="_blank" rel="noopener">
-      <div class="d1">YouTube</div><div class="d2">Anatomy of every song</div></a>
-  </div>
-</section>
+#lcworld .lcfront.paper{
+  background:
+    linear-gradient(196deg, rgba(255,255,255,.55) 0%, rgba(255,255,255,0) 34%),
+    linear-gradient(170deg,#F6E9A0 0%,#F0E28A 56%,#E7D678 100%);
+  box-shadow:0 12px 22px -10px rgba(104,96,48,.20),
+             0 2px 6px rgba(104,96,48,.10), inset 0 1px 0 rgba(255,255,255,.5);
+  display:flex;align-items:center;justify-content:center;
+}
+#lcworld .lcfront.paper .body{
+  width:100%;padding:0 9% ;box-sizing:border-box;text-align:center;
+}
+#lcworld .art{
+  display:block;width:46%;aspect-ratio:1;object-fit:cover;margin:0 auto 6%;
+  border-radius:2px;box-shadow:0 6px 14px rgba(90,84,44,.34);
+}
+#lcworld .lcfront .hand{
+  font-family:'DashHand',cursive;font-weight:400;
+  font-size:calc(var(--nw) * .072);line-height:1.2;color:#2E2A22;margin:0 0 3%;
+}
+#lcworld .credits{
+  font-family:'Oswald',sans-serif;text-transform:uppercase;
+  font-size:calc(var(--nw) * .034);letter-spacing:1.5px;color:#5c5636;
+  line-height:1.45;margin-bottom:6%;
+}
 
-<footer>
-  <img src="/gateway/wordmark.png" alt="LamarCy" loading="lazy" decoding="async">
+/* ---- store controls — classes and initial states preserved verbatim ---- */
+#lcworld .song .playrow{display:none;align-items:center;gap:8px;margin-bottom:5%}
+#lcworld .pbtn{
+  flex:0 0 auto;width:calc(var(--nw)*.115);height:calc(var(--nw)*.115);
+  border-radius:50%;border:1.5px solid rgba(46,42,34,.5);background:rgba(255,255,255,.45);
+  color:#2E2A22;font-size:calc(var(--nw)*.05);line-height:1;cursor:pointer;
+}
+#lcworld .pbar{flex:1;height:4px;border-radius:2px;background:rgba(46,42,34,.22);cursor:pointer}
+#lcworld .pfill{height:100%;width:0;border-radius:2px;background:#067874}
+#lcworld .ptime{
+  flex:0 0 auto;font-family:'Oswald',sans-serif;
+  font-size:calc(var(--nw)*.032);letter-spacing:1px;color:#5c5636;
+}
+#lcworld .song button.cta.buy{
+  display:none;border:0;cursor:pointer;background:#067874;color:#F7F3E8;
+  font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:2px;
+  font-size:calc(var(--nw)*.038);padding:3.4% 7%;border-radius:2px;
+}
+#lcworld .song button.cta.buy:hover{background:#05605d}
+#lcworld .song button.cta.buy:disabled{opacity:.7;cursor:default}
+#lcworld .song .buynote{
+  display:none;font-family:'Oswald',sans-serif;text-transform:uppercase;
+  font-size:calc(var(--nw)*.028);letter-spacing:1.4px;color:#6b6440;margin-top:4%;
+}
+#lcworld .song .buyerr{display:none;font-size:calc(var(--nw)*.032);color:#7a3226;margin-top:4%;font-style:italic}
 
-  <div class="foot-cap">
-    <label class="fc-label" for="foot-email">Get the Saturday letter</label>
-    <form data-capture="footer" novalidate>
-      <input id="foot-email" name="email" type="email" inputmode="email" autocomplete="email"
-             placeholder="you@email.com" required>
-      <button type="submit" aria-label="Subscribe to the Saturday letter">&rarr;</button>
-      <div class="cap-pot" aria-hidden="true">
-        <label for="foot-company">Company</label>
-        <input id="foot-company" name="company" type="text" tabindex="-1" autocomplete="off">
-      </div>
-    </form>
-    <p class="cap-status" data-status role="status" aria-live="polite"></p>
-  </div>
+/* ---- the heart, as navigation ---- */
+#lcworld .lcheart{
+  position:fixed;left:26px;top:26px;z-index:40;
+  display:flex;align-items:center;gap:10px;text-decoration:none;
+  padding:8px 14px 8px 8px;border-radius:999px;
+  background:rgba(255,255,255,.5);border:1px solid rgba(20,20,18,.12);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  transition:transform .16s ease, background .16s ease;
+}
+#lcworld .lcheart img{display:block;width:34px;height:auto}
+#lcworld .lcheart-lbl{
+  font-family:'Oswald',sans-serif;text-transform:uppercase;
+  font-size:10px;letter-spacing:3px;color:#1c4f4d;
+}
+#lcworld .lcheart:hover{transform:scale(1.05);background:rgba(255,255,255,.75)}
+#lcworld .lcheart:focus-visible{outline:3px solid #067874;outline-offset:4px}
 
-  <div class="mono">LamarCy · The Yin to D.LAMAR&rsquo;s Yang · Atlanta, GA</div>
-</footer>
+@media (max-width:860px){
+  #lcworld .lcrow{
+    --nw:min(72vw,300px);
+    justify-content:flex-start;overflow-x:auto;overflow-y:hidden;
+    scroll-snap-type:x proximity;overscroll-behavior-x:contain;
+    padding:0 max(16px,calc(50vw - (var(--nw)/2)));scrollbar-width:none;
+  }
+  #lcworld .lcrow::-webkit-scrollbar{display:none}
+  #lcworld .lcnote{scroll-snap-align:center}
+  #lcworld .lcheart{left:14px;top:14px}
+}
+html,body{max-width:100%;overflow-x:hidden}
+
+@media (prefers-reduced-motion:reduce){
+  #lcworld .lcfog span,#lcworld .lcnote{animation:none!important}
+}
+</style>
 
 <script is:inline>
-// ---- THE CAPTURE: source attribution + submit ---------------------------
-// Wires every form marked [data-capture] on the page (the Chronicle block
-// here, the gateway footer's one-liner). Endpoint is a Netlify Function.
+// ---- SPIN: drag a note in 3D, let it coast ------------------------------
+// Pointer drag rotates the inner .lcfaces; releasing hands the remaining
+// velocity to a decay loop. A drag only starts after the pointer has moved a
+// few pixels, so a plain click on Play or Buy still registers as a click —
+// and controls marked .no-spin never start a drag at all.
 (function(){
-  // ===================== CONFIG =====================
-  // Channel map: ?s=<key> → the `source` field stored on the subscriber.
-  // The matching Kit TAG for each source is mapped server-side in
-  // netlify/functions/subscribe.mts, so tag IDs never reach the browser.
-  const SOURCE_MAP = {
-    yt:  'youtube-shorts',
-    ytl: 'youtube-longform',
-    ig:  'instagram-reels',
-    igb: 'instagram-bio',
-    bc:  'bandcamp',
-    sub: 'substack'
-  };
-  const DEFAULT_SOURCE = 'direct';
+  const notes = document.querySelectorAll('#lcworld .lcnote[data-spin]');
+  if (!notes.length) return;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // NOT /api/subscribe: netlify.toml already proxies /api/* to the Render
-  // backend with force=true, which would swallow this call. The function
-  // claims this path itself via `export const config`.
-  const ENDPOINT = '/list/subscribe';
-  const STORE_KEY = 'lc_source';
-  const REF_KEY = 'lc_referrer';
-  // ==================================================
+  for (const note of notes){
+    const faces = note.querySelector('.lcfaces');
+    let rx = 0, ry = 0, vx = 0, vy = 0;
+    let down = false, dragging = false, sx = 0, sy = 0, lx = 0, ly = 0, raf = 0;
 
-  // Capture on arrival and persist: the visitor may crack the diamond, pick
-  // an egg and scroll a long way before subscribing, and the egg journey
-  // rewrites the URL state. sessionStorage outlives all of it.
-  function resolveSource(){
-    let stored = null;
-    try { stored = sessionStorage.getItem(STORE_KEY); } catch(e){}
-    const raw = new URLSearchParams(location.search).get('s');
-    if (raw){
-      const mapped = SOURCE_MAP[raw.toLowerCase().trim()] || DEFAULT_SOURCE;
-      try {
-        sessionStorage.setItem(STORE_KEY, mapped);
-        // First touch wins for referrer too — record it once, on arrival.
-        if (!sessionStorage.getItem(REF_KEY)) sessionStorage.setItem(REF_KEY, document.referrer || '');
-      } catch(e){}
-      return mapped;
-    }
-    if (stored) return stored;
-    try {
-      sessionStorage.setItem(STORE_KEY, DEFAULT_SOURCE);
-      if (!sessionStorage.getItem(REF_KEY)) sessionStorage.setItem(REF_KEY, document.referrer || '');
-    } catch(e){}
-    return DEFAULT_SOURCE;
-  }
-  const SOURCE = resolveSource();
-  function referrer(){
-    try { return sessionStorage.getItem(REF_KEY) || document.referrer || ''; }
-    catch(e){ return document.referrer || ''; }
-  }
-
-  const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-
-  function initCapture(form){
-    const input = form.querySelector('input[type=email]');
-    const btn = form.querySelector('button[type=submit]');
-    const status = form.querySelector('[data-status]');
-    const pot = form.querySelector('input[name=company]');
-    const idleLabel = btn ? btn.textContent : '';
-    if (!input || !btn) return;
-
-    const say = (msg, isErr) => {
-      if (!status) return;
-      status.textContent = msg || '';
-      status.classList.toggle('err', !!isErr);
+    const paint = () => {
+      faces.style.setProperty('--rx', rx.toFixed(2) + 'deg');
+      faces.style.setProperty('--ry', ry.toFixed(2) + 'deg');
+      // cos < 0 means we are looking at the back of the paper
+      const flipped = Math.cos(ry * Math.PI / 180) < 0;
+      note.classList.toggle('flipped', flipped);
     };
 
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const email = (input.value || '').trim();
+    const coast = () => {
+      vx *= 0.94; vy *= 0.94;
+      rx = Math.max(-70, Math.min(70, rx + vy));
+      ry += vx;
+      paint();
+      raf = (Math.abs(vx) > 0.02 || Math.abs(vy) > 0.02) ? requestAnimationFrame(coast) : 0;
+    };
 
-      // Bot filled the honeypot: look successful, send nothing.
-      if (pot && pot.value){ succeed(); return; }
-
-      if (!EMAIL_RE.test(email) || email.length > 200){
-        input.setAttribute('aria-invalid','true');
-        say('That email doesn’t look right. Check it and try again?', true);
-        input.focus();
-        return;
-      }
-      input.removeAttribute('aria-invalid');
-
-      btn.disabled = true;
-      btn.textContent = 'Sending…';
-      say('');
-
-      try {
-        const r = await fetch(ENDPOINT, {
-          method: 'POST',
-          headers: {'content-type':'application/json'},
-          body: JSON.stringify({
-            email: email,
-            source: SOURCE,
-            referrer: referrer(),
-            form: form.dataset.capture || 'chronicle'
-          })
-        });
-        const data = await r.json().catch(() => null);
-        if (r.ok && data && data.ok){ succeed(); return; }
-        throw new Error('subscribe_failed');
-      } catch (err){
-        btn.disabled = false;
-        btn.textContent = idleLabel;
-        say('That didn’t go through. Try again?', true);
-      }
+    note.addEventListener('pointerdown', (e) => {
+      if (e.button !== 0 && e.pointerType === 'mouse') return;
+      if (e.target.closest('.no-spin')) return;      // Play / Buy keep their clicks
+      down = true; dragging = false;
+      sx = lx = e.clientX; sy = ly = e.clientY;
+      vx = vy = 0;
+      if (raf) { cancelAnimationFrame(raf); raf = 0; }
     });
 
-    // Success replaces the form outright — the one heart this block gets.
-    function succeed(){
-      const done = document.createElement('div');
-      done.className = 'cap-done';
-      done.setAttribute('role','status');
-      done.innerHTML = '<span class="h" aria-hidden="true">❤</span>' +
-        '<span class="t">You’re in. First entry hits Saturday.</span>';
-      form.replaceWith(done);
-    }
-  }
+    note.addEventListener('pointermove', (e) => {
+      if (!down) return;
+      const dx = e.clientX - lx, dy = e.clientY - ly;
+      if (!dragging && Math.hypot(e.clientX - sx, e.clientY - sy) < 6) return;
+      if (!dragging){
+        dragging = true;
+        note.classList.add('dragging');
+        note.setPointerCapture(e.pointerId);
+      }
+      ry += dx * 0.45;
+      rx = Math.max(-70, Math.min(70, rx - dy * 0.45));
+      vx = dx * 0.45; vy = -dy * 0.45;
+      lx = e.clientX; ly = e.clientY;
+      paint();
+    });
 
-  for (const form of document.querySelectorAll('form[data-capture]')) initCapture(form);
+    const release = (e) => {
+      if (!down) return;
+      down = false;
+      if (dragging){
+        note.classList.remove('dragging');
+        try { note.releasePointerCapture(e.pointerId); } catch (_) {}
+        if (!reduce && (Math.abs(vx) > 0.2 || Math.abs(vy) > 0.2)) raf = requestAnimationFrame(coast);
+      }
+    };
+    note.addEventListener('pointerup', release);
+    note.addEventListener('pointercancel', release);
+
+    // A drag must never also fire the click underneath it.
+    note.addEventListener('click', (e) => { if (dragging) { e.preventDefault(); e.stopPropagation(); } }, true);
+  }
 })();
 </script>
+
 <script is:inline>
 // ---- THE LISTENING POST + DIRECT SALES ----------------------------------
 // Players appear when a single's master is uploaded; Buy buttons appear when
@@ -554,23 +368,4 @@ footer img{height:40px}
   }
 })();
 </script>
-<script is:inline>
-// ---- LIVE INSTAGRAM FEED ----------------------------------------------
-// The six boxes always show the newest @_lamar_cy posts — no code changes.
-// Feed built at https://behold.so; swap the URL if the feed is ever rebuilt.
-const IG_FEED_URL = 'https://feeds.behold.so/hbwB56KthgozLkVVIRyn';   // @_lamar_cy via behold.so
-if (IG_FEED_URL) {
-  fetch(IG_FEED_URL).then(r => r.json()).then(data => {
-    const posts = (data.posts || data).slice(0, 6);
-    const boxes = document.querySelectorAll('#igrid .igbox');
-    posts.forEach((post, i) => {
-      if (!boxes[i]) return;
-      const img = post.thumbnailUrl || post.mediaUrl || post.sizes?.medium?.mediaUrl;
-      if (!img) return;
-      boxes[i].href = post.permalink || boxes[i].href;
-      boxes[i].querySelector('.ph').innerHTML =
-        '<img class="igimg" loading="lazy" alt="Instagram post" src="' + img + '">';
-    });
-  }).catch(()=>{ /* placeholders remain */ });
-}
-</script>
+
