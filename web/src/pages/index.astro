@@ -20,7 +20,7 @@ import MediaGuard from '../components/MediaGuard.astro';
 // it expires. Bump ASSET_V whenever a note image changes -- the toml comment
 // calls for exactly this. Skipping it is why a broken earlier cut of these
 // sheets stayed on screen after the fix shipped.
-const ASSET_V = 2;
+const ASSET_V = 3;
 
 // Copy is verbatim from the previous .egglabels overlay.
 const WORLDS = [
@@ -129,19 +129,14 @@ const WORLDS = [
   background:
     linear-gradient(196deg, rgba(255,255,255,.55) 0%, rgba(255,255,255,0) 34%),
     linear-gradient(170deg, #F6E9A0 0%, #F0E28A 56%, #E7D678 100%);
-  box-shadow:0 16px 28px -10px rgba(104,96,48,.34),
-             0 3px 8px rgba(104,96,48,.16),
-             inset 0 1px 0 rgba(255,255,255,.5);
   animation:bob 9s ease-in-out infinite;
   will-change:transform;
 }
 /* A photographed note supplies its own paper, shadow and corner, so the
    painted ones are switched off — otherwise the CSS card shows behind the
    cut-out and doubles the shadow. */
-#hero .note.is-photo{
-  background:none;box-shadow:none;
-  filter:drop-shadow(0 10px 18px rgba(104,96,48,.17));
-}
+/* No shadow of any kind: the sheets are cut to the paper edge and sit flat. */
+#hero .note.is-photo{background:none;box-shadow:none}
 #hero .note.is-photo::after{content:none}
 /* The sheet leaves the flex flow and becomes a backdrop, so a header written
    on top centres over the paper instead of being pushed underneath it. */
@@ -151,17 +146,14 @@ const WORLDS = [
   position:absolute;inset:0;z-index:1;
   display:block;width:100%;height:100%;object-fit:contain;
 }
-/* Paper occupies roughly the top 90% of the frame — the strip below it is the
-   contact shadow. Writing rides up so it lands on the sheet, not the shadow. */
-#hero .note.is-photo .hand,
-#hero .note.is-photo .mark{transform:translateY(-4%) rotate(-2deg)}
+/* The sheets are now cropped to the paper, so the frame is all paper and the
+   writing centres without the lift that cleared the old contact shadow. */
 
 /* The lifted bottom-right corner from the reference photo. */
 #hero .note::after{
   content:'';position:absolute;right:0;bottom:0;width:26px;height:22px;
   background:linear-gradient(135deg, rgba(0,0,0,0) 46%, rgba(160,150,90,.30) 52%, #F7EFAE 56%);
   border-bottom-right-radius:2px;
-  box-shadow:-3px -3px 6px rgba(104,96,48,.16);
 }
 /* Pinned by hand, so none of them sit perfectly square. */
 #hero li:nth-child(1) .eggwrap{transform:rotate(-2.4deg)}
@@ -304,7 +296,10 @@ body.locked{overflow:hidden;height:100vh}
                 were shot already lettered, so `baked` suppresses the overlay;
                 the rest take the blank sheet with the header written on top. */}
             <span class={w.photo ? 'note is-photo' : 'note'}>
-              {w.photo && <img src={`${w.photo}?v=${ASSET_V}`} alt="" width="366" height="380" decoding="async" />}
+              {/* No width/height: cropping to the paper left the sheets at
+                  differing heights, and the img is absolutely positioned and
+                  sized by CSS, so the attributes would only be wrong. */}
+              {w.photo && <img src={`${w.photo}?v=${ASSET_V}`} alt="" decoding="async" />}
               {!w.baked && (w.logo
                 ? <span class="mark"><img src={w.logo} alt="" width="520" height="200" decoding="async" /></span>
                 : <span class="hand"><span class="who">{w.who}</span><span class="role">{w.role}</span></span>

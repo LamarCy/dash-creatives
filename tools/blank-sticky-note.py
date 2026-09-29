@@ -128,46 +128,60 @@ def verify(rgb, out, alpha):
 
 
 # --- bottom edge -------------------------------------------------------------
-# The background removal clipped the contact shadow at a hard, stair-stepped
-# boundary, so every note ended in a jagged edge -- the photographed pair as
-# much as the generated ones. The shadow's own pixels survive underneath (RGB
-# averages 44,42,40 where alpha is 0), so fading the alpha out reveals real
-# shadow rather than a white fringe.
+# The contact shadow is removed, not softened: the notes are meant to sit flat
+# with no shadow at all. Paper runs 177-240 in luminance and the shadow 40-70,
+# so a threshold at 120 separates them with wide margin either side.
 
-ZONE_TOP = 330     # above this the cutout's own alpha is left alone
-FADE     = 9.0     # rows over which the shadow dissolves
-SMOOTH   = 41      # window that turns the ragged edge into the sheet's curve
+PAPER_MIN = 120    # luminance floor that still counts as paper
+EDGE_DEG  = 4      # the sheet's bottom is a gentle curve
+EDGE_AA   = 1.3    # antialias width on the new edge
 
 
-def soften_bottom(im):
+def strip_shadow(im):
+    """Cut the contact shadow off the bottom, keeping the paper and its wrinkles.
+
+    The bottom is fitted as a low-order polynomial -- smooth by construction,
+    so it cannot stair-step -- then offset down until it sits at or below the
+    true paper edge everywhere. Clamping per-column instead reintroduced 4px of
+    raggedness; a plain smoothed average left a sliver of shadow at the corners
+    where the sheet curves up sharply.
+    """
     a = np.asarray(im.convert('RGBA')).astype(np.float32)
     rgb, al = a[..., :3], a[..., 3]
     h, w = al.shape
+    L = .2126 * rgb[..., 0] + .7152 * rgb[..., 1] + .0722 * rgb[..., 2]
+    ispaper = (L > PAPER_MIN) & (al > 128)
 
     edge = np.full(w, np.nan)
     for c in range(w):
-        op = np.nonzero(al[:, c] > 128)[0]
-        if op.size:
-            edge[c] = op.max()
+        r = np.nonzero(ispaper[:, c])[0]
+        if r.size:
+            edge[c] = r.max()
     idx = np.arange(w)
     ok = ~np.isnan(edge)
-    edge = np.interp(idx, idx[ok], edge[ok])
+    e = np.interp(idx, idx[ok], edge[ok])
 
-    pad = np.pad(edge, (SMOOTH, SMOOTH), mode='edge')
-    curve = np.convolve(pad, np.ones(SMOOTH) / SMOOTH, mode='same')[SMOOTH:-SMOOTH]
+    x = idx / w - .5
+    curve = np.polyval(np.polyfit(x, e, EDGE_DEG), x)
+    curve -= max(0.0, float((curve - e).max())) + 1.0
 
     ys = np.arange(h)[:, None]
-    ramp = np.clip((curve[None, :] - ys) / FADE + 0.5, 0, 1) * 255.0
+    cut = np.clip((curve[None, :] - ys) / EDGE_AA + 0.5, 0, 1)
+    img = Image.fromarray(np.dstack([rgb, np.minimum(al, cut * 255.0)]).astype(np.uint8))
+    img = img.crop(img.getbbox())
 
-    t = np.clip((ys - ZONE_TOP) / 12.0, 0, 1)
-    out = np.where(ys >= ZONE_TOP, al * (1 - t) + np.minimum(al, ramp) * t, al)
-    out = np.where(ys >= ZONE_TOP,
-                   np.maximum(out, np.where(ys > curve[None, :] - FADE, ramp, 0)),
-                   out)
-
-    jag = np.abs(np.diff(edge)).max()
-    print(f'  bottom edge: raggedness {jag:.0f}px -> smooth curve, {FADE:.0f}px fade')
-    return Image.fromarray(np.dstack([rgb, np.clip(out, 0, 255)]).astype(np.uint8))
+    a2 = np.asarray(img.convert('RGBA'))
+    al2 = a2[..., 3]
+    L2 = .2126 * a2[..., 0] + .7152 * a2[..., 1] + .0722 * a2[..., 2]
+    low = al2 > 128
+    low[:int(img.height * 0.70)] = False
+    assert L2[low].min() > 70, 'contact shadow still visible below the sheet'
+    cols = [int(np.nonzero(al2[:, c] > 128)[0].max())
+            for c in range(5, img.width - 5) if (al2[:, c] > 128).any()]
+    jag = max(abs(np.diff(cols)))
+    assert jag <= 2, f'bottom edge is stair-stepped ({jag}px)'
+    print(f'  shadow stripped: {im.size} -> {img.size}, edge raggedness {jag}px')
+    return img
 
 
 def main():
@@ -179,11 +193,11 @@ def main():
         print(f'  {name:22} {img.size}  {os.path.getsize(p)} bytes')
 
     # The two lettered photographs get the same treatment, or the row would be
-    # three smooth notes beside two jagged ones -- cohesion is the whole point.
-    save(soften_bottom(Image.open(SRC)), 'note-dlamar.webp')
-    save(soften_bottom(Image.open(SRC_LAMARCY)), 'note-lamarcy.webp')
+    # three shadowless notes beside two with shadows.
+    save(strip_shadow(Image.open(SRC)), 'note-dlamar.webp')
+    save(strip_shadow(Image.open(SRC_LAMARCY)), 'note-lamarcy.webp')
 
-    sheet = soften_bottom(sheet)
+    sheet = strip_shadow(sheet)
     # Three sheets off one pad, so the row is not one image repeated.
     save(sheet, 'note-blank-a.webp')
     save(ImageOps.mirror(sheet), 'note-blank-b.webp')
