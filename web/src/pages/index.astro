@@ -135,8 +135,16 @@ const WORLDS = [
 /* A photographed note supplies its own paper, shadow and corner, so the
    painted ones are switched off — otherwise the CSS card shows behind the
    cut-out and doubles the shadow. */
-/* No shadow of any kind: the sheets are cut to the paper edge and sit flat. */
-#hero .note.is-photo{background:none;box-shadow:none}
+/* The sheets are cut to the paper edge, so the shadow is CSS rather than the
+   photographed one -- that band was luminance 42 against near-white fog, far
+   too heavy. Two layers: a tight one to ground the sheet, a wide soft one for
+   ambient. drop-shadow follows the alpha, so it hugs the wavy paper edge the
+   way a real sheet would instead of boxing it. */
+#hero .note.is-photo{
+  background:none;box-shadow:none;
+  filter:drop-shadow(0 3px 4px rgba(104,96,48,.22))
+         drop-shadow(0 10px 16px rgba(104,96,48,.14));
+}
 #hero .note.is-photo::after{content:none}
 /* The sheet leaves the flex flow and becomes a backdrop, so a header written
    on top centres over the paper instead of being pushed underneath it. */
