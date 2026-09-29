@@ -211,6 +211,11 @@ def main():
     # 4.45:1 worst case it would not clear AA for the yellow/green ink.
     save(c, 'note-blank-c.webp')
 
+    # A fourth sheet for LamarCy, which now carries the heart logo rather than
+    # its photographed handwriting. Mirrored and deeper, so it is not a repeat
+    # of any of the other three.
+    save(ImageOps.mirror(c), 'note-blank-d.webp')
+
 
 if __name__ == '__main__':
     main()
