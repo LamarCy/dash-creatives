@@ -60,7 +60,7 @@ const WORLDS = [
    depth in every direction rather than a room. */
 #hero{
   position:relative;height:100vh;min-height:640px;overflow:hidden;
-  display:flex;align-items:center;justify-content:center;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
   /* Falloff is steeper than a flat wash: white fog only reads as fog if the
      ground behind it is meaningfully darker at the edges. */
   background:radial-gradient(ellipse 110% 95% at 50% 42%,
@@ -98,6 +98,16 @@ const WORLDS = [
 
 @keyframes drift-a{0%,100%{transform:translate3d(0,0,0)}50%{transform:translate3d(6%,-2%,0)}}
 @keyframes drift-b{0%,100%{transform:translate3d(0,0,0)}50%{transform:translate3d(-7%,2%,0)}}
+
+/* ---------- the wordmark ---------- */
+/* The page had no heading at all, so this is the h1 -- the lockup carries the
+   tagline, which becomes the accessible name. Kept well under the note row's
+   width so it introduces the worlds rather than competing with them. */
+#hero .wordmark{
+  position:relative;z-index:3;margin:0 0 clamp(26px,5.2vh,58px);
+  width:clamp(190px,23vw,310px);padding:0 20px;box-sizing:content-box;
+}
+#hero .wordmark img{display:block;width:100%;height:auto}
 
 /* ---------- the row ---------- */
 #hero .worlds{
@@ -306,6 +316,11 @@ body.locked{overflow:hidden;height:100vh}
 <div id="hero">
   <div class="fog" aria-hidden="true"><span class="f1"></span><span class="f2"></span><span class="f3"></span><span class="f4"></span></div>
   <div class="band" aria-hidden="true"></div>
+
+  <h1 class="wordmark">
+    <img src={`/gateway/cprice-wordmark.webp?v=${ASSET_V}`}
+         alt="C.PRICE — Design Thinking | Fine Art Finish" decoding="async" />
+  </h1>
 
   <ul class="worlds" id="worlds">
     {WORLDS.map((w) => (
