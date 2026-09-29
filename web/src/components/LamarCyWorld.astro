@@ -152,7 +152,7 @@ const SINGLES = [
 }
 #lcworld .credits{
   font-family:'Oswald',sans-serif;text-transform:uppercase;
-  font-size:calc(var(--nw) * .034);letter-spacing:1.5px;color:#5c5636;
+  font-size:max(12px, calc(var(--nw) * .034));letter-spacing:1.5px;color:#5c5636;
   line-height:1.45;margin-bottom:6%;
 }
 
@@ -167,18 +167,18 @@ const SINGLES = [
 #lcworld .pfill{height:100%;width:0;border-radius:2px;background:#067874}
 #lcworld .ptime{
   flex:0 0 auto;font-family:'Oswald',sans-serif;
-  font-size:calc(var(--nw)*.032);letter-spacing:1px;color:#5c5636;
+  font-size:max(12px, calc(var(--nw)*.032));letter-spacing:1px;color:#5c5636;
 }
 #lcworld .song button.cta.buy{
   display:none;border:0;cursor:pointer;background:#067874;color:#F7F3E8;
   font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:2px;
-  font-size:calc(var(--nw)*.038);padding:3.4% 7%;border-radius:2px;
+  font-size:max(14px, calc(var(--nw)*.038));padding:3.4% 7%;border-radius:2px;
 }
 #lcworld .song button.cta.buy:hover{background:#05605d}
 #lcworld .song button.cta.buy:disabled{opacity:.7;cursor:default}
 #lcworld .song .buynote{
   display:none;font-family:'Oswald',sans-serif;text-transform:uppercase;
-  font-size:calc(var(--nw)*.028);letter-spacing:1.4px;color:#6b6440;margin-top:4%;
+  font-size:max(11px, calc(var(--nw)*.028));letter-spacing:1.4px;color:#6b6440;margin-top:4%;
 }
 #lcworld .song .buyerr{display:none;font-size:calc(var(--nw)*.032);color:#7a3226;margin-top:4%;font-style:italic}
 
@@ -194,7 +194,7 @@ const SINGLES = [
 #lcworld .lcheart img{display:block;width:34px;height:auto}
 #lcworld .lcheart-lbl{
   font-family:'Oswald',sans-serif;text-transform:uppercase;
-  font-size:10px;letter-spacing:3px;color:#1c4f4d;
+  font-size:11px;letter-spacing:3px;color:#1c4f4d;
 }
 #lcworld .lcheart:hover{transform:scale(1.05);background:rgba(255,255,255,.75)}
 #lcworld .lcheart:focus-visible{outline:3px solid #067874;outline-offset:4px}
