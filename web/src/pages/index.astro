@@ -61,26 +61,40 @@ const WORLDS = [
 #hero{
   position:relative;height:100vh;min-height:640px;overflow:hidden;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
-  /* Durrell's photograph, shoes on the wire. The scrim over it is doing real
-     work: the frame runs from a bright sky to a near-black treeline (mean
-     luminance 200 at the top, 49 at the bottom), and every label on this page
-     is near-black, so without it the lower half would swallow the text.
-     Weighted to the bottom for that reason. Revert = restore the radial. */
+  /* Durrell's photograph, shoes on the wire. The top 45% is the photo at full
+     strength -- no wash at all -- because the wordmark's dark ink clears 5.35:1
+     against the darkest sky behind it on its own. Only the lower band is
+     darkened, and only because the labels sit there: they are cream now, and
+     the brightest cloud behind them is #FEF8F5, which cream cannot survive
+     un-scrimmed (1.06:1). Warm dark rather than neutral, to stay in the
+     photograph's own register. */
   background:
     linear-gradient(180deg,
-      rgba(250,249,246,.52) 0%,
-      rgba(250,249,246,.44) 38%,
-      rgba(250,249,246,.72) 72%,
-      rgba(250,249,246,.86) 100%),
+      rgba(30,23,17,0)    0%,
+      rgba(30,23,17,0)   45%,
+      rgba(30,23,17,.62) 60%,
+      rgba(30,23,17,.72) 100%),
     url('/gateway/sky.webp?v=1') 50% 34% / cover no-repeat,
-    #e9e5dd;
+    #2a231d;
 }
 
 /* Fog layers never intercept a click — every egg link stays reachable. */
 #hero .fog,#hero .fog span,#hero .band{pointer-events:none}
 
-/* Dialled back hard: over a photograph these read as haze, not depth. */
-#hero .fog{position:absolute;inset:-12%;z-index:1;opacity:.28}
+/* Off entirely. These were white blurred blobs standing in for atmosphere on a
+   flat background; over the photograph they read as smudges on the lens, and
+   the sky has its own depth. Markup kept (aria-hidden) so restoring the white
+   gateway is purely a CSS revert. */
+#hero .fog{display:none}
+/* Same story as the fog: a white ellipse behind the row and white wisps under
+   each note were atmosphere for a flat background. All off, .c-back included:
+   .c-back spans -38% either side and .c-front -30%, so across five notes they
+   merged into one continuous light strip lying over the photograph. The notes
+   separate on their own -- bright yellow paper, and their own drop shadow. */
+#hero .band{display:none}
+#hero .wisp{display:none}
+#hero .c-back,
+#hero .c-front{display:none}
 #hero .fog span{
   position:absolute;border-radius:50%;
   background:radial-gradient(ellipse at 50% 50%, rgba(255,255,255,.9) 0%,
@@ -267,7 +281,7 @@ const WORLDS = [
 #hero .lbl .ln{
   display:block;font-family:'Oswald',sans-serif;text-transform:uppercase;
   font-size:11px;letter-spacing:4px;font-weight:400;
-  color:#3d3b36;line-height:1.5;
+  color:#f7f3e8;line-height:1.5;
 }
 /* Marker ink keeps each world's colour, darkened only as far as WCAG AA
    needed against the paper (the reference note used one dark pen; colour is
@@ -285,23 +299,6 @@ const WORLDS = [
 
 /* ---------- mobile: swipe the row ---------- */
 @media (max-width:760px){
-  /* At phone width the photograph is cropped horizontally only -- it already
-     fills the height exactly -- so the treeline sits directly behind the label
-     row and no background-position can move it. The row is a scroll carousel
-     as well, so the labels travel across every part of the frame. Measured
-     worst case in that band is #100502, which needs 0.68 alpha to clear 4.5:1;
-     this runs ~0.73 there. The photo washes out more than on desktop, and that
-     is the cost of keeping the labels legible. */
-  #hero{
-    background:
-      linear-gradient(180deg,
-        rgba(250,249,246,.58) 0%,
-        rgba(250,249,246,.56) 38%,
-        rgba(250,249,246,.80) 72%,
-        rgba(250,249,246,.90) 100%),
-      url('/gateway/sky.webp?v=1') 50% 34% / cover no-repeat,
-      #e9e5dd;
-  }
   #hero .worlds{
     justify-content:flex-start;
     overflow-x:auto;overflow-y:hidden;
