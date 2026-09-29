@@ -13,7 +13,6 @@
 //      trips and the IG bio depend on it, and it carries ?s= attribution.
 import LamarCyWorld from '../components/LamarCyWorld.astro';
 import OrbNav from '../components/OrbNav.astro';
-import MediaGuard from '../components/MediaGuard.astro';
 
 // /gateway/* is cached for a week (see netlify.toml), and these sheets keep
 // their filenames across edits, so a repeat visitor keeps the old bytes until
@@ -26,7 +25,7 @@ const ASSET_V = 3;
 const WORLDS = [
   { cls: 'pink',   href: '/art/#gallery',                who: 'D.LAMAR',        role: 'The Painter',    line: 'The Art',                           photo: '/gateway/note-dlamar.webp',  baked: true },
   { cls: 'blue',   href: '/?world=lamarcy',              who: 'LamarCy',        role: 'The Songwriter', line: 'The Music',                     inPage: true, photo: '/gateway/note-blank-d.webp', logo: '/gateway/heart.png' },
-  { cls: 'yellow', href: '/art/#music',                  who: 'Ashley Smith',   role: 'The Voice',      line: 'her songs & stories',              photo: '/gateway/note-blank-a.webp' },
+  { cls: 'yellow', href: '/ashley',                          who: 'Ashley Smith',   role: 'The Voice',      line: 'her songs & stories',              photo: '/gateway/note-blank-a.webp' },
   { cls: 'green',  href: 'https://ux.cprice.studio', who: 'Durrell Smith',  role: 'UX Design',      line: 'the design work',                  photo: '/gateway/note-blank-b.webp' },
   { cls: 'rust',   href: 'https://dogman.cprice.studio',                   who: 'Original Dogman', role: 'The Sculptor',  line: 'one-of-one sculptures and wearable art', logo: '/gateway/logo-dogman.webp', photo: '/gateway/note-blank-c.webp' },
 ];
@@ -36,6 +35,7 @@ const WORLDS = [
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>C.PRICE</title>
+<link rel="canonical" href={new URL('/', Astro.site ?? 'https://cprice.studio').toString()}>
 <meta name="description" content="C.PRICE — design thinking, fine art finish. The work of Durrell Smith: painting, music, UX design, and one-of-one sculpture.">
 <style is:global>
 /* Gateway-only chrome. Base tokens, type roles and every world style live in
@@ -74,7 +74,7 @@ const WORLDS = [
       rgba(30,23,17,0)   45%,
       rgba(30,23,17,.62) 60%,
       rgba(30,23,17,.72) 100%),
-    url('/gateway/sky.webp?v=1') 50% 34% / cover no-repeat,
+    url('/gateway/sky.webp?v=2') 50% 34% / cover no-repeat,
     #2a231d;
 }
 
@@ -132,6 +132,30 @@ const WORLDS = [
   width:clamp(190px,23vw,310px);padding:0 20px;box-sizing:content-box;
 }
 #hero .wordmark img{display:block;width:100%;height:auto}
+
+/* The page is entirely navigation and never said so. It was titled "Pick a
+   World" until the wordmark took the title; that instruction then existed
+   nowhere, leaving a first-time visitor a photo and five yellow squares.
+   Dark like the wordmark, because it sits in the un-scrimmed top half. */
+#hero .cue{
+  position:relative;z-index:3;margin:0 0 clamp(22px,4vh,44px);
+  font-family:'Oswald',sans-serif;text-transform:uppercase;
+  font-size:11px;letter-spacing:5px;color:#231c12;
+}
+
+/* And the notes never looked interactive. Lift on hover via filter rather than
+   transform, because .note already owns transform for the bob animation and
+   the two would fight. Touch gets no hover, which is what the line above is
+   for. focus-visible so keyboard users get the same signal. */
+#hero .world .note{transition:filter .18s ease}
+#hero .world:hover .note.is-photo,
+#hero .world:focus-visible .note.is-photo{
+  filter:drop-shadow(0 8px 10px rgba(40,30,20,.30))
+         drop-shadow(0 18px 26px rgba(40,30,20,.18))
+         brightness(1.04);
+}
+#hero .world:focus-visible{outline:2px solid #f7f3e8;outline-offset:6px;border-radius:3px}
+@media (prefers-reduced-motion:reduce){#hero .world .note{transition:none}}
 
 /* ---------- the row ---------- */
 #hero .worlds{
@@ -345,6 +369,7 @@ body.locked{overflow:hidden;height:100vh}
     <img src={`/gateway/cprice-wordmark.webp?v=${ASSET_V}`}
          alt="C.PRICE — Design Thinking | Fine Art Finish" decoding="async" />
   </h1>
+  <p class="cue">take a note</p>
 
   <ul class="worlds" id="worlds">
     {WORLDS.map((w) => (
@@ -383,7 +408,6 @@ body.locked{overflow:hidden;height:100vh}
 </div><!-- /rest -->
 
 <OrbNav />
-<MediaGuard />
 
 <script is:inline>
 (function(){
