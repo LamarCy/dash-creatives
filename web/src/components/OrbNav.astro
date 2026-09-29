@@ -9,7 +9,7 @@ const WORLDS = [
   { href: '/?world=lamarcy', label: 'LamarCy', sub: 'the songwriter · the music', kind: 'egg', c1: '#24817E', c2: '#185452' },
   { href: '/art/#music', label: 'Ashley Smith', sub: 'the voice · her stories', kind: 'egg', c1: '#CAAB46', c2: '#95782F' },
   { href: 'https://ux.dashcreatives.art', label: 'Durrell Smith', sub: 'ux · the design work', kind: 'egg', c1: '#5F9869', c2: '#366141' },
-  { href: '/memorials', label: 'Original Dogman', sub: 'the sculptor · sculptures & wearable art', kind: 'egg', c1: '#A77E67', c2: '#5F3F35' },
+  { href: 'https://dogman.cprice.studio', label: 'Original Dogman', sub: 'the sculptor · sculptures & wearable art', kind: 'egg', c1: '#A77E67', c2: '#5F3F35' },
 ];
 ---
 <nav id="orbnav" aria-label="C.PRICE worlds">
@@ -107,7 +107,6 @@ const WORLDS = [
     if (href === '/') cur = path === '' && !isLamarcy;
     else if (href.indexOf('world=lamarcy') !== -1) cur = path === '' && isLamarcy;
     else if (href.indexOf('/art') === 0) cur = path === '/art' && (location.hash ? href.slice(-location.hash.length) === location.hash : href === '/art/#gallery');
-    else if (href === '/memorials') cur = path === '/memorials';
     if (cur) a.classList.add('current');
   }
 })();

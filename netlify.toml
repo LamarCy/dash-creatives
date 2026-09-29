@@ -23,6 +23,22 @@
 # when the destination already carries its own — which silently killed the ?s=
 # attribution. Do not reintroduce that redirect.
 
+# Original Dogman moved to its own site. /memorials was the old splash page and
+# is still what every existing link and search result points at, so it sends
+# people to the real one rather than leaving two versions live. The page source
+# stays in the repo, so reverting is deleting this block.
+[[redirects]]
+  from = "/memorials"
+  to = "https://dogman.cprice.studio/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/memorials/*"
+  to = "https://dogman.cprice.studio/:splat"
+  status = 301
+  force = true
+
 [[redirects]]
   from = "/api/*"
   to = "https://dash-creatives-api.onrender.com/api/:splat"
