@@ -434,3 +434,29 @@ img[data-artwork] { cursor: zoom-in; }
   footer { padding: 52px 24px 36px; }
 }
 
+/* ---------- touch targets ----------
+   44px is the Apple and Android minimum and WCAG 2.5.5. On a phone these were
+   22-39px: 30 buttons at 39, the footer's 16 links at 21, the header logo at
+   22, and the contact form's fields at 39.
+
+   Sized with min-height rather than extra padding so the type keeps its visual
+   weight and only the hit area grows. The buttons already centre their content
+   (inline-flex + align-items:center), so they simply get taller; the inline
+   links need the flex box to apply a height at all. */
+.btn { min-height: 44px; }
+
+.nav-logo,
+.footer-col li a,
+.track-watch {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+
+/* Short footer words -- Etsy, Terms, CV -- were only 25-39px wide once they
+   were tall enough. The box widens; the text stays where it is. */
+.footer-col li a { min-width: 44px; }
+
+.nb-field input,
+.nb-field select,
+.nb-field textarea { min-height: 44px; }
