@@ -48,6 +48,12 @@ const WORLDS = [
    letter heights, blunt marker stroke. Replace with the real Calligraphr build
    when that TTF exists — only the src and the two font-size rules change. */
 @font-face{font-family:'DashHand';src:url('/gateway/RockSalt.ttf');font-display:swap}
+/* The UX world is the one note not in Durrell's hand: ux.cprice.studio sets his
+   name in JetBrains Mono 400, so the note that leads there matches it. Latin
+   subset, self-hosted for the same reason as the others -- the landing page
+   should not wait on a third-party font request. */
+@font-face{font-family:'JetBrains Mono';src:url('/gateway/JetBrainsMono-400.woff2') format('woff2');
+  font-weight:400;font-style:normal;font-display:swap}
 
 /* ---------- the fog environment ---------- */
 /* No floor, no ceiling, no horizon — the gradient is radial so it reads as
@@ -247,6 +253,11 @@ const WORLDS = [
 #hero .blue   .hand{color:#066E6B}
 #hero .yellow .hand{color:#785906}
 #hero .green  .hand{color:#2E6A38}
+/* Matches the UX page's own treatment of the name. Monospace sets wider than
+   the marker hand, so the two lines come down a little to stay on the paper. */
+#hero .green .hand{font-family:'JetBrains Mono',ui-monospace,monospace}
+#hero .green .hand .who{font-size:calc(var(--nw) * .082);letter-spacing:-.01em}
+#hero .green .hand .role{font-size:calc(var(--nw) * .058)}
 #hero .rust   .hand{color:#7B3F2E}
 
 /* ---------- mobile: swipe the row ---------- */
