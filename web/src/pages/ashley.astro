@@ -1,0 +1,72 @@
+---
+// Ashley Smith — "The Voice". Her own destination, because the gateway names
+// her as one of the five worlds and until now her note landed on /art#music,
+// the same page as D.LAMAR's: two different notes, one page.
+//
+// Everything here already existed in the Chapter II section of /art. Nothing
+// about Ashley is invented for this page -- the tracks, the links and the
+// collaboration note are the site's own words, and the headings use the
+// gateway's ("The Voice", "her songs & stories"). /art keeps its Chapter II so
+// Durrell's I-VI numbering is untouched; it now links here for the full set.
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import YouTubeLite from '@/components/YouTubeLite.astro';
+import { tracks, musicLinks } from '@/data/tracks';
+
+const featuredId = import.meta.env.PUBLIC_YOUTUBE_FEATURED_ID ?? 'EdFSDXgwF4U';
+---
+
+<BaseLayout
+  title="Ashley Smith — The Voice | C.PRICE"
+  description="Songs written and sung with Ashley Smith. Folk recorded in Atlanta, and the stories behind them."
+>
+  <section class="section" style="padding-top:clamp(90px,14vh,150px)">
+    <div class="section-header">
+      <p class="chapter-label">Ashley Smith — Atlanta, GA</p>
+      <h2 class="section-title">The <em>Voice</em></h2>
+      <p style="max-width:46ch;margin-top:14px">Her songs &amp; stories.</p>
+    </div>
+
+    <div class="music-layout">
+      <div>
+        <div class="music-tracks">
+          {tracks.map((t) => (
+            <div class="track">
+              <span class="track-num">{t.number}</span>
+              <div class="track-info">
+                <h4>{t.title}</h4>
+                <p>{t.meta}</p>
+              </div>
+              <span class="track-dur">
+                {t.watchUrl
+                  ? <a href={t.watchUrl} target="_blank" rel="noopener" class="track-watch">▶ Watch</a>
+                  : '—'}
+              </span>
+            </div>
+          ))}
+        </div>
+        <div class="music-actions">
+          {musicLinks.substack && (
+            <a href={musicLinks.substack} target="_blank" rel="noopener" class="btn btn-fill btn-sm">Substack ↗</a>
+          )}
+          {musicLinks.spotify && (
+            <a href={musicLinks.spotify} target="_blank" rel="noopener" class="btn btn-sm">Spotify ↗</a>
+          )}
+          <a href="/art/#music" class="btn btn-sm">On the gallery page ↗</a>
+        </div>
+      </div>
+
+      <div class="music-aside">
+        <div class="album-cover">
+          <YouTubeLite id={featuredId} title="Momma Gone" />
+        </div>
+        <div class="collab-note">
+          <p>
+            A long-running collaboration built on shared late nights, half-finished cups of tea, and
+            the belief that songs and pictures belong together. New music arriving late 2025.
+          </p>
+          <span class="by-line">— Made with Ashley</span>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
