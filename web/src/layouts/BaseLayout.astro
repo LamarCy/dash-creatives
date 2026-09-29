@@ -1,7 +1,6 @@
 ---
 import '../styles/global.css';
 import OrbNav from '../components/OrbNav.astro';
-import MediaGuard from '../components/MediaGuard.astro';
 
 interface Props {
   title?: string;
@@ -14,6 +13,10 @@ const {
 } = Astro.props;
 
 const siteUrl = import.meta.env.PUBLIC_SITE_URL ?? Astro.site?.toString() ?? 'http://localhost:4321';
+// Per page, not per site. This was href={siteUrl} on every page, so /art,
+// /ashley, /404 and /thanks each declared the homepage as their canonical --
+// which tells search engines they are duplicates of it and should be dropped.
+const canonical = new URL(Astro.url.pathname, siteUrl).toString();
 const ogImage = '/images/the-songwriter-2.jpg';
 ---
 
@@ -25,12 +28,12 @@ const ogImage = '/images/the-songwriter-2.jpg';
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="canonical" href={siteUrl} />
+    <link rel="canonical" href={canonical} />
 
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:url" content={siteUrl} />
+    <meta property="og:url" content={canonical} />
     <meta property="og:image" content={`${siteUrl}${ogImage}`} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
@@ -42,7 +45,6 @@ const ogImage = '/images/the-songwriter-2.jpg';
   <body>
     <slot />
     <OrbNav />
-    <MediaGuard />
 
     <script>
       import '../scripts/scroll-reveal.ts';

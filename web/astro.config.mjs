@@ -1,6 +1,6 @@
 import { defineConfig } from 'astro/config';
 
-const SITE_URL = process.env.PUBLIC_SITE_URL || 'https://dash-creatives.netlify.app';
+const SITE_URL = process.env.PUBLIC_SITE_URL || 'https://cprice.studio';
 
 export default defineConfig({
   site: SITE_URL,
