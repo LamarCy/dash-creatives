@@ -63,14 +63,26 @@ const WORLDS = [
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   /* Falloff is steeper than a flat wash: white fog only reads as fog if the
      ground behind it is meaningfully darker at the edges. */
-  background:radial-gradient(ellipse 110% 95% at 50% 42%,
-    #fafaf9 0%, #f3f3f1 26%, #ebebe8 48%, #e0e0dc 74%, #d4d4cf 100%);
+  /* Durrell's photograph, shoes on the wire. The scrim over it is doing real
+     work: the frame runs from a bright sky to a near-black treeline (mean
+     luminance 200 at the top, 49 at the bottom), and every label on this page
+     is near-black, so without it the lower half would swallow the text.
+     Weighted to the bottom for that reason. Revert = restore the radial. */
+  background:
+    linear-gradient(180deg,
+      rgba(250,249,246,.52) 0%,
+      rgba(250,249,246,.44) 38%,
+      rgba(250,249,246,.72) 72%,
+      rgba(250,249,246,.86) 100%),
+    url('/gateway/sky.webp?v=1') 50% 34% / cover no-repeat,
+    #e9e5dd;
 }
 
 /* Fog layers never intercept a click — every egg link stays reachable. */
 #hero .fog,#hero .fog span,#hero .band{pointer-events:none}
 
-#hero .fog{position:absolute;inset:-12%;z-index:1}
+/* Dialled back hard: over a photograph these read as haze, not depth. */
+#hero .fog{position:absolute;inset:-12%;z-index:1;opacity:.28}
 #hero .fog span{
   position:absolute;border-radius:50%;
   background:radial-gradient(ellipse at 50% 50%, rgba(255,255,255,.9) 0%,
@@ -275,6 +287,23 @@ const WORLDS = [
 
 /* ---------- mobile: swipe the row ---------- */
 @media (max-width:760px){
+  /* At phone width the photograph is cropped horizontally only -- it already
+     fills the height exactly -- so the treeline sits directly behind the label
+     row and no background-position can move it. The row is a scroll carousel
+     as well, so the labels travel across every part of the frame. Measured
+     worst case in that band is #100502, which needs 0.68 alpha to clear 4.5:1;
+     this runs ~0.73 there. The photo washes out more than on desktop, and that
+     is the cost of keeping the labels legible. */
+  #hero{
+    background:
+      linear-gradient(180deg,
+        rgba(250,249,246,.58) 0%,
+        rgba(250,249,246,.56) 38%,
+        rgba(250,249,246,.80) 72%,
+        rgba(250,249,246,.90) 100%),
+      url('/gateway/sky.webp?v=1') 50% 34% / cover no-repeat,
+      #e9e5dd;
+  }
   #hero .worlds{
     justify-content:flex-start;
     overflow-x:auto;overflow-y:hidden;
