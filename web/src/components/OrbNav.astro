@@ -4,7 +4,7 @@
 // worlds menu (eggs as icons). The ball is the C.P medallion filling the
 // circle: /gateway/medallion-cp.webp. No orbiting electrons.
 const WORLDS = [
-  { href: '/', label: 'The Gateway', sub: 'the diamond heart', kind: 'heart', c1: '', c2: '' },
+  { href: '/', label: 'The Gateway', sub: 'pick a world', kind: 'floppy', c1: '#4E5A48', c2: '#C7CBC2' },
   { href: '/art/#gallery', label: 'D.LAMAR', sub: 'the painter · the gallery', kind: 'egg', c1: '#DFA8BC', c2: '#B45E7B' },
   { href: '/?world=lamarcy', label: 'LamarCy', sub: 'the songwriter · the music', kind: 'egg', c1: '#24817E', c2: '#185452' },
   { href: '/art/#music', label: 'Ashley Smith', sub: 'the voice · her stories', kind: 'egg', c1: '#CAAB46', c2: '#95782F' },
@@ -16,8 +16,19 @@ const WORLDS = [
   <div class="omenu" id="orbmenu" role="menu">
     {WORLDS.map((w) => (
       <a class="oitem" role="menuitem" href={w.href}>
-        {w.kind === 'heart' ? (
-          <img class="oicon" src="/gateway/heart.png" alt="" />
+        {w.kind === 'floppy' ? (
+          /* A 3.5" floppy for the gateway: body with the clipped corner, a
+             metal shutter at the top and the label across the bottom. Drawn in
+             the same 26x26 box and stroke weight as the sticky notes so the
+             two icon kinds sit together. */
+          <svg class="oicon" viewBox="0 0 26 26" aria-hidden="true">
+            <path d="M2.4 2.4h15.8l5.4 5.4v15.8H2.4z" fill={w.c1} stroke="#3E4A38"
+                  stroke-width="1.1" stroke-linejoin="round" />
+            <path d="M8.2 2.4h7v6.6h-7z" fill={w.c2} stroke="#3E4A38"
+                  stroke-width="1.1" stroke-linejoin="round" />
+            <path d="M6.2 13.4h13.6v10.2H6.2z" fill="#F7F3E8" stroke="#3E4A38"
+                  stroke-width="1.1" stroke-linejoin="round" />
+          </svg>
         ) : (
           <svg class="oicon" viewBox="0 0 26 26" aria-hidden="true">
             <path d="M2.4 2.4h21.2v16.4l-5 5H2.4z" fill={w.c1} stroke="#3E4A38" stroke-width="1.1"
@@ -75,7 +86,6 @@ const WORLDS = [
 #orbnav .oitem + .oitem{border-top:1px solid rgba(82,107,77,.16)}
 #orbnav .oitem:hover{background:rgba(82,107,77,.09)}
 #orbnav .oicon{width:24px;height:24px;flex:0 0 24px;object-fit:contain}
-#orbnav img.oicon{width:24px;height:22px;flex-basis:24px}
 #orbnav .olabel{display:block;font-family:'ZenOrb',system-ui,sans-serif;text-transform:uppercase;
   font-size:11px;letter-spacing:.3em;font-weight:500;color:#526B4D}
 #orbnav .osub{display:block;font-family:'ZenOrb',system-ui,sans-serif;font-size:11px;
