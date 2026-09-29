@@ -293,8 +293,8 @@ const WORLDS = [
 /* Matches the UX page's own treatment of the name. Monospace sets wider than
    the marker hand, so the two lines come down a little to stay on the paper. */
 #hero .green .hand{font-family:'JetBrains Mono',ui-monospace,monospace}
-#hero .green .hand .who{font-size:calc(var(--nw) * .082);letter-spacing:-.01em}
-#hero .green .hand .role{font-size:calc(var(--nw) * .058)}
+#hero .green .hand .who{font-size:max(11px, calc(var(--nw) * .082));letter-spacing:-.01em}
+#hero .green .hand .role{font-size:max(10px, calc(var(--nw) * .058))}
 #hero .rust   .hand{color:#7B3F2E}
 
 /* ---------- mobile: swipe the row ---------- */
@@ -316,7 +316,7 @@ const WORLDS = [
   #hero .worlds{--nw:118px}
   /* 12px spilled 'Durrell Smith' past the paper edge at 118px notes. */
   #hero .hand .who{font-size:11px}
-  #hero .hand .role{font-size:8px;margin-top:6px}
+  #hero .hand .role{font-size:10px;margin-top:6px}
   #hero .band{height:230px}
   /* ~2.5 eggs in view, so it reads as scrollable */
   #hero .lbl .ln{font-size:10px;letter-spacing:2px}
