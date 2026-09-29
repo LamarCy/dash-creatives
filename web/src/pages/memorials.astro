@@ -9,7 +9,7 @@
 //   1. asset paths rewritten to /memorials/*
 //   2. the three invented customer testimonials removed (the studio has not
 //      delivered to an outside client yet; the Share Your Story card stays)
-//   3. matcha #5C6B42 -> #4E5A3A, which the design file also carries now
+//   3. matcha #5C6B42 -> #222021, which the design file also carries now
 //   4. responsive overrides added below, since the artboard is a fixed 1440px
 //
 // Added around it: the turntable splash, the shared OrbNav, and SEO/meta.
@@ -35,7 +35,7 @@ const OG    = `${SITE}/memorials/gd_03.jpg`;
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Lobster+Two:ital,wght@0,700;1,700&family=Oswald:wght@400;600&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <script type="application/ld+json" set:html={JSON.stringify({
   "@context":"https://schema.org","@type":"Product",
   "name":"Custom Pet Memorial Urn — one-of-one sculpted commission",
@@ -45,7 +45,7 @@ const OG    = `${SITE}/memorials/gd_03.jpg`;
 })} />
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
-  body{background:#F0EAD9;font-family:'Playfair Display',Georgia,serif;color:#2B2620;
+  body{background:#F0EAD9;font-family:'Lobster Two',cursive;color:#2B2620;
        -webkit-font-smoothing:antialiased}
   img{max-width:100%}
 
@@ -123,8 +123,8 @@ const OG    = `${SITE}/memorials/gd_03.jpg`;
     box-shadow:0 18px 44px rgba(43,38,32,.38),inset 0 1px 1px rgba(255,255,255,.65),
                inset 0 -1px 1px rgba(43,38,32,.12)}
   #design a[style*="border-bottom:1px solid rgba(138,122,94"]:hover{
-    color:#7B3F2E;border-bottom-color:#B08D57}
-  #design a[style*="transition:color"]:hover{color:#7B3F2E}
+    color:#A20E2C;border-bottom-color:#CA996C}
+  #design a[style*="transition:color"]:hover{color:#A20E2C}
   #design [style*="backdrop-filter"][style*="border-radius:16px"]:hover,
   #design [style*="backdrop-filter"][style*="border-radius:14px"]:hover{
     transform:translateY(-4px);box-shadow:0 16px 36px rgba(43,38,32,.2)}
@@ -142,9 +142,9 @@ const OG    = `${SITE}/memorials/gd_03.jpg`;
     gap:clamp(14px,2.6vh,30px);transition:opacity .9s ease,visibility .9s ease}
   #splash.done{opacity:0;visibility:hidden}
   .brandname{font-size:clamp(21px,2.6vw,34px);font-weight:600;
-    letter-spacing:clamp(7px,1.1vw,14px);color:#8A7A5E;text-indent:clamp(7px,1.1vw,14px)}
-  .brandsub{font-family:'Cormorant Garamond',serif;font-size:clamp(13px,1.5vw,21px);
-    letter-spacing:6px;color:#8A7A5E;opacity:.75;margin-top:8px;text-indent:6px}
+    letter-spacing:clamp(7px,1.1vw,14px);color:#6E6046;text-indent:clamp(7px,1.1vw,14px)}
+  .brandsub{font-family:'Oswald',sans-serif;font-size:clamp(13px,1.5vw,21px);
+    letter-spacing:6px;color:#6E6046;opacity:.75;margin-top:8px;text-indent:6px}
   /* Turntable sprite sheet, driven from JS so the frame rate is one number to
      tune. 24 frames over 9s read as ~2.7fps and stepped visibly; 60 frames at
      12fps is a smooth 5s revolution. Geometry constants live on the element so
@@ -155,18 +155,18 @@ const OG    = `${SITE}/memorials/gd_03.jpg`;
     filter:drop-shadow(0 24px 28px rgba(118,92,58,.28));
     opacity:0;animation:fade-in .9s .3s ease forwards}
   @keyframes fade-in{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-  #splash .rule{width:120px;height:2px;background:#B08D57;transform:scaleX(0);
+  #splash .rule{width:120px;height:2px;background:#CA996C;transform:scaleX(0);
     animation:draw 2.6s .8s cubic-bezier(.4,0,.2,1) forwards}
   @keyframes draw{to{transform:scaleX(1)}}
-  #splash .tag{font-style:italic;color:#8A7A5E;font-size:clamp(16px,2vw,27px);
+  #splash .tag{font-style:italic;color:#6E6046;font-size:clamp(16px,2vw,27px);
     text-align:center;padding:0 22px;opacity:0;animation:fade-in .9s .62s ease forwards}
   #splash .lockup{text-align:center;opacity:0;animation:fade-in .9s .12s ease forwards}
   .brandmark{display:block;width:clamp(230px,32vw,430px);height:auto;margin:0 auto 14px}
   /* Long enough that at 6px tracking it overflows a phone — clamp it and let
      it wrap instead of pushing the layout sideways. */
-  .brandtag{font-family:'Cormorant Garamond',serif;font-size:clamp(12px,1.5vw,21px);
+  .brandtag{font-family:'Oswald',sans-serif;font-size:clamp(12px,1.5vw,21px);
     letter-spacing:clamp(3px,.5vw,6px);text-indent:clamp(3px,.5vw,6px);
-    color:#8A7A5E;margin-top:6px;max-width:100%;text-wrap:balance}
+    color:#6E6046;margin-top:6px;max-width:100%;text-wrap:balance}
   .brandsub{max-width:92vw;margin-left:auto;margin-right:auto;text-wrap:balance}
 
   @media (prefers-reduced-motion:reduce){
@@ -261,51 +261,51 @@ const OG    = `${SITE}/memorials/gd_03.jpg`;
            width="520" height="200" decoding="async" />
       <div class="brandtag">ONE-OF-ONE SCULPTURES AND WEARABLE ART</div>
     </div>
-    <div style="display:flex;gap:54px;font-family:'Cormorant Garamond',serif;font-size:18px;letter-spacing:4px;text-transform:uppercase">
-      <a href="/" style="transition:color 0.2s ease;color:#4E5A3A">Home</a>
-      <a href="#gallery" style="transition:color 0.2s ease;color:#4E5A3A">Gallery</a>
-      <a href="/memorials" aria-current="page" style="color:#7B3F2E;border-bottom:2px solid #B08D57;padding-bottom:4px">Memorials</a>
-      <a href="#commissions" style="transition:color 0.2s ease;color:#4E5A3A">Commissions</a>
-      <a href="#shop" style="transition:color 0.2s ease;color:#4E5A3A">Studio Shop</a>
-      <a href="mailto:durrell.smith03@gmail.com?subject=Pet%20memorial%20commission" style="transition:color 0.2s ease;color:#4E5A3A">Contact</a>
+    <div style="display:flex;gap:54px;font-family:'Oswald',sans-serif;font-size:15px;letter-spacing:4px;text-transform:uppercase;font-weight:400">
+      <a href="/" style="transition:color 0.2s ease;color:#222021">Home</a>
+      <a href="#gallery" style="transition:color 0.2s ease;color:#222021">Gallery</a>
+      <a href="/memorials" aria-current="page" style="color:#A20E2C;border-bottom:2px solid #CA996C;padding-bottom:4px">Memorials</a>
+      <a href="#commissions" style="transition:color 0.2s ease;color:#222021">Commissions</a>
+      <a href="#shop" style="transition:color 0.2s ease;color:#222021">Studio Shop</a>
+      <a href="mailto:durrell.smith03@gmail.com?subject=Pet%20memorial%20commission" style="transition:color 0.2s ease;color:#222021">Contact</a>
     </div>
   </div>
 
   <!-- hero -->
   <div style="display:grid;grid-template-columns:1fr 560px;gap:80px;align-items:center;padding:90px 100px">
     <div>
-      <div style="font-family:'Cormorant Garamond',serif;font-size:17px;letter-spacing:7px;text-transform:uppercase;color:#4E5A3A">One-of-One Sculpted Memorials</div>
-      <h1 style="font-size:62px;line-height:1.15;font-weight:600;color:#7B3F2E;margin:26px 0 0;text-wrap:pretty">Sculpting the Memory of your Beloved Pet</h1>
-      <div style="width:120px;height:2px;background:#B08D57;margin:28px 0"></div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:17px;letter-spacing:7px;text-transform:uppercase;color:#222021">One-of-One Sculpted Memorials</div>
+      <h1 style="font-family:'Lobster Two',cursive;font-size:72px;line-height:1.08;font-weight:700;color:#CE1338;margin:26px 0 0;text-wrap:pretty">Sculpting the Memory of your Beloved Pet</h1>
+      <div style="width:120px;height:2px;background:#CA996C;margin:28px 0"></div>
       <p style="font-size:19px;line-height:1.75;margin:0;max-width:520px">Each piece is a one-of-one sculpture of your own companion, modeled from your photographs and finished by hand in our studio. Not a shape from a catalog &mdash; them.</p>
       <div style="display:flex;align-items:center;gap:30px;margin-top:44px;flex-wrap:wrap">
-        <a href="mailto:durrell.smith03@gmail.com?subject=Pet%20memorial%20commission" style="display:inline-block;background:linear-gradient(rgba(255,255,255,0.28),rgba(255,255,255,0.02) 46%),rgba(123,63,46,0.7);backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);border:1px solid rgba(255,255,255,0.45);border-radius:999px;transition:transform 0.25s ease,box-shadow 0.25s ease,filter 0.25s ease;box-shadow:0 12px 34px rgba(43,38,32,0.3),inset 0 1px 1px rgba(255,255,255,0.5),inset 0 -1px 1px rgba(43,38,32,0.15);color:#F0EAD9;font-family:'Cormorant Garamond',serif;font-size:26px;letter-spacing:4px;text-transform:uppercase;padding:20px 46px;white-space:nowrap" style-hover="transform:translateY(-3px);filter:brightness(1.09);box-shadow:0 18px 44px rgba(43,38,32,0.38),inset 0 1px 1px rgba(255,255,255,0.65),inset 0 -1px 1px rgba(43,38,32,0.12)">Begin a Commission</a>
-        <a href="#gallery" style="font-family:'Cormorant Garamond',serif;font-size:20px;letter-spacing:3px;text-transform:uppercase;color:#4E5A3A;border-bottom:1px solid rgba(138,122,94,0.5);padding-bottom:4px" style-hover="color:#7B3F2E;border-bottom:1px solid #B08D57">View the Gallery</a>
+        <a href="mailto:durrell.smith03@gmail.com?subject=Pet%20memorial%20commission" style="display:inline-block;background:linear-gradient(rgba(255,255,255,0.28),rgba(255,255,255,0.02) 46%),rgba(162,14,44,0.78);backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);border:1px solid rgba(255,255,255,0.45);border-radius:999px;transition:transform 0.25s ease,box-shadow 0.25s ease,filter 0.25s ease;box-shadow:0 12px 34px rgba(43,38,32,0.3),inset 0 1px 1px rgba(255,255,255,0.5),inset 0 -1px 1px rgba(43,38,32,0.15);color:#F0EAD9;font-family:'Oswald',sans-serif;font-size:19px;letter-spacing:4px;text-transform:uppercase;font-weight:600;padding:20px 46px;white-space:nowrap" style-hover="transform:translateY(-3px);filter:brightness(1.09);box-shadow:0 18px 44px rgba(43,38,32,0.38),inset 0 1px 1px rgba(255,255,255,0.65),inset 0 -1px 1px rgba(43,38,32,0.12)">Begin a Commission</a>
+        <a href="#gallery" style="font-family:'Cormorant Garamond',serif;font-size:20px;letter-spacing:3px;text-transform:uppercase;color:#222021;border-bottom:1px solid rgba(138,122,94,0.5);padding-bottom:4px" style-hover="color:#A20E2C;border-bottom:1px solid #CA996C">View the Gallery</a>
       </div>
-      <div style="font-family:'Cormorant Garamond',serif;font-size:18px;font-style:italic;color:#4E5A3A;margin-top:30px">One price &mdash; $950 &middot; When you&rsquo;re ready.</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:18px;font-style:italic;color:#222021;margin-top:30px">One price &mdash; $950 &middot; When you&rsquo;re ready.</div>
     </div>
     <div style="height:680px;overflow:hidden;background:#EAE2CE"><img src="/memorials/gd_03.jpg" alt="A finished gold goldendoodle sculpture, left profile" style="width:100%;height:100%;object-fit:cover;display:block"></div>
   </div>
 
   <!-- how it works -->
   <div style="padding:80px 100px;text-align:center">
-    <div style="font-family:'Cormorant Garamond',serif;font-size:16px;letter-spacing:7px;text-transform:uppercase;color:#4E5A3A">How It Works</div>
-    <h2 style="font-size:44px;font-weight:600;color:#7B3F2E;margin:18px 0 0">Three steps</h2>
-    <div style="width:120px;height:2px;background:#B08D57;margin:26px auto"></div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:16px;letter-spacing:7px;text-transform:uppercase;color:#222021">How It Works</div>
+    <h2 style="font-family:'Lobster Two',cursive;font-size:52px;font-weight:700;color:#CE1338;margin:18px 0 0">Three steps</h2>
+    <div style="width:120px;height:2px;background:#CA996C;margin:26px auto"></div>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:70px;margin-top:56px;text-align:center">
       <div>
-        <div style="font-size:56px;color:#7B3F2E;font-weight:500">I</div>
-        <div style="font-family:'Cormorant Garamond',serif;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#2B2620;margin-top:16px">Share Photos</div>
+        <div style="font-size:56px;color:#A20E2C;font-weight:500">I</div>
+        <div style="font-family:'Oswald',sans-serif;font-size:17px;letter-spacing:4px;text-transform:uppercase;font-weight:600;color:#2B2620;margin-top:16px">Share Photos</div>
         <p style="font-size:17px;line-height:1.7;color:#2B2620;margin:16px auto 0;max-width:320px">Send us the pictures you already have &mdash; old, imperfect, phone-quality. We work from what you love.</p>
       </div>
       <div>
-        <div style="font-size:56px;color:#7B3F2E;font-weight:500">II</div>
-        <div style="font-family:'Cormorant Garamond',serif;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#2B2620;margin-top:16px">Approve Your Sculpture</div>
+        <div style="font-size:56px;color:#A20E2C;font-weight:500">II</div>
+        <div style="font-family:'Oswald',sans-serif;font-size:17px;letter-spacing:4px;text-transform:uppercase;font-weight:600;color:#2B2620;margin-top:16px">Approve Your Sculpture</div>
         <p style="font-size:17px;line-height:1.7;color:#2B2620;margin:16px auto 0;max-width:320px">We sculpt in the studio and send you proof images from every angle. Nothing moves forward without your yes.</p>
       </div>
       <div>
-        <div style="font-size:56px;color:#7B3F2E;font-weight:500">III</div>
-        <div style="font-family:'Cormorant Garamond',serif;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#2B2620;margin-top:16px">Welcome Them Home</div>
+        <div style="font-size:56px;color:#A20E2C;font-weight:500">III</div>
+        <div style="font-family:'Oswald',sans-serif;font-size:17px;letter-spacing:4px;text-transform:uppercase;font-weight:600;color:#2B2620;margin-top:16px">Welcome Them Home</div>
         <p style="font-size:17px;line-height:1.7;color:#2B2620;margin:16px auto 0;max-width:320px">Your finished piece arrives with everything prepared, ready to take its place in your home.</p>
       </div>
     </div>
@@ -313,52 +313,52 @@ const OG    = `${SITE}/memorials/gd_03.jpg`;
 
   <!-- trust band -->
   <div style="background:#EAE2CE;border-top:1px solid rgba(138,122,94,0.35);border-bottom:1px solid rgba(138,122,94,0.35);padding:70px 100px;text-align:center">
-    <div style="font-size:32px;font-style:italic;color:#7B3F2E;max-width:760px;margin:0 auto;line-height:1.5">&ldquo;Your companion never leaves your care.&rdquo;</div>
+    <div style="font-size:32px;font-style:italic;color:#A20E2C;max-width:760px;margin:0 auto;line-height:1.5">&ldquo;Your companion never leaves your care.&rdquo;</div>
     <p style="font-family:'Cormorant Garamond',serif;font-size:20px;line-height:1.7;color:#2B2620;max-width:680px;margin:22px auto 0">We never handle remains. Every urn arrives with a matched filling funnel and a step-by-step care card, so your family fills it privately, at home, in your own time.</p>
   </div>
 
   <!-- tiers -->
   <div id="commissions" style="padding:90px 100px;text-align:center">
-    <div style="font-family:'Cormorant Garamond',serif;font-size:16px;letter-spacing:7px;text-transform:uppercase;color:#4E5A3A">Commissions</div>
-    <h2 style="font-size:44px;font-weight:600;color:#7B3F2E;margin:18px 0 0">One piece. One price.</h2>
-    <div style="width:120px;height:2px;background:#B08D57;margin:26px auto"></div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:16px;letter-spacing:7px;text-transform:uppercase;color:#222021">Commissions</div>
+    <h2 style="font-family:'Lobster Two',cursive;font-size:52px;font-weight:700;color:#CE1338;margin:18px 0 0">One piece. One price.</h2>
+    <div style="width:120px;height:2px;background:#CA996C;margin:26px auto"></div>
     <p style="font-family:'Cormorant Garamond',serif;font-size:20px;color:#2B2620;margin:0 auto;max-width:600px">Every commission is the same piece &mdash; a one-of-one, ten-inch studio sculpture of your companion, at one honest price.</p>
     <div style="max-width:540px;margin:54px auto 0;background:linear-gradient(rgba(255,255,255,0.4),rgba(255,255,255,0.12) 55%),rgba(234,226,206,0.35);backdrop-filter:blur(14px) saturate(160%);-webkit-backdrop-filter:blur(14px) saturate(160%);border:1px solid rgba(255,255,255,0.6);border-radius:14px;box-shadow:0 10px 28px rgba(43,38,32,0.12),inset 0 1px 1px rgba(255,255,255,0.6);padding:56px 50px">
-      <div style="font-family:'Cormorant Garamond',serif;font-size:22px;letter-spacing:5px;text-transform:uppercase;color:#4E5A3A">The Commission</div>
-      <div style="font-size:58px;font-weight:600;color:#7B3F2E;margin-top:16px">$950</div>
-      <div style="width:60px;height:1px;background:#B08D57;margin:22px auto"></div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:22px;letter-spacing:5px;text-transform:uppercase;color:#222021">The Commission</div>
+      <div style="font-size:58px;font-weight:600;color:#A20E2C;margin-top:16px">$950</div>
+      <div style="width:60px;height:1px;background:#CA996C;margin:22px auto"></div>
       <div style="font-family:'Cormorant Garamond',serif;font-size:19px;color:#2B2620;line-height:1.9">A one-of-one sculpture of your companion<br>About ten inches long &middot; holds companions to about 30 lb<br>Larger companions &mdash; write to us first</div>
     </div>
-    <p style="font-family:'Cormorant Garamond',serif;font-size:19px;color:#4E5A3A;margin:36px auto 0;max-width:760px;line-height:1.8">Every commission includes the sculpted replica, secure base closure, the matched filling funnel, a felt base, a care card, and a signed certificate of authenticity from the artist.<br>Standard turnaround 3&ndash;4 weeks &middot; 50% deposit to begin &middot; installments available.</p>
+    <p style="font-family:'Cormorant Garamond',serif;font-size:19px;color:#222021;margin:36px auto 0;max-width:760px;line-height:1.8">Every commission includes the sculpted replica, secure base closure, the matched filling funnel, a felt base, a care card, and a signed certificate of authenticity from the artist.<br>Standard turnaround 3&ndash;4 weeks &middot; 50% deposit to begin &middot; installments available.</p>
   </div>
 
   <!-- finishes -->
   <div style="background:#EAE2CE;border-top:1px solid rgba(138,122,94,0.35);border-bottom:1px solid rgba(138,122,94,0.35);padding:90px 100px;text-align:center">
-    <div style="font-family:'Cormorant Garamond',serif;font-size:16px;letter-spacing:7px;text-transform:uppercase;color:#4E5A3A">The Signature Choice</div>
-    <h2 style="font-size:44px;font-weight:600;color:#7B3F2E;margin:18px 0 0">Two finishes, one decision</h2>
-    <div style="width:120px;height:2px;background:#B08D57;margin:26px auto"></div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:16px;letter-spacing:7px;text-transform:uppercase;color:#222021">The Signature Choice</div>
+    <h2 style="font-family:'Lobster Two',cursive;font-size:52px;font-weight:700;color:#CE1338;margin:18px 0 0">Two finishes, one decision</h2>
+    <div style="width:120px;height:2px;background:#CA996C;margin:26px auto"></div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;max-width:920px;margin:54px auto 0;text-align:center">
       <div style="transition:all 0.25s ease;background:linear-gradient(rgba(255,255,255,0.45),rgba(255,255,255,0.15) 55%),rgba(240,234,217,0.3);backdrop-filter:blur(14px) saturate(160%);-webkit-backdrop-filter:blur(14px) saturate(160%);border:1px solid rgba(255,255,255,0.6);border-radius:16px;box-shadow:0 10px 28px rgba(43,38,32,0.12),inset 0 1px 1px rgba(255,255,255,0.65);padding:36px 32px 44px" style-hover="transform:translateY(-4px);box-shadow:0 16px 36px rgba(43,38,32,0.2),inset 0 1px 1px rgba(255,255,255,0.65)">
         <div style="height:220px;overflow:hidden;background:#EAE2CE"><img src="/memorials/gd_07.jpg" alt="The house gold finish on a finished commission" style="width:100%;height:100%;object-fit:cover;display:block"></div>
-        <div style="font-family:'Cormorant Garamond',serif;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#2B2620;margin-top:30px">Gold Finish</div>
+        <div style="font-family:'Oswald',sans-serif;font-size:17px;letter-spacing:4px;text-transform:uppercase;font-weight:600;color:#2B2620;margin-top:30px">Gold Finish</div>
         <div style="font-family:'Cormorant Garamond',serif;font-size:17px;letter-spacing:3px;text-transform:uppercase;color:#7E5E27;margin-top:10px">Included</div>
         <p style="font-size:16px;line-height:1.7;margin:18px 0 0">A hand-worked gold finish with the warmth and depth of a gallery casting. Our house finish.</p>
       </div>
       <div style="transition:all 0.25s ease;background:linear-gradient(rgba(255,255,255,0.45),rgba(255,255,255,0.15) 55%),rgba(240,234,217,0.3);backdrop-filter:blur(14px) saturate(160%);-webkit-backdrop-filter:blur(14px) saturate(160%);border:1px solid rgba(255,255,255,0.6);border-radius:16px;box-shadow:0 10px 28px rgba(43,38,32,0.12),inset 0 1px 1px rgba(255,255,255,0.65);padding:36px 32px 44px" style-hover="transform:translateY(-4px);box-shadow:0 16px 36px rgba(43,38,32,0.2),inset 0 1px 1px rgba(255,255,255,0.65)">
-        <div style="height:220px;background:#EAE2CE;border:2px dashed rgba(138,122,94,0.6);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:22px;letter-spacing:2px;color:#4E5A3A">Gold leaf photo</div>
-        <div style="font-family:'Cormorant Garamond',serif;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#2B2620;margin-top:30px">Lifelike Handworked Gold Leaf</div>
-        <div style="font-family:'Cormorant Garamond',serif;font-size:17px;letter-spacing:3px;text-transform:uppercase;color:#7B3F2E;margin-top:10px">+ $350</div>
+        <div style="height:220px;background:#EAE2CE;border:2px dashed rgba(138,122,94,0.6);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:22px;letter-spacing:2px;color:#222021">Gold leaf photo</div>
+        <div style="font-family:'Oswald',sans-serif;font-size:17px;letter-spacing:4px;text-transform:uppercase;font-weight:600;color:#2B2620;margin-top:30px">Lifelike Handworked Gold Leaf</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:17px;letter-spacing:3px;text-transform:uppercase;color:#A20E2C;margin-top:10px">+ $350</div>
         <p style="font-size:16px;line-height:1.7;margin:18px 0 0">Genuine gold leaf, laid by hand across every contour of the sculpture. You approve the finished piece before it ships.</p>
       </div>
     </div>
-    <p style="font-family:'Cormorant Garamond',serif;font-size:19px;color:#4E5A3A;margin:36px 0 0">Every piece includes a signed certificate of authenticity from the artist, Durrell Smith.<br>Add-ons &mdash; companion mini +$195 &middot; second pet +$300 &middot; rush two-week +$150</p>
+    <p style="font-family:'Cormorant Garamond',serif;font-size:19px;color:#222021;margin:36px 0 0">Every piece includes a signed certificate of authenticity from the artist, Durrell Smith.<br>Add-ons &mdash; companion mini +$195 &middot; second pet +$300 &middot; rush two-week +$150</p>
   </div>
 
   <!-- gallery -->
   <div id="gallery" style="padding:90px 100px;text-align:center">
-    <div style="font-family:'Cormorant Garamond',serif;font-size:16px;letter-spacing:7px;text-transform:uppercase;color:#4E5A3A">Recent Commissions</div>
-    <h2 style="font-size:44px;font-weight:600;color:#7B3F2E;margin:18px 0 0">From the studio</h2>
-    <div style="width:120px;height:2px;background:#B08D57;margin:26px auto"></div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:16px;letter-spacing:7px;text-transform:uppercase;color:#222021">Recent Commissions</div>
+    <h2 style="font-family:'Lobster Two',cursive;font-size:52px;font-weight:700;color:#CE1338;margin:18px 0 0">From the studio</h2>
+    <div style="width:120px;height:2px;background:#CA996C;margin:26px auto"></div>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:26px;margin-top:50px">
       <div style="height:340px;overflow:hidden;background:#EAE2CE"><img src="/memorials/gd_01.jpg" alt="A finished commission from the studio" style="width:100%;height:100%;object-fit:cover;display:block"></div>
       <div style="height:340px;overflow:hidden;background:#EAE2CE"><img src="/memorials/gd_02.jpg" alt="A finished commission from the studio" style="width:100%;height:100%;object-fit:cover;display:block"></div>
@@ -371,9 +371,9 @@ const OG    = `${SITE}/memorials/gd_03.jpg`;
 
   <!-- studio shop -->
   <div id="shop" style="padding:0 100px 90px;text-align:center">
-    <div style="font-family:'Cormorant Garamond',serif;font-size:16px;letter-spacing:7px;text-transform:uppercase;color:#4E5A3A">The Studio Shop</div>
-    <h2 style="font-size:44px;font-weight:600;color:#7B3F2E;margin:18px 0 0">More from the studio</h2>
-    <div style="width:120px;height:2px;background:#B08D57;margin:26px auto"></div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:16px;letter-spacing:7px;text-transform:uppercase;color:#222021">The Studio Shop</div>
+    <h2 style="font-family:'Lobster Two',cursive;font-size:52px;font-weight:700;color:#CE1338;margin:18px 0 0">More from the studio</h2>
+    <div style="width:120px;height:2px;background:#CA996C;margin:26px auto"></div>
     <p style="font-family:'Cormorant Garamond',serif;font-size:20px;color:#2B2620;margin:0 auto;max-width:620px;line-height:1.7">Smaller pieces from the same hands &mdash; ready to ship, no commission required.</p>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:28px;margin-top:50px">
       <div style="transition:all 0.25s ease;background:linear-gradient(rgba(255,255,255,0.4),rgba(255,255,255,0.12) 55%),rgba(234,226,206,0.35);backdrop-filter:blur(14px) saturate(160%);-webkit-backdrop-filter:blur(14px) saturate(160%);border:1px solid rgba(255,255,255,0.6);border-radius:14px;box-shadow:0 10px 28px rgba(43,38,32,0.12),inset 0 1px 1px rgba(255,255,255,0.6);padding:26px 26px 34px" style-hover="transform:translateY(-4px);box-shadow:0 16px 36px rgba(43,38,32,0.2),inset 0 1px 1px rgba(255,255,255,0.65)">
@@ -384,37 +384,37 @@ const OG    = `${SITE}/memorials/gd_03.jpg`;
       
       
     </div>
-    <a href="#shop" style="display:inline-block;margin-top:44px;transition:color 0.2s ease;font-family:'Cormorant Garamond',serif;font-size:20px;letter-spacing:3px;text-transform:uppercase;color:#4E5A3A;border-bottom:1px solid rgba(138,122,94,0.5);padding-bottom:4px" style-hover="color:#7B3F2E;border-bottom:1px solid #B08D57">Visit the Studio Shop</a>
+    <a href="#shop" style="display:inline-block;margin-top:44px;transition:color 0.2s ease;font-family:'Cormorant Garamond',serif;font-size:20px;letter-spacing:3px;text-transform:uppercase;color:#222021;border-bottom:1px solid rgba(138,122,94,0.5);padding-bottom:4px" style-hover="color:#A20E2C;border-bottom:1px solid #CA996C">Visit the Studio Shop</a>
   </div>
 
   <!-- testimonials -->
   <div style="padding:20px 100px 90px;text-align:center">
-    <div style="font-family:'Cormorant Garamond',serif;font-size:16px;letter-spacing:7px;text-transform:uppercase;color:#4E5A3A">Kind Words</div>
-    <h2 style="font-size:44px;font-weight:600;color:#7B3F2E;margin:18px 0 0">From the families</h2>
-    <div style="width:120px;height:2px;background:#B08D57;margin:26px auto"></div>
-    <p style="font-family:'Cormorant Garamond',serif;font-style:italic;color:#8A7A5E;font-size:19px;max-width:56ch;margin:0 auto 44px;line-height:1.7">Our first commissions are finding their way home now. When yours arrives, we would be honoured to share your words here.</p>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:16px;letter-spacing:7px;text-transform:uppercase;color:#222021">Kind Words</div>
+    <h2 style="font-family:'Lobster Two',cursive;font-size:52px;font-weight:700;color:#CE1338;margin:18px 0 0">From the families</h2>
+    <div style="width:120px;height:2px;background:#CA996C;margin:26px auto"></div>
+    <p style="font-family:'Cormorant Garamond',serif;font-style:italic;color:#6E6046;font-size:19px;max-width:56ch;margin:0 auto 44px;line-height:1.7">Our first commissions are finding their way home now. When yours arrives, we would be honoured to share your words here.</p>
     <div id="faq" style="max-width:760px;margin:60px auto 0;transition:all 0.25s ease;background:linear-gradient(rgba(255,255,255,0.4),rgba(255,255,255,0.12) 55%),rgba(234,226,206,0.35);backdrop-filter:blur(14px) saturate(160%);-webkit-backdrop-filter:blur(14px) saturate(160%);border:1px solid rgba(255,255,255,0.6);border-radius:16px;box-shadow:0 10px 28px rgba(43,38,32,0.12),inset 0 1px 1px rgba(255,255,255,0.6);padding:44px 48px;text-align:left">
       <div style="text-align:center">
-        <div style="font-family:'Cormorant Garamond',serif;font-size:22px;letter-spacing:4px;text-transform:uppercase;color:#7B3F2E">Share Your Story</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:22px;letter-spacing:4px;text-transform:uppercase;color:#A20E2C">Share Your Story</div>
         <p style="font-family:'Cormorant Garamond',serif;font-size:19px;color:#2B2620;margin:14px auto 0;max-width:560px;line-height:1.7">If a piece from the studio lives with you, we would be honored to hear how they&rsquo;re doing. We read every word.</p>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:32px">
         <div>
-          <div style="font-family:'Cormorant Garamond',serif;font-size:15px;letter-spacing:3px;text-transform:uppercase;color:#4E5A3A;margin-bottom:10px">Your name</div>
-          <div style="background:rgba(255,255,255,0.4);border:1px solid rgba(255,255,255,0.7);border-radius:10px;padding:14px 16px;font-family:'Cormorant Garamond',serif;font-size:19px;font-style:italic;color:#8A7A5E">as you&rsquo;d like it to appear</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:15px;letter-spacing:3px;text-transform:uppercase;color:#222021;margin-bottom:10px">Your name</div>
+          <div style="background:rgba(255,255,255,0.4);border:1px solid rgba(255,255,255,0.7);border-radius:10px;padding:14px 16px;font-family:'Cormorant Garamond',serif;font-size:19px;font-style:italic;color:#6E6046">as you&rsquo;d like it to appear</div>
         </div>
         <div>
-          <div style="font-family:'Cormorant Garamond',serif;font-size:15px;letter-spacing:3px;text-transform:uppercase;color:#4E5A3A;margin-bottom:10px">Their name</div>
-          <div style="background:rgba(255,255,255,0.4);border:1px solid rgba(255,255,255,0.7);border-radius:10px;padding:14px 16px;font-family:'Cormorant Garamond',serif;font-size:19px;font-style:italic;color:#8A7A5E">the companion we sculpted</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:15px;letter-spacing:3px;text-transform:uppercase;color:#222021;margin-bottom:10px">Their name</div>
+          <div style="background:rgba(255,255,255,0.4);border:1px solid rgba(255,255,255,0.7);border-radius:10px;padding:14px 16px;font-family:'Cormorant Garamond',serif;font-size:19px;font-style:italic;color:#6E6046">the companion we sculpted</div>
         </div>
       </div>
       <div style="margin-top:24px">
-        <div style="font-family:'Cormorant Garamond',serif;font-size:15px;letter-spacing:3px;text-transform:uppercase;color:#4E5A3A;margin-bottom:10px">Your words</div>
-        <div style="background:rgba(255,255,255,0.4);border:1px solid rgba(255,255,255,0.7);border-radius:10px;padding:16px;min-height:110px;font-family:'Cormorant Garamond',serif;font-size:19px;font-style:italic;color:#8A7A5E">take all the time and space you need</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:15px;letter-spacing:3px;text-transform:uppercase;color:#222021;margin-bottom:10px">Your words</div>
+        <div style="background:rgba(255,255,255,0.4);border:1px solid rgba(255,255,255,0.7);border-radius:10px;padding:16px;min-height:110px;font-family:'Cormorant Garamond',serif;font-size:19px;font-style:italic;color:#6E6046">take all the time and space you need</div>
       </div>
       <div style="display:flex;align-items:center;justify-content:space-between;gap:24px;margin-top:32px;flex-wrap:wrap">
-        <div style="font-family:'Cormorant Garamond',serif;font-size:16px;font-style:italic;color:#8A7A5E">Photos of your piece at home are always welcome.</div>
-        <a href="mailto:durrell.smith03@gmail.com?subject=My%20DASH%20piece" style="display:inline-block;background:linear-gradient(rgba(255,255,255,0.28),rgba(255,255,255,0.02) 46%),rgba(123,63,46,0.7);backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);border:1px solid rgba(255,255,255,0.45);border-radius:999px;transition:transform 0.25s ease,box-shadow 0.25s ease,filter 0.25s ease;box-shadow:0 12px 34px rgba(43,38,32,0.3),inset 0 1px 1px rgba(255,255,255,0.5),inset 0 -1px 1px rgba(43,38,32,0.15);color:#F0EAD9;font-family:'Cormorant Garamond',serif;font-size:22px;letter-spacing:4px;text-transform:uppercase;padding:16px 44px;white-space:nowrap" style-hover="transform:translateY(-3px);filter:brightness(1.09);box-shadow:0 18px 44px rgba(43,38,32,0.38),inset 0 1px 1px rgba(255,255,255,0.65),inset 0 -1px 1px rgba(43,38,32,0.12)">Send Your Review</a>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:16px;font-style:italic;color:#6E6046">Photos of your piece at home are always welcome.</div>
+        <a href="mailto:durrell.smith03@gmail.com?subject=My%20DASH%20piece" style="display:inline-block;background:linear-gradient(rgba(255,255,255,0.28),rgba(255,255,255,0.02) 46%),rgba(162,14,44,0.78);backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);border:1px solid rgba(255,255,255,0.45);border-radius:999px;transition:transform 0.25s ease,box-shadow 0.25s ease,filter 0.25s ease;box-shadow:0 12px 34px rgba(43,38,32,0.3),inset 0 1px 1px rgba(255,255,255,0.5),inset 0 -1px 1px rgba(43,38,32,0.15);color:#F0EAD9;font-family:'Cormorant Garamond',serif;font-size:22px;letter-spacing:4px;text-transform:uppercase;padding:16px 44px;white-space:nowrap" style-hover="transform:translateY(-3px);filter:brightness(1.09);box-shadow:0 18px 44px rgba(43,38,32,0.38),inset 0 1px 1px rgba(255,255,255,0.65),inset 0 -1px 1px rgba(43,38,32,0.12)">Send Your Review</a>
       </div>
     </div>
   </div>
@@ -422,49 +422,49 @@ const OG    = `${SITE}/memorials/gd_03.jpg`;
   <!-- FAQ -->
   <div style="padding:20px 100px 100px">
     <div style="text-align:center">
-      <div style="font-family:'Cormorant Garamond',serif;font-size:16px;letter-spacing:7px;text-transform:uppercase;color:#4E5A3A">Questions</div>
-      <h2 style="font-size:44px;font-weight:600;color:#7B3F2E;margin:18px 0 0">Everything families ask us</h2>
-      <div style="width:120px;height:2px;background:#B08D57;margin:26px auto 0"></div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:16px;letter-spacing:7px;text-transform:uppercase;color:#222021">Questions</div>
+      <h2 style="font-family:'Lobster Two',cursive;font-size:52px;font-weight:700;color:#CE1338;margin:18px 0 0">Everything families ask us</h2>
+      <div style="width:120px;height:2px;background:#CA996C;margin:26px auto 0"></div>
     </div>
     <div style="max-width:860px;margin:50px auto 0;border-top:1px solid rgba(138,122,94,0.4)">
       <div style="border-bottom:1px solid rgba(138,122,94,0.4);padding:28px 8px">
         <div style="display:flex;justify-content:space-between;align-items:center;gap:20px">
-          <div style="font-size:22px;font-weight:500;color:#7B3F2E">What size is the piece?</div>
-          <div style="font-family:'Cormorant Garamond',serif;font-size:30px;color:#4E5A3A;line-height:1">&minus;</div>
+          <div style="font-size:22px;font-weight:500;color:#A20E2C">What size is the piece?</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:30px;color:#222021;line-height:1">&minus;</div>
         </div>
         <p style="font-family:'Cormorant Garamond',serif;font-size:19px;line-height:1.75;color:#2B2620;margin:16px 0 0;max-width:720px">Every piece is sculpted at our ten-inch studio scale &mdash; roughly ten inches nose to tail. By the traditional rule of one cubic inch per pound, that holds companions up to about 30 lb: cats, and the smaller and mid-sized dogs. Pose changes the interior volume a little, so we confirm the fit for your companion before we begin, always with a comfortable margin. For larger dogs or multi-pet families, write to us first &mdash; we&rsquo;ll find the right way.</p>
       </div>
       <div style="transition:all 0.2s ease;border-bottom:1px solid rgba(138,122,94,0.4);padding:28px 8px;display:flex;justify-content:space-between;align-items:center;gap:20px" style-hover="background:rgba(255,255,255,0.5);border-radius:10px;padding-left:16px;padding-right:16px">
         <div style="font-size:22px;font-weight:500;color:#2B2620">How does the filling process work?</div>
-        <div style="font-family:'Cormorant Garamond',serif;font-size:30px;color:#4E5A3A;line-height:1">+</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:30px;color:#222021;line-height:1">+</div>
       </div>
       <div style="transition:all 0.2s ease;border-bottom:1px solid rgba(138,122,94,0.4);padding:28px 8px;display:flex;justify-content:space-between;align-items:center;gap:20px" style-hover="background:rgba(255,255,255,0.5);border-radius:10px;padding-left:16px;padding-right:16px">
         <div style="font-size:22px;font-weight:500;color:#2B2620">How long does a commission take?</div>
-        <div style="font-family:'Cormorant Garamond',serif;font-size:30px;color:#4E5A3A;line-height:1">+</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:30px;color:#222021;line-height:1">+</div>
       </div>
       <div style="transition:all 0.2s ease;border-bottom:1px solid rgba(138,122,94,0.4);padding:28px 8px;display:flex;justify-content:space-between;align-items:center;gap:20px" style-hover="background:rgba(255,255,255,0.5);border-radius:10px;padding-left:16px;padding-right:16px">
         <div style="font-size:22px;font-weight:500;color:#2B2620">What photos do you need?</div>
-        <div style="font-family:'Cormorant Garamond',serif;font-size:30px;color:#4E5A3A;line-height:1">+</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:30px;color:#222021;line-height:1">+</div>
       </div>
       <div style="transition:all 0.2s ease;border-bottom:1px solid rgba(138,122,94,0.4);padding:28px 8px;display:flex;justify-content:space-between;align-items:center;gap:20px" style-hover="background:rgba(255,255,255,0.5);border-radius:10px;padding-left:16px;padding-right:16px">
         <div style="font-size:22px;font-weight:500;color:#2B2620">Can I request changes to the sculpture?</div>
-        <div style="font-family:'Cormorant Garamond',serif;font-size:30px;color:#4E5A3A;line-height:1">+</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:30px;color:#222021;line-height:1">+</div>
       </div>
       <div style="transition:all 0.2s ease;border-bottom:1px solid rgba(138,122,94,0.4);padding:28px 8px;display:flex;justify-content:space-between;align-items:center;gap:20px" style-hover="background:rgba(255,255,255,0.5);border-radius:10px;padding-left:16px;padding-right:16px">
         <div style="font-size:22px;font-weight:500;color:#2B2620">Materials &amp; caring for your piece</div>
-        <div style="font-family:'Cormorant Garamond',serif;font-size:30px;color:#4E5A3A;line-height:1">+</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:30px;color:#222021;line-height:1">+</div>
       </div>
     </div>
     <div style="text-align:center;margin-top:70px">
-      <a href="mailto:durrell.smith03@gmail.com?subject=Pet%20memorial%20commission" style="display:inline-block;background:linear-gradient(rgba(255,255,255,0.28),rgba(255,255,255,0.02) 46%),rgba(123,63,46,0.7);backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);border:1px solid rgba(255,255,255,0.45);border-radius:999px;transition:transform 0.25s ease,box-shadow 0.25s ease,filter 0.25s ease;box-shadow:0 12px 34px rgba(43,38,32,0.3),inset 0 1px 1px rgba(255,255,255,0.5),inset 0 -1px 1px rgba(43,38,32,0.15);color:#F0EAD9;font-family:'Cormorant Garamond',serif;font-size:26px;letter-spacing:4px;text-transform:uppercase;padding:20px 46px;white-space:nowrap" style-hover="transform:translateY(-3px);filter:brightness(1.09);box-shadow:0 18px 44px rgba(43,38,32,0.38),inset 0 1px 1px rgba(255,255,255,0.65),inset 0 -1px 1px rgba(43,38,32,0.12)">Begin a Commission</a>
-      <div style="font-family:'Cormorant Garamond',serif;font-size:18px;font-style:italic;color:#4E5A3A;margin-top:22px">When you&rsquo;re ready &mdash; there is no hurry.</div>
+      <a href="mailto:durrell.smith03@gmail.com?subject=Pet%20memorial%20commission" style="display:inline-block;background:linear-gradient(rgba(255,255,255,0.28),rgba(255,255,255,0.02) 46%),rgba(162,14,44,0.78);backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);border:1px solid rgba(255,255,255,0.45);border-radius:999px;transition:transform 0.25s ease,box-shadow 0.25s ease,filter 0.25s ease;box-shadow:0 12px 34px rgba(43,38,32,0.3),inset 0 1px 1px rgba(255,255,255,0.5),inset 0 -1px 1px rgba(43,38,32,0.15);color:#F0EAD9;font-family:'Oswald',sans-serif;font-size:19px;letter-spacing:4px;text-transform:uppercase;font-weight:600;padding:20px 46px;white-space:nowrap" style-hover="transform:translateY(-3px);filter:brightness(1.09);box-shadow:0 18px 44px rgba(43,38,32,0.38),inset 0 1px 1px rgba(255,255,255,0.65),inset 0 -1px 1px rgba(43,38,32,0.12)">Begin a Commission</a>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:18px;font-style:italic;color:#222021;margin-top:22px">When you&rsquo;re ready &mdash; there is no hurry.</div>
     </div>
   </div>
 
   <!-- footer -->
   <div style="border-top:1px solid rgba(138,122,94,0.35);padding:56px 100px 64px;text-align:center">
-    <div style="font-size:27px;font-style:italic;color:#4E5A3A">Sculpting the Memory of your Beloved Pet</div>
-    <div style="font-family:'Cormorant Garamond',serif;font-size:17px;letter-spacing:4px;text-transform:uppercase;color:#4E5A3A;margin-top:20px">Original Dogman &middot; One-of-One Sculptures and Wearable Art</div>
+    <div style="font-size:27px;font-style:italic;color:#222021">Sculpting the Memory of your Beloved Pet</div>
+    <div style="font-family:'Oswald',sans-serif;font-size:13px;letter-spacing:4px;text-transform:uppercase;font-weight:400;color:#222021;margin-top:20px">Original Dogman &middot; One-of-One Sculptures and Wearable Art</div>
   </div>
 </div>
 
