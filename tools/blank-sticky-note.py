@@ -39,7 +39,9 @@ from PIL import Image, ImageEnhance, ImageOps
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 GATEWAY = os.path.join(HERE, '..', 'web', 'public', 'gateway')
-SRC = os.path.join(GATEWAY, 'note-dlamar.webp')
+ASSETS = os.path.join(HERE, 'assets')          # pristine cutouts, never written
+SRC = os.path.join(ASSETS, 'note-dlamar.webp')
+SRC_LAMARCY = os.path.join(ASSETS, 'note-lamarcy.webp')
 
 # Measured off the source sheet (366x380):
 #   rows  10-105  clean paper
@@ -125,6 +127,49 @@ def verify(rgb, out, alpha):
           f'{d[untouched].max():.0f} change outside rows {WY0}-{WY1}')
 
 
+# --- bottom edge -------------------------------------------------------------
+# The background removal clipped the contact shadow at a hard, stair-stepped
+# boundary, so every note ended in a jagged edge -- the photographed pair as
+# much as the generated ones. The shadow's own pixels survive underneath (RGB
+# averages 44,42,40 where alpha is 0), so fading the alpha out reveals real
+# shadow rather than a white fringe.
+
+ZONE_TOP = 330     # above this the cutout's own alpha is left alone
+FADE     = 9.0     # rows over which the shadow dissolves
+SMOOTH   = 41      # window that turns the ragged edge into the sheet's curve
+
+
+def soften_bottom(im):
+    a = np.asarray(im.convert('RGBA')).astype(np.float32)
+    rgb, al = a[..., :3], a[..., 3]
+    h, w = al.shape
+
+    edge = np.full(w, np.nan)
+    for c in range(w):
+        op = np.nonzero(al[:, c] > 128)[0]
+        if op.size:
+            edge[c] = op.max()
+    idx = np.arange(w)
+    ok = ~np.isnan(edge)
+    edge = np.interp(idx, idx[ok], edge[ok])
+
+    pad = np.pad(edge, (SMOOTH, SMOOTH), mode='edge')
+    curve = np.convolve(pad, np.ones(SMOOTH) / SMOOTH, mode='same')[SMOOTH:-SMOOTH]
+
+    ys = np.arange(h)[:, None]
+    ramp = np.clip((curve[None, :] - ys) / FADE + 0.5, 0, 1) * 255.0
+
+    t = np.clip((ys - ZONE_TOP) / 12.0, 0, 1)
+    out = np.where(ys >= ZONE_TOP, al * (1 - t) + np.minimum(al, ramp) * t, al)
+    out = np.where(ys >= ZONE_TOP,
+                   np.maximum(out, np.where(ys > curve[None, :] - FADE, ramp, 0)),
+                   out)
+
+    jag = np.abs(np.diff(edge)).max()
+    print(f'  bottom edge: raggedness {jag:.0f}px -> smooth curve, {FADE:.0f}px fade')
+    return Image.fromarray(np.dstack([rgb, np.clip(out, 0, 255)]).astype(np.uint8))
+
+
 def main():
     sheet = blank_sheet()
 
@@ -133,6 +178,12 @@ def main():
         img.save(p, 'WEBP', quality=92, method=6)
         print(f'  {name:22} {img.size}  {os.path.getsize(p)} bytes')
 
+    # The two lettered photographs get the same treatment, or the row would be
+    # three smooth notes beside two jagged ones -- cohesion is the whole point.
+    save(soften_bottom(Image.open(SRC)), 'note-dlamar.webp')
+    save(soften_bottom(Image.open(SRC_LAMARCY)), 'note-lamarcy.webp')
+
+    sheet = soften_bottom(sheet)
     # Three sheets off one pad, so the row is not one image repeated.
     save(sheet, 'note-blank-a.webp')
     save(ImageOps.mirror(sheet), 'note-blank-b.webp')

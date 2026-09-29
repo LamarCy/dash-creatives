@@ -15,6 +15,13 @@ import LamarCyWorld from '../components/LamarCyWorld.astro';
 import OrbNav from '../components/OrbNav.astro';
 import MediaGuard from '../components/MediaGuard.astro';
 
+// /gateway/* is cached for a week (see netlify.toml), and these sheets keep
+// their filenames across edits, so a repeat visitor keeps the old bytes until
+// it expires. Bump ASSET_V whenever a note image changes -- the toml comment
+// calls for exactly this. Skipping it is why a broken earlier cut of these
+// sheets stayed on screen after the fix shipped.
+const ASSET_V = 2;
+
 // Copy is verbatim from the previous .egglabels overlay.
 const WORLDS = [
   { cls: 'pink',   href: '/art/#gallery',                who: 'D.LAMAR',        role: 'The Painter',    line: 'The Works',                        photo: '/gateway/note-dlamar.webp',  baked: true },
@@ -297,7 +304,7 @@ body.locked{overflow:hidden;height:100vh}
                 were shot already lettered, so `baked` suppresses the overlay;
                 the rest take the blank sheet with the header written on top. */}
             <span class={w.photo ? 'note is-photo' : 'note'}>
-              {w.photo && <img src={w.photo} alt="" width="366" height="380" decoding="async" />}
+              {w.photo && <img src={`${w.photo}?v=${ASSET_V}`} alt="" width="366" height="380" decoding="async" />}
               {!w.baked && (w.logo
                 ? <span class="mark"><img src={w.logo} alt="" width="520" height="200" decoding="async" /></span>
                 : <span class="hand"><span class="who">{w.who}</span><span class="role">{w.role}</span></span>
