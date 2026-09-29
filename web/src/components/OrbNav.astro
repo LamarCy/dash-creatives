@@ -1,7 +1,8 @@
 ---
 // The Astral Orb — Durrell's ink-heart painting spun into electron orbits
 // inside a glass ball. Fixed bottom-right on every DASH page; opens the
-// worlds menu (eggs as icons). Asset: /gateway/orb-heart.png (transparent bg).
+// worlds menu (eggs as icons). Nucleus: /gateway/medallion-cp.webp (the C.P
+// medallion); the three orbiting electrons stay /gateway/orb-heart.png.
 const WORLDS = [
   { href: '/', label: 'The Gateway', sub: 'the diamond heart', kind: 'heart', c1: '', c2: '' },
   { href: '/art/#gallery', label: 'D.LAMAR', sub: 'the painter · the gallery', kind: 'egg', c1: '#DFA8BC', c2: '#B45E7B' },
@@ -34,7 +35,7 @@ const WORLDS = [
     ))}
   </div>
   <button class="oball" id="orbball" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="orbmenu" title="Navigate the worlds">
-    <span class="onucleus" aria-hidden="true"><img src="/gateway/orb-heart.png" alt="" /></span>
+    <span class="onucleus" aria-hidden="true"><img src="/gateway/medallion-cp.webp" alt="" /></span>
     <span class="oplane p1" aria-hidden="true"><span class="oring"></span><span class="ocarrier"><img class="oelectron" src="/gateway/orb-heart.png" alt="" /></span></span>
     <span class="oplane p2" aria-hidden="true"><span class="oring"></span><span class="ocarrier"><img class="oelectron" src="/gateway/orb-heart.png" alt="" /></span></span>
     <span class="oplane p3" aria-hidden="true"><span class="oring"></span><span class="ocarrier"><img class="oelectron" src="/gateway/orb-heart.png" alt="" /></span></span>
@@ -64,7 +65,11 @@ const WORLDS = [
 /* The atom: nucleus = the painting; electrons = small copies of it
    traveling inclined ink orbits, one per plane, different periods. */
 #orbnav .onucleus{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
-#orbnav .onucleus img{width:42%;height:42%;object-fit:contain}
+/* The medallion is a filled disc, not art with transparent padding like the
+   heart it replaces, so the same percentage reads much larger. The electron
+   rings are tilted 68deg, so their path passes closest to centre at the top
+   and bottom -- that clearance, not the width, sets this number. */
+#orbnav .onucleus img{width:38%;height:38%;object-fit:contain;border-radius:50%}
 #orbnav .oplane{position:absolute;inset:8%;pointer-events:none;transform-style:preserve-3d}
 #orbnav .p1{transform:rotateZ(0deg) rotateX(68deg)}
 #orbnav .p2{transform:rotateZ(60deg) rotateX(68deg)}
