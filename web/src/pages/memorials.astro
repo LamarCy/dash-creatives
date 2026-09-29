@@ -162,6 +162,12 @@ const OG    = `${SITE}/memorials/gd_03.jpg`;
     text-align:center;padding:0 22px;opacity:0;animation:fade-in .9s .62s ease forwards}
   #splash .lockup{text-align:center;opacity:0;animation:fade-in .9s .12s ease forwards}
   .brandmark{display:block;width:clamp(230px,32vw,430px);height:auto;margin:0 auto 14px}
+  /* Long enough that at 6px tracking it overflows a phone — clamp it and let
+     it wrap instead of pushing the layout sideways. */
+  .brandtag{font-family:'Cormorant Garamond',serif;font-size:clamp(12px,1.5vw,21px);
+    letter-spacing:clamp(3px,.5vw,6px);text-indent:clamp(3px,.5vw,6px);
+    color:#8A7A5E;margin-top:6px;max-width:100%;text-wrap:balance}
+  .brandsub{max-width:92vw;margin-left:auto;margin-right:auto;text-wrap:balance}
 
   @media (prefers-reduced-motion:reduce){
     #spin{animation:none;opacity:1}
@@ -179,7 +185,7 @@ const OG    = `${SITE}/memorials/gd_03.jpg`;
   <div class="lockup">
     <img class="brandmark" src="/gateway/logo-dogman.webp"
          alt="Original Dogman" width="520" height="200" decoding="async" />
-    <div class="brandsub">MEMORIAL ART STUDIO</div>
+    <div class="brandsub">ONE-OF-ONE SCULPTURES AND WEARABLE ART</div>
   </div>
   <div id="spin" role="img" aria-label="A sculpted English Setter, turning slowly"></div>
   <div class="rule"></div>
@@ -253,7 +259,7 @@ const OG    = `${SITE}/memorials/gd_03.jpg`;
     <div style="text-align:center">
       <img class="brandmark" src="/gateway/logo-dogman.webp" alt="Original Dogman"
            width="520" height="200" decoding="async" />
-      <div style="font-family:'Cormorant Garamond',serif;font-size:21px;letter-spacing:6px;text-indent:6px;color:#8A7A5E;margin-top:6px">MEMORIAL ART STUDIO</div>
+      <div class="brandtag">ONE-OF-ONE SCULPTURES AND WEARABLE ART</div>
     </div>
     <div style="display:flex;gap:54px;font-family:'Cormorant Garamond',serif;font-size:18px;letter-spacing:4px;text-transform:uppercase">
       <a href="/" style="transition:color 0.2s ease;color:#4E5A3A">Home</a>
@@ -458,7 +464,7 @@ const OG    = `${SITE}/memorials/gd_03.jpg`;
   <!-- footer -->
   <div style="border-top:1px solid rgba(138,122,94,0.35);padding:56px 100px 64px;text-align:center">
     <div style="font-size:27px;font-style:italic;color:#4E5A3A">Sculpting the Memory of your Beloved Pet</div>
-    <div style="font-family:'Cormorant Garamond',serif;font-size:17px;letter-spacing:4px;text-transform:uppercase;color:#4E5A3A;margin-top:20px">Original Dogman &middot; Memorial Art Studio</div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:17px;letter-spacing:4px;text-transform:uppercase;color:#4E5A3A;margin-top:20px">Original Dogman &middot; One-of-One Sculptures and Wearable Art</div>
   </div>
 </div>
 
