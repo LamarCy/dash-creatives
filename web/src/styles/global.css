@@ -460,3 +460,24 @@ img[data-artwork] { cursor: zoom-in; }
 .nb-field input,
 .nb-field select,
 .nb-field textarea { min-height: 44px; }
+
+/* ---------- youtube channel card ----------
+   Stands in for the featured player while no valid video id is set. Sized to
+   fill the same slot as the embed so the music layout does not shift. */
+.yt-channel{
+  display:flex;flex-direction:column;justify-content:center;gap:6px;
+  aspect-ratio:16/9;width:100%;padding:0 clamp(18px,4vw,34px);
+  border:1px solid var(--rule);background:var(--paper,#fbfaf7);
+  text-decoration:none;color:var(--ink);
+  transition:background .18s ease,border-color .18s ease;
+}
+.yt-channel:hover{background:#fff;border-color:var(--ink)}
+.yt-channel-k{
+  font-family:'DM Mono',monospace;font-weight:300;font-size:0.70rem;
+  letter-spacing:0.18em;text-transform:uppercase;color:var(--blue-pencil);
+}
+.yt-channel-n{font-family:'EB Garamond',Georgia,serif;font-size:clamp(1.4rem,2.4vw,2rem);line-height:1.1}
+.yt-channel-go{
+  font-family:'DM Mono',monospace;font-weight:300;font-size:0.72rem;
+  letter-spacing:0.12em;color:var(--ink-light);margin-top:4px;
+}

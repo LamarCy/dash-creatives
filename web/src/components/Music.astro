@@ -2,7 +2,7 @@
 import { tracks, musicLinks } from '@/data/tracks';
 import YouTubeLite from './YouTubeLite.astro';
 
-const featuredId = import.meta.env.PUBLIC_YOUTUBE_FEATURED_ID ?? 'EdFSDXgwF4U';
+const featuredId = import.meta.env.PUBLIC_YOUTUBE_FEATURED_ID ?? '';
 ---
 
 <section id="music" class="section">
@@ -37,12 +37,26 @@ const featuredId = import.meta.env.PUBLIC_YOUTUBE_FEATURED_ID ?? 'EdFSDXgwF4U';
         {musicLinks.spotify && (
           <a href={musicLinks.spotify} target="_blank" rel="noopener" class="btn btn-sm">Spotify ↗</a>
         )}
-        <a href="/ashley" class="btn btn-sm">Ashley Smith →</a>
+        <a href={musicLinks.youtube} target="_blank" rel="noopener" class="btn btn-sm">YouTube ↗</a>
+          <a href="/ashley" class="btn btn-sm">Ashley Smith →</a>
       </div>
     </div>
     <div class="music-aside">
       <div class="album-cover">
-        <YouTubeLite id={featuredId} title="Momma Gone" />
+        {featuredId ? (
+          <YouTubeLite id={featuredId} title="Momma Gone" />
+        ) : (
+          /* No featured video while the old ids are dead -- a YouTubeLite with
+             a bad id renders YouTube's grey placeholder and a play button that
+             opens an unavailable embed. Link the channel instead. Set
+             PUBLIC_YOUTUBE_FEATURED_ID, or a real default in Music.astro, and
+             the player comes back. */
+          <a class="yt-channel" href={musicLinks.youtube} target="_blank" rel="noopener">
+            <span class="yt-channel-k">YouTube</span>
+            <span class="yt-channel-n">LamarCy</span>
+            <span class="yt-channel-go">Watch on the channel ↗</span>
+          </a>
+        )}
       </div>
       <div class="collab-note">
         <p>
