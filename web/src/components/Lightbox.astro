@@ -4,7 +4,11 @@
 <div id="lb" aria-hidden="true">
   <button id="lb-x" type="button" aria-label="Close">&#x2715; &nbsp;Close</button>
   <div id="lb-inner">
-    <img id="lb-img" src="" alt="" />
+    <!-- No src attribute until a thumbnail is clicked. An empty one is not
+         "no image": the browser resolves it against the current URL and
+         re-requests the page itself as an image, so every gallery page was
+         fetching itself a second time. -->
+    <img id="lb-img" alt="" />
   </div>
   <p id="lb-cap"></p>
 </div>
